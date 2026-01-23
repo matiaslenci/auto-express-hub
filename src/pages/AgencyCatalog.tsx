@@ -32,9 +32,7 @@ export default function AgencyCatalog() {
 
   useEffect(() => {
     if (username) {
-      // Remove @ prefix if present from the username param
-      const cleanUsername = username.startsWith('@') ? username.slice(1) : username;
-      const foundAgency = getAgencyByUsername(cleanUsername);
+      const foundAgency = getAgencyByUsername(username);
       if (foundAgency) {
         setAgency(foundAgency);
         setVehicles(getActiveVehiclesByAgency(foundAgency.username));
@@ -82,7 +80,7 @@ export default function AgencyCatalog() {
             </div>
             <h1 className="text-2xl font-bold mb-2">Agencia no encontrada</h1>
             <p className="text-muted-foreground mb-6">
-              La agencia @{username?.replace('@', '')} no existe o ya no está disponible
+              La agencia "{username}" no existe o ya no está disponible
             </p>
             <Link to="/">
               <Button variant="gradient">Volver al inicio</Button>

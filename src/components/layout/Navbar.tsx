@@ -34,7 +34,7 @@ export function Navbar() {
             <ThemeToggle />
             {isAuthenticated ? (
               <>
-                <Link to={`/@${user?.username}`}>
+                <Link to={`/${user?.username}`}>
                   <Button variant="ghost" size="sm">
                     Ver catálogo
                   </Button>
@@ -85,7 +85,7 @@ export function Navbar() {
               </div>
               {isAuthenticated ? (
                 <>
-                  <Link to={`/@${user?.username}`} onClick={() => setIsMenuOpen(false)}>
+                  <Link to={`/${user?.username}`} onClick={() => setIsMenuOpen(false)}>
                     <Button variant="ghost" className="w-full justify-start">
                       Ver catálogo
                     </Button>
