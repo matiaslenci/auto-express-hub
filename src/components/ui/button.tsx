@@ -18,7 +18,7 @@ const buttonVariants = cva(
         gradient: "bg-gradient-to-r from-primary to-orange-400 text-white font-semibold shadow-lg hover:shadow-[0_0_30px_rgba(249,115,22,0.3)] hover:scale-[1.02]",
         hero: "bg-gradient-to-r from-primary to-orange-400 text-white font-bold text-lg shadow-xl hover:shadow-[0_0_40px_rgba(249,115,22,0.4)] hover:scale-[1.03] px-8 py-6",
         whatsapp: "bg-[#25D366] text-white font-semibold shadow-lg hover:bg-[#20BD5A] hover:shadow-xl hover:scale-[1.02]",
-        glass: "bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 hover:border-white/30",
+        glass: "bg-black/5 backdrop-blur-md border border-black/10 text-foreground hover:bg-black/10 hover:border-black/20 dark:bg-white/10 dark:border-white/20 dark:text-white dark:hover:bg-white/20 dark:hover:border-white/30",
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -37,7 +37,7 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+  VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
