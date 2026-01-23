@@ -20,9 +20,42 @@ import { SEO } from '@/components/common/SEO';
 // ... existing imports
 
 export default function Register() {
-  // ... existing hooks and state
+  const { register, loading, isAuthenticated } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
-  // ... existing handleSubmit
+  const [formData, setFormData] = useState({
+    nombre: '',
+    username: '',
+    email: '',
+    password: '',
+    plan: 'basico' as 'basico' | 'profesional' | 'premium',
+  });
+
+  const updateField = (field: string, value: any) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const result = await register(formData);
+
+    if (result.success) {
+      toast({
+        title: "¡Cuenta creada!",
+        description: "Bienvenido a AgenciaExpress.",
+      });
+      navigate('/dashboard');
+    } else {
+      toast({
+        title: "Error",
+        description: result.error || "No se pudo crear la cuenta",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden px-4 py-12">
@@ -34,13 +67,7 @@ export default function Register() {
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-orange-500/5 rounded-full blur-3xl" />
 
-      import {SEO} from '@/components/common/SEO';
-
       <div className="w-full max-w-lg relative z-10">
-        <SEO
-          title="Registrar Agencia - AgenciaExpress"
-          description="Crea tu cuenta en AgenciaExpress y comienza a gestionar tu inventario de vehículos hoy mismo."
-        />
         {/* Logo */}
         <Link to="/" className="flex items-center justify-center gap-2 mb-8">
           <div className="p-2 rounded-xl bg-primary/10">

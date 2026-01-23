@@ -11,9 +11,34 @@ import { SEO } from '@/components/common/SEO';
 
 export default function Login() {
   const [email, setEmail] = useState('');
-  // ... existing state and hooks
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const { login, loading, isAuthenticated } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  // ... existing handleSubmit
+  if (isAuthenticated) {
+    navigate('/dashboard');
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const result = await login(email, password);
+
+    if (result.success) {
+      toast({
+        title: "Bienvenido",
+        description: "Has iniciado sesión correctamente.",
+      });
+      navigate('/dashboard');
+    } else {
+      toast({
+        title: "Error",
+        description: result.error || "Credenciales incorrectas",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden px-4">
