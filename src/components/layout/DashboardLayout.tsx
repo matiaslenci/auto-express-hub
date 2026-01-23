@@ -1,6 +1,7 @@
 import { ReactNode, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { 
   Car, 
   LayoutDashboard, 
@@ -137,6 +138,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* Bottom Actions */}
           <div className="p-4 border-t border-sidebar-border space-y-2">
+            <div className="flex items-center justify-between px-4 py-2">
+              <span className="text-sm text-muted-foreground">Tema</span>
+              <ThemeToggle />
+            </div>
             <Link
               to={`/@${user?.username}`}
               target="_blank"
