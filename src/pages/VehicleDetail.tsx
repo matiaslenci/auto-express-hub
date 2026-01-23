@@ -34,9 +34,7 @@ export default function VehicleDetail() {
 
   useEffect(() => {
     if (username && vehicleId) {
-      // Remove @ prefix if present from the username param
-      const cleanUsername = username.startsWith('@') ? username.slice(1) : username;
-      const foundAgency = getAgencyByUsername(cleanUsername);
+      const foundAgency = getAgencyByUsername(username);
       const foundVehicle = getVehicleById(vehicleId);
       
       if (foundAgency && foundVehicle && foundVehicle.agenciaUsername === foundAgency.username) {
@@ -71,7 +69,7 @@ export default function VehicleDetail() {
             <p className="text-muted-foreground mb-6">
               Este vehículo no existe o ya no está disponible
             </p>
-            <Link to={`/@${username}`}>
+            <Link to={`/${username}`}>
               <Button variant="gradient">Ver otros vehículos</Button>
             </Link>
           </div>
@@ -125,7 +123,7 @@ export default function VehicleDetail() {
         <div className="container mx-auto px-4">
           {/* Back Button */}
           <Link 
-            to={`/@${username}`}
+            to={`/${username}`}
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
           >
             <ArrowLeft className="h-4 w-4" />

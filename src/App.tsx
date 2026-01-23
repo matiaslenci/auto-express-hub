@@ -30,8 +30,8 @@ const App = () => (
           <Route path="/dashboard/vehiculos" element={<DashboardVehicles />} />
           <Route path="/dashboard/vehiculos/nuevo" element={<DashboardNewVehicle />} />
           <Route path="/dashboard/perfil" element={<DashboardProfile />} />
-          <Route path="/@:username" element={<AgencyCatalog />} />
-          <Route path="/@:username/:vehicleId" element={<VehicleDetail />} />
+          <Route path="/:username" element={<AgencyCatalog />} />
+          <Route path="/:username/:vehicleId" element={<VehicleDetail />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

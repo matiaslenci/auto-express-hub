@@ -20,7 +20,7 @@ export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardP
 
   return (
     <Link 
-      to={`/@${agencyUsername}/${vehicle.id}`}
+      to={`/${agencyUsername}/${vehicle.id}`}
       className={cn("vehicle-card block group", className)}
     >
       {/* Image */}
