@@ -10,11 +10,13 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, User, MapPin, Phone, Image, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+import { SEO } from '@/components/common/SEO';
+
 export default function DashboardProfile() {
   const { user, loading, isAuthenticated, refreshUser } = useAuth();
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     nombre: '',
     logo: '',
@@ -26,11 +28,11 @@ export default function DashboardProfile() {
   useEffect(() => {
     if (user) {
       setFormData({
-        nombre: user.nombre,
-        logo: user.logo,
-        portada: user.portada,
-        ubicacion: user.ubicacion,
-        whatsapp: user.whatsapp,
+        nombre: user.nombre || '',
+        logo: user.logo || '',
+        portada: user.portada || '',
+        ubicacion: user.ubicacion || '',
+        whatsapp: user.whatsapp || '',
       });
     }
   }, [user]);
@@ -73,11 +75,12 @@ export default function DashboardProfile() {
     setSubmitting(false);
   };
 
-  const planClass = user?.plan === 'premium' ? 'badge-premium' : 
-                    user?.plan === 'profesional' ? 'badge-profesional' : 'badge-basico';
+  const planClass = user?.plan === 'premium' ? 'badge-premium' :
+    user?.plan === 'profesional' ? 'badge-profesional' : 'badge-basico';
 
   return (
     <DashboardLayout>
+      <SEO title="Mi Perfil | AgenciaExpress" description="Administra la información de tu agencia." />
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -89,8 +92,8 @@ export default function DashboardProfile() {
         <div className="glass-card overflow-hidden mb-8">
           <div className="relative h-32 bg-gradient-to-r from-primary/20 to-primary/5">
             {formData.portada && (
-              <img 
-                src={formData.portada} 
+              <img
+                src={formData.portada}
                 alt="Portada"
                 className="w-full h-full object-cover"
               />
@@ -125,7 +128,7 @@ export default function DashboardProfile() {
               <User className="h-5 w-5 text-primary" />
               Información básica
             </h2>
-            
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="nombre">Nombre de la agencia</Label>
@@ -179,7 +182,7 @@ export default function DashboardProfile() {
               <Image className="h-5 w-5 text-primary" />
               Imágenes
             </h2>
-            
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="logo">Logo (URL)</Label>
@@ -228,9 +231,9 @@ export default function DashboardProfile() {
 
           {/* Actions */}
           <div className="flex gap-4">
-            <a 
-              href={`/@${user?.username}`} 
-              target="_blank" 
+            <a
+              href={`/@${user?.username}`}
+              target="_blank"
               rel="noopener noreferrer"
               className="flex-1"
             >
@@ -239,9 +242,9 @@ export default function DashboardProfile() {
                 Ver catálogo
               </Button>
             </a>
-            <Button 
-              type="submit" 
-              variant="gradient" 
+            <Button
+              type="submit"
+              variant="gradient"
               className="flex-1"
               disabled={submitting}
             >

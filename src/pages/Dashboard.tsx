@@ -7,8 +7,11 @@ import { Car, Eye, MessageCircle, TrendingUp, BarChart3 } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 
+import { SEO } from '@/components/common/SEO';
+
 export default function Dashboard() {
   const { user, loading, isAuthenticated } = useAuth();
+
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
 
   useEffect(() => {
@@ -70,8 +73,11 @@ export default function Dashboard() {
     },
   ];
 
+
+
   return (
     <DashboardLayout>
+      <SEO title="Dashboard | AgenciaExpress" description="Resumen de tu agencia." />
       <div className="space-y-8">
         {/* Header */}
         <div>
@@ -93,7 +99,7 @@ export default function Dashboard() {
             <div className={cn(
               "badge-plan",
               user?.plan === 'premium' ? 'badge-premium' :
-              user?.plan === 'profesional' ? 'badge-profesional' : 'badge-basico'
+                user?.plan === 'profesional' ? 'badge-profesional' : 'badge-basico'
             )}>
               {user?.plan === 'premium' ? 'Sin límites' : `${activeVehicles.length}/${limit} publicaciones`}
             </div>
@@ -106,8 +112,8 @@ export default function Dashboard() {
         {/* Stats Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats.map((stat, index) => (
-            <div 
-              key={stat.label} 
+            <div
+              key={stat.label}
               className="stat-card animate-fade-in-up"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
@@ -136,7 +142,7 @@ export default function Dashboard() {
               {topVehicles.map((vehicle, index) => {
                 const maxViews = topVehicles[0]?.vistas || 1;
                 const percentage = (vehicle.vistas / maxViews) * 100;
-                
+
                 return (
                   <div key={vehicle.id} className="flex items-center gap-4">
                     <span className="w-6 text-center font-bold text-muted-foreground">
@@ -155,7 +161,7 @@ export default function Dashboard() {
                       </p>
                       <div className="flex items-center gap-2 mt-1">
                         <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                          <div 
+                          <div
                             className="h-full bg-primary rounded-full transition-all duration-500"
                             style={{ width: `${percentage}%` }}
                           />

@@ -16,16 +16,18 @@ const TRANSMISIONES = ['Manual', 'Automática'];
 const COMBUSTIBLES = ['Gasolina', 'Diésel', 'Híbrido', 'Eléctrico'];
 const COLORES = ['Blanco', 'Negro', 'Gris', 'Plata', 'Rojo', 'Azul', 'Verde', 'Otro'];
 const MARCAS = [
-  'Audi', 'BMW', 'Chevrolet', 'Ford', 'Honda', 'Hyundai', 'Kia', 
+  'Audi', 'BMW', 'Chevrolet', 'Ford', 'Honda', 'Hyundai', 'Kia',
   'Mazda', 'Mercedes-Benz', 'Nissan', 'Toyota', 'Volkswagen', 'Otro'
 ];
+
+import { SEO } from '@/components/common/SEO';
 
 export default function DashboardNewVehicle() {
   const { user, loading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     marca: '',
     modelo: '',
@@ -114,8 +116,11 @@ export default function DashboardNewVehicle() {
     setSubmitting(false);
   };
 
+
+
   return (
     <DashboardLayout>
+      <SEO title="Nuevo Vehículo | AgenciaExpress" description="Publica un nuevo vehículo en tu catálogo." />
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
@@ -135,7 +140,7 @@ export default function DashboardNewVehicle() {
           {/* Basic Info */}
           <div className="glass-card p-6 space-y-6">
             <h2 className="text-lg font-semibold">Información básica</h2>
-            
+
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="marca">Marca *</Label>
@@ -196,7 +201,7 @@ export default function DashboardNewVehicle() {
           {/* Specifications */}
           <div className="glass-card p-6 space-y-6">
             <h2 className="text-lg font-semibold">Especificaciones</h2>
-            
+
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label>Tipo *</Label>
@@ -296,9 +301,9 @@ export default function DashboardNewVehicle() {
                 onChange={(e) => setNewPhotoUrl(e.target.value)}
                 className="input-glow"
               />
-              <Button 
-                type="button" 
-                variant="outline" 
+              <Button
+                type="button"
+                variant="outline"
                 onClick={addPhoto}
                 disabled={!newPhotoUrl || formData.fotos.length >= 10}
               >
@@ -344,9 +349,9 @@ export default function DashboardNewVehicle() {
             >
               Cancelar
             </Button>
-            <Button 
-              type="submit" 
-              variant="gradient" 
+            <Button
+              type="submit"
+              variant="gradient"
               className="flex-1"
               disabled={submitting}
             >

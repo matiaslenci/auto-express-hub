@@ -5,13 +5,13 @@ import { useAuth } from '@/hooks/useAuth';
 import { getVehiclesByAgency, Vehicle, deleteVehicle, updateVehicle } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  Plus, 
-  Search, 
-  Eye, 
-  MessageCircle, 
-  Trash2, 
-  Edit, 
+import {
+  Plus,
+  Search,
+  Eye,
+  MessageCircle,
+  Trash2,
+  Edit,
   MoreVertical,
   Power,
   PowerOff
@@ -35,6 +35,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+
+import { SEO } from '@/components/common/SEO';
 
 export default function DashboardVehicles() {
   const { user, loading, isAuthenticated } = useAuth();
@@ -68,7 +70,7 @@ export default function DashboardVehicles() {
     return <Navigate to="/login" replace />;
   }
 
-  const filteredVehicles = vehicles.filter(v => 
+  const filteredVehicles = vehicles.filter(v =>
     `${v.marca} ${v.modelo} ${v.año}`.toLowerCase().includes(search.toLowerCase())
   );
 
@@ -99,11 +101,14 @@ export default function DashboardVehicles() {
     setVehicleToDelete(null);
   };
 
-  const formatPrice = (price: number) => 
+  const formatPrice = (price: number) =>
     new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(price);
+
+
 
   return (
     <DashboardLayout>
+      <SEO title="Mis Vehículos | AgenciaExpress" description="Gestiona tu inventario de vehículos." />
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -136,8 +141,8 @@ export default function DashboardVehicles() {
         {filteredVehicles.length > 0 ? (
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredVehicles.map((vehicle) => (
-              <div 
-                key={vehicle.id} 
+              <div
+                key={vehicle.id}
                 className={cn(
                   "glass-card overflow-hidden transition-all duration-300",
                   !vehicle.activo && "opacity-60"
@@ -214,7 +219,7 @@ export default function DashboardVehicles() {
                           )}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           className="text-destructive"
                           onClick={() => handleDeleteClick(vehicle)}
                         >
@@ -237,7 +242,7 @@ export default function DashboardVehicles() {
               {search ? 'No se encontraron vehículos' : 'Sin vehículos'}
             </h3>
             <p className="text-muted-foreground mb-6">
-              {search 
+              {search
                 ? 'Intenta con otros términos de búsqueda'
                 : 'Comienza agregando tu primer vehículo'}
             </p>
@@ -264,7 +269,7 @@ export default function DashboardVehicles() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogAction
               onClick={handleDeleteConfirm}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
