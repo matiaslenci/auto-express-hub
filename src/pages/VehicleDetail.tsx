@@ -34,7 +34,9 @@ export default function VehicleDetail() {
 
   useEffect(() => {
     if (username && vehicleId) {
-      const foundAgency = getAgencyByUsername(username);
+      // Remove @ prefix if present from the username param
+      const cleanUsername = username.startsWith('@') ? username.slice(1) : username;
+      const foundAgency = getAgencyByUsername(cleanUsername);
       const foundVehicle = getVehicleById(vehicleId);
       
       if (foundAgency && foundVehicle && foundVehicle.agenciaUsername === foundAgency.username) {
