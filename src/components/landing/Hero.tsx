@@ -9,7 +9,7 @@ export function Hero() {
       <div className="absolute inset-0 bg-gradient-to-b from-secondary to-background" />
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse-slow" />
       <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '2s' }} />
-      
+
       {/* Grid Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(hsl(var(--foreground)/0.03)_1px,transparent_1px),linear-gradient(90deg,hsl(var(--foreground)/0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
 
@@ -29,7 +29,7 @@ export function Hero() {
 
           {/* Subtitle */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-            Crea tu catálogo digital en minutos. Gestiona tu inventario, conecta con clientes 
+            Crea tu catálogo digital en minutos. Gestiona tu inventario, conecta con clientes
             por WhatsApp y haz crecer tu negocio automotriz.
           </p>
 
@@ -41,7 +41,7 @@ export function Hero() {
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
-            <Link to="/@autosdeluxe">
+            <Link to="/autosdeluxe">
               <Button variant="glass" size="xl">
                 Ver demo
               </Button>
