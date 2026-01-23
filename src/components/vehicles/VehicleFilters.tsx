@@ -96,12 +96,12 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
         {/* Marca */}
         <div className="space-y-2">
           <Label>Marca</Label>
-          <Select value={filters.marca} onValueChange={(v) => updateFilter('marca', v)}>
+          <Select value={filters.marca || "all"} onValueChange={(v) => updateFilter('marca', v === "all" ? "" : v)}>
             <SelectTrigger>
               <SelectValue placeholder="Todas las marcas" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todas las marcas</SelectItem>
+              <SelectItem value="all">Todas las marcas</SelectItem>
               {marcas.map((marca) => (
                 <SelectItem key={marca} value={marca}>{marca}</SelectItem>
               ))}
@@ -112,12 +112,12 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
         {/* Tipo */}
         <div className="space-y-2">
           <Label>Tipo</Label>
-          <Select value={filters.tipo} onValueChange={(v) => updateFilter('tipo', v)}>
+          <Select value={filters.tipo || "all"} onValueChange={(v) => updateFilter('tipo', v === "all" ? "" : v)}>
             <SelectTrigger>
               <SelectValue placeholder="Todos los tipos" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Todos los tipos</SelectItem>
+              <SelectItem value="all">Todos los tipos</SelectItem>
               {TIPOS.map((tipo) => (
                 <SelectItem key={tipo} value={tipo}>{tipo}</SelectItem>
               ))}
@@ -128,12 +128,12 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
         {/* Transmisión */}
         <div className="space-y-2">
           <Label>Transmisión</Label>
-          <Select value={filters.transmision} onValueChange={(v) => updateFilter('transmision', v)}>
+          <Select value={filters.transmision || "all"} onValueChange={(v) => updateFilter('transmision', v === "all" ? "" : v)}>
             <SelectTrigger>
               <SelectValue placeholder="Cualquier transmisión" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Cualquier transmisión</SelectItem>
+              <SelectItem value="all">Cualquier transmisión</SelectItem>
               {TRANSMISIONES.map((t) => (
                 <SelectItem key={t} value={t}>{t}</SelectItem>
               ))}
@@ -144,12 +144,12 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
         {/* Combustible */}
         <div className="space-y-2">
           <Label>Combustible</Label>
-          <Select value={filters.combustible} onValueChange={(v) => updateFilter('combustible', v)}>
+          <Select value={filters.combustible || "all"} onValueChange={(v) => updateFilter('combustible', v === "all" ? "" : v)}>
             <SelectTrigger>
               <SelectValue placeholder="Cualquier combustible" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Cualquier combustible</SelectItem>
+              <SelectItem value="all">Cualquier combustible</SelectItem>
               {COMBUSTIBLES.map((c) => (
                 <SelectItem key={c} value={c}>{c}</SelectItem>
               ))}
