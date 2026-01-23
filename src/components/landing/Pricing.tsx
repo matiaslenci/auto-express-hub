@@ -65,7 +65,7 @@ export function Pricing() {
             <span className="gradient-text"> tu negocio</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Sin contratos a largo plazo. Cancela cuando quieras.
+            Sin comisiones. Cancela cuando quieras.
           </p>
         </div>
 
