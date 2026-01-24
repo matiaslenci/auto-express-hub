@@ -2,20 +2,14 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
-import { 
-  getVehicleById, 
-  getAgencyByUsername, 
-  incrementVehicleViews,
-  incrementVehicleWhatsappClicks,
-  Vehicle, 
-  Agency 
-} from '@/lib/storage';
-import { 
-  ArrowLeft, 
-  MessageCircle, 
-  MapPin, 
-  Gauge, 
-  Fuel, 
+import { useVehicle, useTrackView, useTrackWhatsAppClick } from '@/hooks/useVehicles';
+import { useAgency } from '@/hooks/useAgency';
+import {
+  ArrowLeft,
+  MessageCircle,
+  MapPin,
+  Gauge,
+  Fuel,
   Settings2,
   Calendar,
   Palette,
@@ -27,28 +21,21 @@ import { cn } from '@/lib/utils';
 
 export default function VehicleDetail() {
   const { username, vehicleId } = useParams<{ username: string; vehicleId: string }>();
-  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
-  const [agency, setAgency] = useState<Agency | null>(null);
-  const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  useEffect(() => {
-    if (username && vehicleId) {
-      const foundAgency = getAgencyByUsername(username);
-      const foundVehicle = getVehicleById(vehicleId);
-      
-      if (foundAgency && foundVehicle && foundVehicle.agenciaUsername === foundAgency.username) {
-        setAgency(foundAgency);
-        setVehicle(foundVehicle);
-        
-        // Increment views
-        incrementVehicleViews(vehicleId);
-      }
-    }
-    setLoading(false);
-  }, [username, vehicleId]);
+  const { data: vehicle, isLoading: vehicleLoading } = useVehicle(vehicleId || '');
+  const { data: agency, isLoading: agencyLoading } = useAgency(username || '');
+  const trackViewMutation = useTrackView();
+  const trackWhatsAppMutation = useTrackWhatsAppClick();
 
-  if (loading) {
+  // Track view on mount
+  useEffect(() => {
+    if (vehicleId && vehicle) {
+      trackViewMutation.mutate(vehicleId);
+    }
+  }, [vehicleId, vehicle]);
+
+  if (vehicleLoading || agencyLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
@@ -86,16 +73,18 @@ export default function VehicleDetail() {
 
   const formattedKm = new Intl.NumberFormat('es-MX').format(vehicle.kilometraje);
 
-  const images = vehicle.fotos.length > 0 
-    ? vehicle.fotos 
+  const images = vehicle.fotos.length > 0
+    ? vehicle.fotos
     : ['https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&h=800&fit=crop'];
 
   const handleWhatsAppClick = () => {
-    incrementVehicleWhatsappClicks(vehicle.id);
-    const message = encodeURIComponent(
-      `Hola, me interesa el ${vehicle.marca} ${vehicle.modelo} ${vehicle.año}. ¿Está disponible?`
-    );
-    window.open(`https://wa.me/${agency.whatsapp}?text=${message}`, '_blank');
+    if (vehicle && agency) {
+      trackWhatsAppMutation.mutate(vehicle.id);
+      const message = encodeURIComponent(
+        `Hola, me interesa el ${vehicle.marca} ${vehicle.modelo} ${vehicle.año}. ¿Está disponible?`
+      );
+      window.open(`https://wa.me/${agency.whatsapp}?text=${message}`, '_blank');
+    }
   };
 
   const nextImage = () => {
@@ -118,11 +107,11 @@ export default function VehicleDetail() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <div className="pt-20 pb-12">
         <div className="container mx-auto px-4">
           {/* Back Button */}
-          <Link 
+          <Link
             to={`/${username}`}
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
           >
@@ -140,7 +129,7 @@ export default function VehicleDetail() {
                   alt={`${vehicle.marca} ${vehicle.modelo}`}
                   className="w-full h-full object-cover"
                 />
-                
+
                 {images.length > 1 && (
                   <>
                     <button
@@ -155,7 +144,7 @@ export default function VehicleDetail() {
                     >
                       <ChevronRight className="h-6 w-6" />
                     </button>
-                    
+
                     {/* Image Counter */}
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white text-sm">
                       {currentImageIndex + 1} / {images.length}
@@ -173,8 +162,8 @@ export default function VehicleDetail() {
                       onClick={() => setCurrentImageIndex(index)}
                       className={cn(
                         "flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all",
-                        currentImageIndex === index 
-                          ? "border-primary" 
+                        currentImageIndex === index
+                          ? "border-primary"
                           : "border-transparent opacity-60 hover:opacity-100"
                       )}
                     >
@@ -259,9 +248,9 @@ export default function VehicleDetail() {
 
               {/* WhatsApp CTA */}
               {agency.whatsapp && (
-                <Button 
-                  variant="whatsapp" 
-                  size="xl" 
+                <Button
+                  variant="whatsapp"
+                  size="xl"
                   className="w-full gap-3"
                   onClick={handleWhatsAppClick}
                 >

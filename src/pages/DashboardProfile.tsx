@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
-import { updateAgency, PLAN_NAMES, PLAN_PRICES } from '@/lib/storage';
+import { useUpdateAgency } from '@/hooks/useAgency';
+import { PLAN_NAMES, PLAN_PRICES } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +16,7 @@ import { SEO } from '@/components/common/SEO';
 export default function DashboardProfile() {
   const { user, loading, isAuthenticated, refreshUser } = useAuth();
   const { toast } = useToast();
-  const [submitting, setSubmitting] = useState(false);
+  const updateAgencyMutation = useUpdateAgency();
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -55,24 +56,21 @@ export default function DashboardProfile() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
 
     try {
-      updateAgency(user!.username, formData);
-      refreshUser();
+      await updateAgencyMutation.mutateAsync(formData);
+      await refreshUser();
       toast({
         title: 'Perfil actualizado',
         description: 'Los cambios han sido guardados correctamente.',
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'No se pudo actualizar el perfil.',
+        description: error.message || 'No se pudo actualizar el perfil.',
         variant: 'destructive',
       });
     }
-
-    setSubmitting(false);
   };
 
   const planClass = user?.plan === 'premium' ? 'badge-premium' :
@@ -246,9 +244,9 @@ export default function DashboardProfile() {
               type="submit"
               variant="gradient"
               className="flex-1"
-              disabled={submitting}
+              disabled={updateAgencyMutation.isPending}
             >
-              {submitting ? (
+              {updateAgencyMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
                   Guardando...

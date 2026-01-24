@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
-import { createVehicle, getActiveVehiclesByAgency, PLAN_LIMITS } from '@/lib/storage';
+import { useCreateVehicle, useVehicles } from '@/hooks/useVehicles';
+import { PLAN_LIMITS } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,7 +27,9 @@ export default function DashboardNewVehicle() {
   const { user, loading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [submitting, setSubmitting] = useState(false);
+
+  const createVehicleMutation = useCreateVehicle();
+  const { data: vehicles } = useVehicles({ agenciaUsername: user?.username });
 
   const [formData, setFormData] = useState({
     marca: '',
@@ -57,7 +60,7 @@ export default function DashboardNewVehicle() {
   }
 
   // Check plan limits
-  const activeVehicles = getActiveVehiclesByAgency(user?.username || '');
+  const activeVehicles = vehicles?.filter(v => v.activo) || [];
   const limit = PLAN_LIMITS[user?.plan || 'basico'];
   const canAddMore = limit === Infinity || activeVehicles.length < limit;
 
@@ -90,12 +93,10 @@ export default function DashboardNewVehicle() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
 
     try {
-      createVehicle({
+      await createVehicleMutation.mutateAsync({
         ...formData,
-        agenciaUsername: user?.username || '',
         activo: true,
       });
 
@@ -105,15 +106,13 @@ export default function DashboardNewVehicle() {
       });
 
       navigate('/dashboard/vehiculos');
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'No se pudo crear el vehículo.',
+        description: error.message || 'No se pudo crear el vehículo.',
         variant: 'destructive',
       });
     }
-
-    setSubmitting(false);
   };
 
 
@@ -353,9 +352,9 @@ export default function DashboardNewVehicle() {
               type="submit"
               variant="gradient"
               className="flex-1"
-              disabled={submitting}
+              disabled={createVehicleMutation.isPending}
             >
-              {submitting ? (
+              {createVehicleMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
                   Guardando...

@@ -1,36 +1,52 @@
 import { useState, useEffect, useCallback } from 'react';
-import { 
-  Agency, 
-  getCurrentUser, 
-  login as authLogin, 
-  logout as authLogout,
-  createAgency,
-  getAgencyByEmail,
-  getAgencyByUsername,
-  PLAN_LIMITS,
-} from '@/lib/storage';
+import { authService } from '@/api/services/auth.service';
+import { agencyService } from '@/api/services/agency.service';
+import { getToken } from '@/api/client';
+import { AgencyDto, RegisterDto, LoginDto } from '@/api/types';
+import { PLAN_LIMITS } from '@/lib/storage';
 
 export function useAuth() {
-  const [user, setUser] = useState<Agency | null>(null);
+  const [user, setUser] = useState<AgencyDto | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Load user from token on mount
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    setUser(currentUser);
-    setLoading(false);
+    const loadUser = async () => {
+      const token = getToken();
+      if (token) {
+        try {
+          // Decode token to get username (JWT payload is base64 encoded)
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          if (payload.username) {
+            const agency = await agencyService.getAgencyByUsername(payload.username);
+            setUser(agency);
+          }
+        } catch (error) {
+          console.error('Error loading user:', error);
+          authService.logout();
+        }
+      }
+      setLoading(false);
+    };
+
+    loadUser();
   }, []);
 
   const login = useCallback(async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
-    const agency = authLogin(email, password);
-    if (agency) {
-      setUser(agency);
+    try {
+      const response = await authService.login({ email, password });
+      setUser(response.agency);
       return { success: true };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.message || 'Credenciales incorrectas'
+      };
     }
-    return { success: false, error: 'Credenciales incorrectas' };
   }, []);
 
   const logout = useCallback(() => {
-    authLogout();
+    authService.logout();
     setUser(null);
   }, []);
 
@@ -41,47 +57,36 @@ export function useAuth() {
     nombre: string;
     plan: 'basico' | 'profesional' | 'premium';
   }): Promise<{ success: boolean; error?: string }> => {
-    // Check if email exists
-    if (getAgencyByEmail(data.email)) {
-      return { success: false, error: 'Este email ya está registrado' };
-    }
-
-    // Check if username exists
-    if (getAgencyByUsername(data.username)) {
-      return { success: false, error: 'Este nombre de usuario ya está en uso' };
-    }
-
-    // Validate username format
-    if (!/^[a-zA-Z0-9_-]+$/.test(data.username)) {
-      return { success: false, error: 'El nombre de usuario solo puede contener letras, números, guiones y guiones bajos' };
-    }
-
     try {
-      const agency = createAgency({
+      const registerData: RegisterDto = {
         email: data.email,
         password: data.password,
         username: data.username.toLowerCase(),
         nombre: data.nombre,
-        logo: '',
-        portada: '',
-        ubicacion: '',
-        whatsapp: '',
         plan: data.plan,
-        limitePublicaciones: PLAN_LIMITS[data.plan],
-      });
+      };
 
-      setUser(agency);
-      authLogin(data.email, data.password);
+      const response = await authService.register(registerData);
+      setUser(response.agency);
       return { success: true };
-    } catch (error) {
-      return { success: false, error: 'Error al crear la cuenta' };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.message || 'Error al crear la cuenta'
+      };
     }
   }, []);
 
-  const refreshUser = useCallback(() => {
-    const currentUser = getCurrentUser();
-    setUser(currentUser);
-  }, []);
+  const refreshUser = useCallback(async () => {
+    if (user) {
+      try {
+        const updatedUser = await agencyService.getAgencyByUsername(user.username);
+        setUser(updatedUser);
+      } catch (error) {
+        console.error('Error refreshing user:', error);
+      }
+    }
+  }, [user]);
 
   return {
     user,

@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
-import { getVehiclesByAgency, Vehicle, deleteVehicle, updateVehicle } from '@/lib/storage';
+import { useVehicles, useDeleteVehicle, useUpdateVehicle } from '@/hooks/useVehicles';
+import { VehicleDto } from '@/api/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -40,25 +41,16 @@ import { SEO } from '@/components/common/SEO';
 
 export default function DashboardVehicles() {
   const { user, loading, isAuthenticated } = useAuth();
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const { data: vehicles = [], isLoading: vehiclesLoading } = useVehicles({ agenciaUsername: user?.username });
+  const deleteVehicleMutation = useDeleteVehicle();
+  const updateVehicleMutation = useUpdateVehicle();
+
   const [search, setSearch] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [vehicleToDelete, setVehicleToDelete] = useState<Vehicle | null>(null);
+  const [vehicleToDelete, setVehicleToDelete] = useState<VehicleDto | null>(null);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (user) {
-      loadVehicles();
-    }
-  }, [user]);
-
-  const loadVehicles = () => {
-    if (user) {
-      setVehicles(getVehiclesByAgency(user.username));
-    }
-  };
-
-  if (loading) {
+  if (loading || vehiclesLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
@@ -74,28 +66,45 @@ export default function DashboardVehicles() {
     `${v.marca} ${v.modelo} ${v.año}`.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleToggleActive = (vehicle: Vehicle) => {
-    updateVehicle(vehicle.id, { activo: !vehicle.activo });
-    loadVehicles();
-    toast({
-      title: vehicle.activo ? 'Vehículo desactivado' : 'Vehículo activado',
-      description: vehicle.activo ? 'Ya no aparecerá en tu catálogo' : 'Ahora aparece en tu catálogo',
-    });
+  const handleToggleActive = async (vehicle: VehicleDto) => {
+    try {
+      await updateVehicleMutation.mutateAsync({
+        id: vehicle.id,
+        data: { activo: !vehicle.activo }
+      });
+      toast({
+        title: vehicle.activo ? 'Vehículo desactivado' : 'Vehículo activado',
+        description: vehicle.activo ? 'Ya no aparecerá en tu catálogo' : 'Ahora aparece en tu catálogo',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'No se pudo actualizar el vehículo',
+        variant: 'destructive',
+      });
+    }
   };
 
-  const handleDeleteClick = (vehicle: Vehicle) => {
+  const handleDeleteClick = (vehicle: VehicleDto) => {
     setVehicleToDelete(vehicle);
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (vehicleToDelete) {
-      deleteVehicle(vehicleToDelete.id);
-      loadVehicles();
-      toast({
-        title: 'Vehículo eliminado',
-        description: 'El vehículo ha sido eliminado de tu inventario.',
-      });
+      try {
+        await deleteVehicleMutation.mutateAsync(vehicleToDelete.id);
+        toast({
+          title: 'Vehículo eliminado',
+          description: 'El vehículo ha sido eliminado de tu inventario.',
+        });
+      } catch (error: any) {
+        toast({
+          title: 'Error',
+          description: error.message || 'No se pudo eliminar el vehículo',
+          variant: 'destructive',
+        });
+      }
     }
     setDeleteDialogOpen(false);
     setVehicleToDelete(null);

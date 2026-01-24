@@ -1,9 +1,10 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Navbar } from '@/components/layout/Navbar';
 import { VehicleCard } from '@/components/vehicles/VehicleCard';
 import { VehicleFilters, VehicleFiltersState } from '@/components/vehicles/VehicleFilters';
-import { getAgencyByUsername, getActiveVehiclesByAgency, Agency, Vehicle } from '@/lib/storage';
+import { useAgency } from '@/hooks/useAgency';
+import { useVehicles } from '@/hooks/useVehicles';
 import { MapPin, Car, Filter, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -24,22 +25,14 @@ const defaultFilters: VehicleFiltersState = {
 
 export default function AgencyCatalog() {
   const { username } = useParams<{ username: string }>();
-  const [agency, setAgency] = useState<Agency | null>(null);
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: agency, isLoading: agencyLoading } = useAgency(username || '');
+  const { data: allVehicles = [], isLoading: vehiclesLoading } = useVehicles({ agenciaUsername: username });
+
   const [filters, setFilters] = useState<VehicleFiltersState>(defaultFilters);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  useEffect(() => {
-    if (username) {
-      const foundAgency = getAgencyByUsername(username);
-      if (foundAgency) {
-        setAgency(foundAgency);
-        setVehicles(getActiveVehiclesByAgency(foundAgency.username));
-      }
-    }
-    setLoading(false);
-  }, [username]);
+  // Filter only active vehicles
+  const vehicles = useMemo(() => allVehicles.filter(v => v.activo), [allVehicles]);
 
   const marcas = useMemo(() => {
     const uniqueMarcas = [...new Set(vehicles.map(v => v.marca))];
@@ -61,7 +54,7 @@ export default function AgencyCatalog() {
     });
   }, [vehicles, filters]);
 
-  if (loading) {
+  if (agencyLoading || vehiclesLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
@@ -94,20 +87,20 @@ export default function AgencyCatalog() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       {/* Hero / Agency Header */}
       <div className="pt-16">
         <div className="relative h-48 md:h-64 bg-gradient-to-r from-primary/20 to-primary/5">
           {agency.portada && (
-            <img 
-              src={agency.portada} 
+            <img
+              src={agency.portada}
               alt={`${agency.nombre} portada`}
               className="w-full h-full object-cover"
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
         </div>
-        
+
         <div className="container mx-auto px-4 -mt-16 relative z-10">
           <div className="flex flex-col md:flex-row md:items-end gap-4 mb-8">
             <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-card border-4 border-background overflow-hidden flex items-center justify-center shadow-xl">
@@ -136,8 +129,8 @@ export default function AgencyCatalog() {
           <p className="text-muted-foreground">
             <span className="font-semibold text-foreground">{filteredVehicles.length}</span> vehículo{filteredVehicles.length !== 1 && 's'} encontrado{filteredVehicles.length !== 1 && 's'}
           </p>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="lg:hidden gap-2"
             onClick={() => setShowMobileFilters(true)}
           >
@@ -150,8 +143,8 @@ export default function AgencyCatalog() {
           {/* Filters - Desktop */}
           <aside className="hidden lg:block w-72 flex-shrink-0">
             <div className="sticky top-24">
-              <VehicleFilters 
-                filters={filters} 
+              <VehicleFilters
+                filters={filters}
                 onFiltersChange={setFilters}
                 marcas={marcas}
               />
@@ -161,7 +154,7 @@ export default function AgencyCatalog() {
           {/* Filters - Mobile */}
           {showMobileFilters && (
             <div className="fixed inset-0 z-50 lg:hidden">
-              <div 
+              <div
                 className="absolute inset-0 bg-black/50 backdrop-blur-sm"
                 onClick={() => setShowMobileFilters(false)}
               />
@@ -175,13 +168,13 @@ export default function AgencyCatalog() {
                     <X className="h-5 w-5" />
                   </button>
                 </div>
-                <VehicleFilters 
-                  filters={filters} 
+                <VehicleFilters
+                  filters={filters}
                   onFiltersChange={setFilters}
                   marcas={marcas}
                 />
-                <Button 
-                  variant="gradient" 
+                <Button
+                  variant="gradient"
                   className="w-full mt-6"
                   onClick={() => setShowMobileFilters(false)}
                 >
@@ -196,13 +189,13 @@ export default function AgencyCatalog() {
             {filteredVehicles.length > 0 ? (
               <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredVehicles.map((vehicle, index) => (
-                  <div 
-                    key={vehicle.id} 
+                  <div
+                    key={vehicle.id}
                     className="animate-fade-in-up"
                     style={{ animationDelay: `${index * 0.05}s` }}
                   >
-                    <VehicleCard 
-                      vehicle={vehicle} 
+                    <VehicleCard
+                      vehicle={vehicle}
                       agencyUsername={agency.username}
                     />
                   </div>
@@ -215,8 +208,8 @@ export default function AgencyCatalog() {
                 <p className="text-muted-foreground mb-4">
                   Intenta ajustar los filtros de búsqueda
                 </p>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   onClick={() => setFilters(defaultFilters)}
                 >
                   Limpiar filtros
