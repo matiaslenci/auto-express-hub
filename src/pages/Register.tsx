@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,6 +24,11 @@ export default function Register() {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const [formData, setFormData] = useState({
     nombre: '',

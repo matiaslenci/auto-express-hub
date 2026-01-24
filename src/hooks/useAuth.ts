@@ -15,9 +15,12 @@ export function useAuth() {
       const token = getToken();
       if (token) {
         try {
-          // Decode token to get username (JWT payload is base64 encoded)
+          // Decode token to get username
           const payload = JSON.parse(atob(token.split('.')[1]));
+          console.log('Token payload on mount:', payload);
+
           if (payload.username) {
+            // Fetch agency data using the username from token
             const agency = await agencyService.getAgencyByUsername(payload.username);
             setUser(agency);
           }
@@ -34,10 +37,19 @@ export function useAuth() {
 
   const login = useCallback(async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     try {
+      setLoading(true);
       const response = await authService.login({ email, password });
+
+      console.log('Login response:', response);
+      console.log('Agency data:', response.agency);
+
       setUser(response.agency);
+      setLoading(false);
+
       return { success: true };
     } catch (error: any) {
+      setLoading(false);
+      console.error('Login error:', error);
       return {
         success: false,
         error: error.message || 'Credenciales incorrectas'

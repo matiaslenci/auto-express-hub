@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,9 +17,14 @@ export default function Login() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  if (isAuthenticated) {
-    navigate('/dashboard');
-  }
+  // Redirect when user becomes authenticated
+  useEffect(() => {
+    console.log('Login - isAuthenticated:', isAuthenticated, 'loading:', loading);
+    if (isAuthenticated && !loading) {
+      console.log('Redirecting to dashboard...');
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, loading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +35,7 @@ export default function Login() {
         title: "Bienvenido",
         description: "Has iniciado sesión correctamente.",
       });
-      navigate('/dashboard');
+      // Navigation will happen via useEffect when isAuthenticated becomes true
     } else {
       toast({
         title: "Error",
