@@ -47,7 +47,7 @@ export default function Register() {
         title: "¡Cuenta creada!",
         description: "Bienvenido a AgenciaExpress.",
       });
-      navigate('/dashboard');
+      navigate('/onboarding');
     } else {
       toast({
         title: "Error",
