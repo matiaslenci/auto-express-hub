@@ -149,7 +149,7 @@ export default function DashboardProfile() {
                     id="ubicacion"
                     value={formData.ubicacion}
                     onChange={(e) => updateField('ubicacion', e.target.value)}
-                    placeholder="Ciudad de México, CDMX"
+                    placeholder="Buenos Aires, CABA"
                     className="input-glow"
                   />
                 </div>
@@ -163,11 +163,11 @@ export default function DashboardProfile() {
                     id="whatsapp"
                     value={formData.whatsapp}
                     onChange={(e) => updateField('whatsapp', e.target.value)}
-                    placeholder="5215512345678"
+                    placeholder="5491112345678"
                     className="input-glow"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Incluye código de país sin + (ej: 521 para México)
+                    Incluye código de país sin + (ej: 549 para Argentina)
                   </p>
                 </div>
               </div>

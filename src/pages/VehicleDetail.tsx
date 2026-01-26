@@ -65,13 +65,13 @@ export default function VehicleDetail() {
     );
   }
 
-  const formattedPrice = new Intl.NumberFormat('es-MX', {
+  const formattedPrice = new Intl.NumberFormat('es-AR', {
     style: 'currency',
-    currency: 'MXN',
+    currency: 'ARS',
     maximumFractionDigits: 0,
   }).format(vehicle.precio);
 
-  const formattedKm = new Intl.NumberFormat('es-MX').format(vehicle.kilometraje);
+  const formattedKm = new Intl.NumberFormat('es-AR').format(vehicle.kilometraje);
 
   const images = vehicle.fotos.length > 0
     ? vehicle.fotos

@@ -182,7 +182,7 @@ export default function DashboardNewVehicle() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="precio">Precio (MXN) *</Label>
+                <Label htmlFor="precio">Precio (ARS) *</Label>
                 <Input
                   id="precio"
                   type="number"

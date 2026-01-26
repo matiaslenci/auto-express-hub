@@ -111,7 +111,7 @@ export default function DashboardVehicles() {
   };
 
   const formatPrice = (price: number) =>
-    new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(price);
+    new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(price);
 
 
 

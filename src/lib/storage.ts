@@ -210,8 +210,8 @@ export const seedDemoData = (): void => {
     nombre: 'Autos DeLuxe',
     logo: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=100&h=100&fit=crop',
     portada: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&h=400&fit=crop',
-    ubicacion: 'Ciudad de México, CDMX',
-    whatsapp: '5215512345678',
+    ubicacion: 'Buenos Aires, CABA',
+    whatsapp: '5491112345678',
     plan: 'profesional',
     limitePublicaciones: PLAN_LIMITS.profesional,
   });

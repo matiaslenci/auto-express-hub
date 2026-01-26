@@ -10,16 +10,16 @@ interface VehicleCardProps {
 }
 
 export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardProps) {
-  const formattedPrice = new Intl.NumberFormat('es-MX', {
+  const formattedPrice = new Intl.NumberFormat('es-AR', {
     style: 'currency',
-    currency: 'MXN',
+    currency: 'ARS',
     maximumFractionDigits: 0,
   }).format(vehicle.precio);
 
-  const formattedKm = new Intl.NumberFormat('es-MX').format(vehicle.kilometraje);
+  const formattedKm = new Intl.NumberFormat('es-AR').format(vehicle.kilometraje);
 
   return (
-    <Link 
+    <Link
       to={`/${agencyUsername}/${vehicle.id}`}
       className={cn("vehicle-card block group", className)}
     >
@@ -32,12 +32,12 @@ export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardP
         />
         {/* Overlay Gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-        
+
         {/* Type Badge */}
         <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md text-xs font-medium">
           {vehicle.tipo}
         </span>
-        
+
         {/* Year Badge */}
         <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-primary/90 text-xs font-bold text-white">
           {vehicle.año}
