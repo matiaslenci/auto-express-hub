@@ -145,7 +145,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <ThemeToggle />
             </div>
             <Link
-              to={`/@${user?.username}`}
+              to={`/${user?.username}`}
               target="_blank"
               className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-sidebar-accent transition-colors text-sidebar-foreground"
             >

@@ -230,7 +230,7 @@ export default function DashboardProfile() {
           {/* Actions */}
           <div className="flex gap-4">
             <a
-              href={`/@${user?.username}`}
+              href={`/${user?.username}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1"

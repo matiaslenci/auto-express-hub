@@ -137,7 +137,7 @@ export default function Register() {
             <div className="space-y-2">
               <Label htmlFor="username">Nombre de usuario (URL)</Label>
               <div className="flex items-center gap-2">
-                <span className="text-muted-foreground text-sm">agencia-express.com/@</span>
+                <span className="text-muted-foreground text-sm">agencia-express.com/</span>
                 <Input
                   id="username"
                   placeholder="miagencia"
