@@ -93,7 +93,7 @@ export const updateAgency = (username: string, updates: Partial<Agency>): Agency
   const agencies = getAgencies();
   const index = agencies.findIndex(a => a.username === username);
   if (index === -1) return undefined;
-  
+
   agencies[index] = { ...agencies[index], ...updates };
   saveAgencies(agencies);
   return agencies[index];
@@ -139,7 +139,7 @@ export const updateVehicle = (id: string, updates: Partial<Vehicle>): Vehicle | 
   const vehicles = getVehicles();
   const index = vehicles.findIndex(v => v.id === id);
   if (index === -1) return undefined;
-  
+
   vehicles[index] = { ...vehicles[index], ...updates };
   saveVehicles(vehicles);
   return vehicles[index];
@@ -149,7 +149,7 @@ export const deleteVehicle = (id: string): boolean => {
   const vehicles = getVehicles();
   const index = vehicles.findIndex(v => v.id === id);
   if (index === -1) return false;
-  
+
   vehicles.splice(index, 1);
   saveVehicles(vehicles);
   return true;
@@ -206,7 +206,7 @@ export const seedDemoData = (): void => {
   const demoAgency = createAgency({
     username: 'autosdeluxe',
     email: 'demo@autosdeluxe.com',
-    password: 'demo123',
+    password: 'demo1234',
     nombre: 'Autos DeLuxe',
     logo: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=100&h=100&fit=crop',
     portada: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&h=400&fit=crop',
