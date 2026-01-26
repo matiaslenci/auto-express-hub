@@ -2,14 +2,15 @@ import { ReactNode, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { 
-  Car, 
-  LayoutDashboard, 
-  Plus, 
-  User, 
-  LogOut, 
-  Menu, 
-  X, 
+import {
+  Car,
+  LayoutDashboard,
+  Plus,
+  User,
+  UserCog,
+  LogOut,
+  Menu,
+  X,
   ExternalLink,
   ChevronRight
 } from 'lucide-react';
@@ -26,6 +27,7 @@ const navItems = [
   { href: '/dashboard/vehiculos', icon: Car, label: 'Vehículos' },
   { href: '/dashboard/vehiculos/nuevo', icon: Plus, label: 'Nuevo vehículo' },
   { href: '/dashboard/perfil', icon: User, label: 'Perfil' },
+  { href: '/onboarding', icon: UserCog, label: 'Completar perfil' },
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
@@ -39,8 +41,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     navigate('/');
   };
 
-  const planClass = user?.plan === 'premium' ? 'badge-premium' : 
-                    user?.plan === 'profesional' ? 'badge-profesional' : 'badge-basico';
+  const planClass = user?.plan === 'premium' ? 'badge-premium' :
+    user?.plan === 'profesional' ? 'badge-profesional' : 'badge-basico';
 
   return (
     <div className="min-h-screen bg-background">
@@ -62,7 +64,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Sidebar Overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
           onClick={() => setSidebarOpen(false)}
         />
@@ -123,8 +125,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   onClick={() => setSidebarOpen(false)}
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
-                    isActive 
-                      ? "bg-primary text-primary-foreground shadow-lg" 
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-lg"
                       : "hover:bg-sidebar-accent text-sidebar-foreground"
                   )}
                 >
