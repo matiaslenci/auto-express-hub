@@ -10,6 +10,7 @@ import ProfileOnboarding from "./pages/ProfileOnboarding";
 import Dashboard from "./pages/Dashboard";
 import DashboardVehicles from "./pages/DashboardVehicles";
 import DashboardNewVehicle from "./pages/DashboardNewVehicle";
+import DashboardEditVehicle from "./pages/DashboardEditVehicle";
 import DashboardProfile from "./pages/DashboardProfile";
 import AgencyCatalog from "./pages/AgencyCatalog";
 import VehicleDetail from "./pages/VehicleDetail";
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/vehiculos" element={<DashboardVehicles />} />
           <Route path="/dashboard/vehiculos/nuevo" element={<DashboardNewVehicle />} />
+          <Route path="/dashboard/vehiculos/:vehicleId/editar" element={<DashboardEditVehicle />} />
           <Route path="/dashboard/perfil" element={<DashboardProfile />} />
           <Route path="/:username" element={<AgencyCatalog />} />
           <Route path="/:username/:vehicleId" element={<VehicleDetail />} />
