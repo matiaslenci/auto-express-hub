@@ -46,13 +46,8 @@ export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardP
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
         {/* Type Badge */}
-        <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/50 backdrop-blur-md text-xs font-medium">
+        <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 dark:bg-black/50 backdrop-blur-md text-xs font-medium text-white shadow-lg">
           {vehicle.tipo}
-        </span>
-
-        {/* Year Badge */}
-        <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-primary/90 text-xs font-bold text-white">
-          {vehicle.año}
         </span>
       </div>
 

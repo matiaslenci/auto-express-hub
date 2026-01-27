@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Navigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useUpdateAgency } from '@/hooks/useAgency';
+import { useUploadAgencyLogo, useUploadAgencyCover } from '@/hooks/useUpload';
 import { PLAN_NAMES, PLAN_PRICES } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, User, MapPin, Phone, Image, ExternalLink } from 'lucide-react';
+import { Loader2, User, MapPin, Phone, Image, ExternalLink, Upload, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 import { SEO } from '@/components/common/SEO';
@@ -17,6 +18,10 @@ export default function DashboardProfile() {
   const { user, loading, isAuthenticated, refreshUser } = useAuth();
   const { toast } = useToast();
   const updateAgencyMutation = useUpdateAgency();
+  const { uploadAsync: uploadLogo, isUploading: isUploadingLogo } = useUploadAgencyLogo();
+  const { uploadAsync: uploadCover, isUploading: isUploadingCover } = useUploadAgencyCover();
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -71,6 +76,44 @@ export default function DashboardProfile() {
         variant: 'destructive',
       });
     }
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const response = await uploadLogo(file);
+      updateField('logo', response.url);
+      toast({ title: 'Logo subido correctamente' });
+    } catch (error: any) {
+      toast({
+        title: 'Error al subir logo',
+        description: error.message || 'No se pudo subir el logo.',
+        variant: 'destructive',
+      });
+    }
+
+    if (logoInputRef.current) logoInputRef.current.value = '';
+  };
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const response = await uploadCover(file);
+      updateField('portada', response.url);
+      toast({ title: 'Portada subida correctamente' });
+    } catch (error: any) {
+      toast({
+        title: 'Error al subir portada',
+        description: error.message || 'No se pudo subir la portada.',
+        variant: 'destructive',
+      });
+    }
+
+    if (coverInputRef.current) coverInputRef.current.value = '';
   };
 
   const planClass = user?.plan === 'premium' ? 'badge-premium' :
@@ -181,32 +224,110 @@ export default function DashboardProfile() {
               Imágenes
             </h2>
 
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="logo">Logo (URL)</Label>
-                <Input
-                  id="logo"
-                  value={formData.logo}
-                  onChange={(e) => updateField('logo', e.target.value)}
-                  placeholder="https://ejemplo.com/logo.png"
-                  className="input-glow"
-                />
+            <div className="space-y-6">
+              {/* Logo Upload */}
+              <div className="space-y-3">
+                <Label>Logo de la agencia</Label>
+                <div className="flex items-center gap-4">
+                  <div className="w-20 h-20 rounded-xl bg-muted border overflow-hidden flex items-center justify-center">
+                    {formData.logo ? (
+                      <img src={formData.logo} alt="Logo" className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="h-8 w-8 text-muted-foreground" />
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <input
+                      ref={logoInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                      id="logo-upload"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => logoInputRef.current?.click()}
+                      disabled={isUploadingLogo}
+                      className="gap-2"
+                    >
+                      {isUploadingLogo ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Subiendo...</>
+                      ) : (
+                        <><Upload className="h-4 w-4" /> Subir logo</>
+                      )}
+                    </Button>
+                    {formData.logo && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => updateField('logo', '')}
+                        className="gap-2 text-destructive"
+                      >
+                        <X className="h-4 w-4" /> Eliminar
+                      </Button>
+                    )}
+                  </div>
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  Recomendado: imagen cuadrada de al menos 200x200px
+                  Recomendado: imagen cuadrada de al menos 200x200px (JPG, PNG, WebP)
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="portada">Imagen de portada (URL)</Label>
-                <Input
-                  id="portada"
-                  value={formData.portada}
-                  onChange={(e) => updateField('portada', e.target.value)}
-                  placeholder="https://ejemplo.com/portada.jpg"
-                  className="input-glow"
-                />
+              {/* Cover Upload */}
+              <div className="space-y-3">
+                <Label>Imagen de portada</Label>
+                <div className="space-y-3">
+                  <div className="w-full h-32 rounded-xl bg-muted border overflow-hidden">
+                    {formData.portada ? (
+                      <img src={formData.portada} alt="Portada" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Image className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      ref={coverInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handleCoverUpload}
+                      className="hidden"
+                      id="cover-upload"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => coverInputRef.current?.click()}
+                      disabled={isUploadingCover}
+                      className="gap-2"
+                    >
+                      {isUploadingCover ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Subiendo...</>
+                      ) : (
+                        <><Upload className="h-4 w-4" /> Subir portada</>
+                      )}
+                    </Button>
+                    {formData.portada && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => updateField('portada', '')}
+                        className="gap-2 text-destructive"
+                      >
+                        <X className="h-4 w-4" /> Eliminar
+                      </Button>
+                    )}
+                  </div>
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  Recomendado: 1200x400px o proporción similar
+                  Recomendado: 1200x400px o proporción similar (JPG, PNG, WebP)
                 </p>
               </div>
             </div>

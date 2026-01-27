@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useCreateVehicle, useVehicles } from '@/hooks/useVehicles';
+import { useUploadVehicleImage } from '@/hooks/useUpload';
 import { PLAN_LIMITS } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Loader2, Plus, X, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Loader2, Plus, X, Image as ImageIcon, Upload } from 'lucide-react';
 
 const TIPOS = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Van'];
 const TRANSMISIONES = ['Manual', 'Automática'];
@@ -35,6 +36,8 @@ export default function DashboardNewVehicle() {
 
   const createVehicleMutation = useCreateVehicle();
   const { data: vehicles } = useVehicles({ agenciaUsername: user?.username });
+  const { uploadAsync, isUploading } = useUploadVehicleImage();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     marca: '',
@@ -50,8 +53,6 @@ export default function DashboardNewVehicle() {
     descripcion: '',
     fotos: [] as string[],
   });
-
-  const [newPhotoUrl, setNewPhotoUrl] = useState('');
 
   if (loading) {
     return (
@@ -83,10 +84,35 @@ export default function DashboardNewVehicle() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const addPhoto = () => {
-    if (newPhotoUrl && formData.fotos.length < 10) {
-      setFormData(prev => ({ ...prev, fotos: [...prev.fotos, newPhotoUrl] }));
-      setNewPhotoUrl('');
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    for (const file of Array.from(files)) {
+      if (formData.fotos.length >= 10) {
+        toast({
+          title: 'Límite alcanzado',
+          description: 'Máximo 10 fotos por vehículo.',
+          variant: 'destructive',
+        });
+        break;
+      }
+
+      try {
+        const response = await uploadAsync(file);
+        setFormData(prev => ({ ...prev, fotos: [...prev.fotos, response.url] }));
+      } catch (error: any) {
+        toast({
+          title: 'Error al subir imagen',
+          description: error.message || 'No se pudo subir la imagen.',
+          variant: 'destructive',
+        });
+      }
+    }
+
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -316,24 +342,38 @@ export default function DashboardNewVehicle() {
           <div className="glass-card p-6 space-y-4">
             <h2 className="text-lg font-semibold">Fotos</h2>
             <p className="text-sm text-muted-foreground">
-              Agrega URLs de fotos del vehículo (máximo 10)
+              Sube fotos del vehículo (máximo 10, formatos: JPG, PNG, WebP)
             </p>
 
-            {/* Add Photo */}
-            <div className="flex gap-2">
-              <Input
-                placeholder="https://ejemplo.com/foto.jpg"
-                value={newPhotoUrl}
-                onChange={(e) => setNewPhotoUrl(e.target.value)}
-                className="input-glow"
+            {/* Upload Button */}
+            <div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                onChange={handleFileSelect}
+                className="hidden"
+                id="photo-upload"
               />
               <Button
                 type="button"
                 variant="outline"
-                onClick={addPhoto}
-                disabled={!newPhotoUrl || formData.fotos.length >= 10}
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading || formData.fotos.length >= 10}
+                className="gap-2"
               >
-                <Plus className="h-4 w-4" />
+                {isUploading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Subiendo...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4" />
+                    Subir fotos
+                  </>
+                )}
               </Button>
             </div>
 
