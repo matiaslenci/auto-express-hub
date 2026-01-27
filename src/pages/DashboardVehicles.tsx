@@ -110,8 +110,14 @@ export default function DashboardVehicles() {
     setVehicleToDelete(null);
   };
 
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(price);
+  const formatPrice = (price: number | null, moneda: string = 'ARS') => {
+    if (moneda === 'CONSULTAR' || price === null) {
+      return 'Consultar';
+    }
+    const currency = moneda === 'USD' ? 'USD' : 'ARS';
+    const formatted = new Intl.NumberFormat('es-AR', { style: 'currency', currency, maximumFractionDigits: 0 }).format(price);
+    return moneda === 'USD' ? formatted.replace('US$', 'US$ ') : formatted;
+  };
 
 
 
@@ -183,7 +189,7 @@ export default function DashboardVehicles() {
                       <p className="text-sm text-muted-foreground">{vehicle.año}</p>
                     </div>
                     <p className="text-lg font-bold text-primary">
-                      {formatPrice(vehicle.precio)}
+                      {formatPrice(vehicle.precio, vehicle.moneda)}
                     </p>
                   </div>
 

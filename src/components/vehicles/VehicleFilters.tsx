@@ -27,7 +27,7 @@ interface VehicleFiltersProps {
 
 const TIPOS = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Van'];
 const TRANSMISIONES = ['Manual', 'Automática'];
-const COMBUSTIBLES = ['Gasolina', 'Diésel', 'Híbrido', 'Eléctrico'];
+const COMBUSTIBLES = ['Nafta', 'Diésel', 'Gas', 'Híbrido', 'Eléctrico'];
 
 const currentYear = new Date().getFullYear();
 
@@ -52,7 +52,7 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
     });
   };
 
-  const hasActiveFilters = filters.marca || filters.tipo || filters.transmision || 
+  const hasActiveFilters = filters.marca || filters.tipo || filters.transmision ||
     filters.combustible || filters.precioMin > 0 || filters.precioMax < 5000000 ||
     filters.añoMin > 2000 || filters.añoMax < currentYear || filters.search;
 

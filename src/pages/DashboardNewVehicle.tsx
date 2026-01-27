@@ -14,8 +14,13 @@ import { ArrowLeft, Loader2, Plus, X, Image as ImageIcon } from 'lucide-react';
 
 const TIPOS = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Van'];
 const TRANSMISIONES = ['Manual', 'Automática'];
-const COMBUSTIBLES = ['Gasolina', 'Diésel', 'Híbrido', 'Eléctrico'];
+const COMBUSTIBLES = ['Nafta', 'Diésel', 'Gas', 'Híbrido', 'Eléctrico'];
 const COLORES = ['Blanco', 'Negro', 'Gris', 'Plata', 'Rojo', 'Azul', 'Verde', 'Otro'];
+const MONEDAS = [
+  { value: 'ARS', label: 'Pesos argentinos ($)' },
+  { value: 'USD', label: 'Dólares (US$)' },
+  { value: 'CONSULTAR', label: 'Sin precio - Consultar' },
+];
 const MARCAS = [
   'Audi', 'BMW', 'Chevrolet', 'Ford', 'Honda', 'Hyundai', 'Kia',
   'Mazda', 'Mercedes-Benz', 'Nissan', 'Toyota', 'Volkswagen', 'Otro'
@@ -34,8 +39,9 @@ export default function DashboardNewVehicle() {
   const [formData, setFormData] = useState({
     marca: '',
     modelo: '',
-    año: new Date().getFullYear(),
-    precio: 0,
+    anio: new Date().getFullYear(),
+    precio: null as number | null,
+    moneda: 'ARS' as 'ARS' | 'USD' | 'CONSULTAR',
     tipo: '',
     transmision: '',
     combustible: '',
@@ -168,32 +174,53 @@ export default function DashboardNewVehicle() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="año">Año *</Label>
+                <Label htmlFor="anio">Año *</Label>
                 <Input
-                  id="año"
+                  id="anio"
                   type="number"
                   min={1990}
                   max={new Date().getFullYear() + 1}
-                  value={formData.año}
-                  onChange={(e) => updateField('año', parseInt(e.target.value))}
+                  value={formData.anio}
+                  onChange={(e) => updateField('anio', parseInt(e.target.value))}
                   required
                   className="input-glow"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="precio">Precio (ARS) *</Label>
-                <Input
-                  id="precio"
-                  type="number"
-                  min={0}
-                  value={formData.precio || ''}
-                  onChange={(e) => updateField('precio', parseInt(e.target.value) || 0)}
-                  required
-                  className="input-glow"
-                  placeholder="0"
-                />
+                <Label>Moneda *</Label>
+                <Select value={formData.moneda} onValueChange={(v: 'ARS' | 'USD' | 'CONSULTAR') => {
+                  updateField('moneda', v);
+                  if (v === 'CONSULTAR') {
+                    updateField('precio', null);
+                  }
+                }} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona moneda" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MONEDAS.map((m) => (
+                      <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+
+              {formData.moneda !== 'CONSULTAR' && (
+                <div className="space-y-2">
+                  <Label htmlFor="precio">Precio ({formData.moneda === 'USD' ? 'USD' : 'ARS'}) *</Label>
+                  <Input
+                    id="precio"
+                    type="number"
+                    min={0}
+                    value={formData.precio || ''}
+                    onChange={(e) => updateField('precio', parseInt(e.target.value) || 0)}
+                    required
+                    className="input-glow"
+                    placeholder="0"
+                  />
+                </div>
+              )}
             </div>
           </div>
 

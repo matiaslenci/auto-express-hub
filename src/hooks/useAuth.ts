@@ -25,7 +25,7 @@ export function useAuth() {
             setUser(agency);
           }
         } catch (error) {
-          console.error('Error loading user:', error);
+          console.error('Error al cargar usuario:', error);
           authService.logout();
         }
       }
@@ -49,7 +49,7 @@ export function useAuth() {
       return { success: true };
     } catch (error: any) {
       setLoading(false);
-      console.error('Login error:', error);
+      console.error('Error de inicio de sesión:', error);
       return {
         success: false,
         error: error.message || 'Credenciales incorrectas'
@@ -95,7 +95,7 @@ export function useAuth() {
         const updatedUser = await agencyService.getAgencyByUsername(user.username);
         setUser(updatedUser);
       } catch (error) {
-        console.error('Error refreshing user:', error);
+        console.error('Error al actualizar usuario:', error);
       }
     }
   }, [user]);

@@ -48,7 +48,8 @@ export default function AgencyCatalog() {
       if (filters.tipo && v.tipo !== filters.tipo) return false;
       if (filters.transmision && v.transmision !== filters.transmision) return false;
       if (filters.combustible && v.combustible !== filters.combustible) return false;
-      if (v.precio < filters.precioMin || v.precio > filters.precioMax) return false;
+      // Skip price filter for CONSULTAR vehicles (precio is null)
+      if (v.precio !== null && (v.precio < filters.precioMin || v.precio > filters.precioMax)) return false;
       if (v.año < filters.añoMin || v.año > filters.añoMax) return false;
       return true;
     });

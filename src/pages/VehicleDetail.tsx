@@ -65,11 +65,23 @@ export default function VehicleDetail() {
     );
   }
 
-  const formattedPrice = new Intl.NumberFormat('es-AR', {
-    style: 'currency',
-    currency: 'ARS',
-    maximumFractionDigits: 0,
-  }).format(vehicle.precio);
+  // Helper para formatear precio según moneda
+  const formatVehiclePrice = (precio: number | null, moneda: string) => {
+    if (moneda === 'CONSULTAR' || precio === null) {
+      return 'Consultar precio';
+    }
+
+    const currency = moneda === 'USD' ? 'USD' : 'ARS';
+    const formatted = new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 0,
+    }).format(precio);
+
+    return moneda === 'USD' ? formatted.replace('US$', 'US$ ') : formatted;
+  };
+
+  const formattedPrice = formatVehiclePrice(vehicle.precio, vehicle.moneda || 'ARS');
 
   const formattedKm = new Intl.NumberFormat('es-AR').format(vehicle.kilometraje);
 

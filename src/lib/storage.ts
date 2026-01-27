@@ -16,13 +16,16 @@ export interface Agency {
   createdAt: string;
 }
 
+export type Moneda = 'ARS' | 'USD' | 'CONSULTAR';
+
 export interface Vehicle {
   id: string;
   agenciaUsername: string;
   marca: string;
   modelo: string;
   año: number;
-  precio: number;
+  precio: number | null;
+  moneda: Moneda;
   tipo: string;
   transmision: string;
   combustible: string;
@@ -223,9 +226,10 @@ export const seedDemoData = (): void => {
       modelo: 'Serie 3',
       año: 2023,
       precio: 850000,
+      moneda: 'USD' as Moneda,
       tipo: 'Sedán',
       transmision: 'Automática',
-      combustible: 'Gasolina',
+      combustible: 'Nafta',
       kilometraje: 15000,
       color: 'Blanco',
       descripcion: 'BMW Serie 3 en excelentes condiciones, único dueño, mantenimiento de agencia.',
@@ -239,9 +243,10 @@ export const seedDemoData = (): void => {
       modelo: 'GLC 300',
       año: 2022,
       precio: 920000,
+      moneda: 'USD' as Moneda,
       tipo: 'SUV',
       transmision: 'Automática',
-      combustible: 'Gasolina',
+      combustible: 'Nafta',
       kilometraje: 25000,
       color: 'Negro',
       descripcion: 'Mercedes GLC 300 AMG Line, interiores de piel, techo panorámico.',
@@ -255,6 +260,7 @@ export const seedDemoData = (): void => {
       modelo: 'RAV4',
       año: 2023,
       precio: 580000,
+      moneda: 'ARS' as Moneda,
       tipo: 'SUV',
       transmision: 'Automática',
       combustible: 'Híbrido',
@@ -269,10 +275,11 @@ export const seedDemoData = (): void => {
       marca: 'Ford',
       modelo: 'Mustang',
       año: 2021,
-      precio: 780000,
+      precio: null,
+      moneda: 'CONSULTAR' as Moneda,
       tipo: 'Coupé',
       transmision: 'Manual',
-      combustible: 'Gasolina',
+      combustible: 'Nafta',
       kilometraje: 32000,
       color: 'Rojo',
       descripcion: 'Ford Mustang GT Premium, motor V8 5.0L, sonido impresionante.',
