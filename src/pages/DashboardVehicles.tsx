@@ -63,7 +63,7 @@ export default function DashboardVehicles() {
   }
 
   const filteredVehicles = vehicles.filter(v =>
-    `${v.marca} ${v.modelo} ${v.año}`.toLowerCase().includes(search.toLowerCase())
+    `${v.marca} ${v.modelo} ${v.anio}`.toLowerCase().includes(search.toLowerCase())
   );
 
   const handleToggleActive = async (vehicle: VehicleDto) => {
@@ -186,7 +186,7 @@ export default function DashboardVehicles() {
                       <h3 className="font-bold">
                         {vehicle.marca} {vehicle.modelo}
                       </h3>
-                      <p className="text-sm text-muted-foreground">{vehicle.año}</p>
+                      <p className="text-sm text-muted-foreground">{vehicle.anio}</p>
                     </div>
                     <p className="text-lg font-bold text-primary">
                       {formatPrice(vehicle.precio, vehicle.moneda)}
@@ -220,6 +220,13 @@ export default function DashboardVehicles() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
+                          <Link to={`/${user?.username}/vehiculo/${vehicle.id}`}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            Ver detalles
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleToggleActive(vehicle)}>
                           {vehicle.activo ? (
                             <>

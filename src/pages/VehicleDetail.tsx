@@ -93,7 +93,7 @@ export default function VehicleDetail() {
     if (vehicle && agency) {
       trackWhatsAppMutation.mutate(vehicle.id);
       const message = encodeURIComponent(
-        `Hola, me interesa el ${vehicle.marca} ${vehicle.modelo} ${vehicle.año}. ¿Está disponible?`
+        `Hola, me interesa el ${vehicle.marca} ${vehicle.modelo} ${vehicle.anio}. ¿Está disponible?`
       );
       window.open(`https://wa.me/${agency.whatsapp}?text=${message}`, '_blank');
     }
@@ -108,7 +108,7 @@ export default function VehicleDetail() {
   };
 
   const specs = [
-    { icon: Calendar, label: 'Año', value: vehicle.año },
+    { icon: Calendar, label: 'Año', value: vehicle.anio },
     { icon: Gauge, label: 'Kilometraje', value: `${formattedKm} km` },
     { icon: Settings2, label: 'Transmisión', value: vehicle.transmision },
     { icon: Fuel, label: 'Combustible', value: vehicle.combustible },
@@ -135,11 +135,11 @@ export default function VehicleDetail() {
             {/* Image Gallery */}
             <div className="space-y-4">
               {/* Main Image */}
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden glass-card">
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden glass-card bg-black/90">
                 <img
                   src={images[currentImageIndex]}
                   alt={`${vehicle.marca} ${vehicle.modelo}`}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                 />
 
                 {images.length > 1 && (
@@ -199,7 +199,7 @@ export default function VehicleDetail() {
                     {vehicle.tipo}
                   </span>
                   <span className="px-3 py-1 rounded-full bg-muted text-sm font-medium">
-                    {vehicle.año}
+                    {vehicle.anio}
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-bold mb-2">

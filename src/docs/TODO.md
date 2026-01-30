@@ -11,6 +11,7 @@
 - [ ] Crear seed en el back para demo y eliminar los datos hardcodeados
 - [ ] Agregar al sidebar la opción de cambiar plan (siempre que sea menor al plan actual motivar a subirlo)
 - [ ] Boton para compartir catalogo
+- [ ] Ver detalle da error 404
 
 ## Perfil
 
@@ -24,9 +25,16 @@
 - [ ] Arreglar ui de filtros de precio y año
 - [x] Eliminar tantos detalles naranjas
 - [x] Arreglar badge de tipo de vehiculo(suv, sedan, etc)
+- [ ] Que todas las card tengan el mismo tamaño
 
 ## Cargar vehiculo
 
 - [x] Cambiar entre precio ARS, USD o Sin precio(modificar backend)
 - [ ] Si es moto o auto
 - [ ] Traer desde el back las marcas
+- [ ] Que se pueda arrastrar imagenes
+
+## Detalle de auto
+
+- [ ] No se ve el año del auto
+- [ ] Badge sin sentido al lado del tipo de auto
