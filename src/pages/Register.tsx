@@ -17,19 +17,12 @@ const plans = [
 
 import { SEO } from '@/components/common/SEO';
 
-// ... existing imports
 
 export default function Register() {
   const { register, loading, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-
-  // Redirect if already authenticated
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
-  }
-
   const [formData, setFormData] = useState({
     nombre: '',
     username: '',
@@ -37,6 +30,11 @@ export default function Register() {
     password: '',
     plan: 'basico' as 'basico' | 'profesional' | 'premium',
   });
+
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   const updateField = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
