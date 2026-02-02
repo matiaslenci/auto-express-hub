@@ -12,6 +12,7 @@
 - [ ] Agregar al sidebar la opción de cambiar plan (siempre que sea menor al plan actual motivar a subirlo)
 - [ ] Boton para compartir catalogo
 - [ ] Ver detalle da error 404
+- [ ] Que se pueda ver el detalle de los vehiculos desde el dashboard
 
 ## Perfil
 
