@@ -221,7 +221,7 @@ export default function DashboardVehicles() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem asChild>
-                          <Link to={`/${user?.username}/vehiculo/${vehicle.id}`}>
+                          <Link to={`/${user?.username}/${vehicle.id}`}>
                             <Eye className="h-4 w-4 mr-2" />
                             Ver detalles
                           </Link>
