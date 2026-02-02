@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Loader2, Plus, X, Image as ImageIcon, Upload } from 'lucide-react';
+import { ArrowLeft, Loader2, Plus, X, Image as ImageIcon, Upload, Star } from 'lucide-react';
 
 const TIPOS = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Van'];
 const TRANSMISIONES = ['Manual', 'Automática'];
@@ -121,6 +121,16 @@ export default function DashboardNewVehicle() {
       ...prev,
       fotos: prev.fotos.filter((_, i) => i !== index),
     }));
+  };
+
+  const setAsCover = (index: number) => {
+    if (index === 0) return; // Already cover
+    setFormData(prev => {
+      const newFotos = [...prev.fotos];
+      const [photo] = newFotos.splice(index, 1);
+      newFotos.unshift(photo);
+      return { ...prev, fotos: newFotos };
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -342,7 +352,7 @@ export default function DashboardNewVehicle() {
           <div className="glass-card p-6 space-y-4">
             <h2 className="text-lg font-semibold">Fotos</h2>
             <p className="text-sm text-muted-foreground">
-              Sube fotos del vehículo (máximo 10, formatos: JPG, PNG, WebP)
+              Sube fotos del vehículo (máximo 10, formatos: JPG, PNG, WebP). Haz clic en la estrella para elegir la portada.
             </p>
 
             {/* Upload Button */}
@@ -381,19 +391,36 @@ export default function DashboardNewVehicle() {
             {formData.fotos.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {formData.fotos.map((foto, index) => (
-                  <div key={index} className="relative group aspect-video rounded-lg overflow-hidden">
+                  <div key={index} className={`relative group aspect-video rounded-lg overflow-hidden ${index === 0 ? 'ring-2 ring-primary' : ''}`}>
                     <img
                       src={foto}
                       alt={`Foto ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
-                    <button
-                      type="button"
-                      onClick={() => removePhoto(index)}
-                      className="absolute top-2 right-2 p-1 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
+                    {index === 0 && (
+                      <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-primary text-primary-foreground text-xs font-medium">
+                        Portada
+                      </div>
+                    )}
+                    <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {index !== 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setAsCover(index)}
+                          className="p-1 rounded-full bg-amber-500 text-white hover:bg-amber-600 transition-colors"
+                          title="Establecer como portada"
+                        >
+                          <Star className="h-4 w-4" />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removePhoto(index)}
+                        className="p-1 rounded-full bg-destructive text-destructive-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

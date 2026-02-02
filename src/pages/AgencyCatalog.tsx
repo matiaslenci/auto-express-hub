@@ -18,8 +18,8 @@ const defaultFilters: VehicleFiltersState = {
   combustible: '',
   precioMin: 0,
   precioMax: 5000000,
-  añoMin: 2000,
-  añoMax: currentYear,
+  anioMin: 2000,
+  anioMax: currentYear,
   search: '',
 };
 
@@ -50,7 +50,7 @@ export default function AgencyCatalog() {
       if (filters.combustible && v.combustible !== filters.combustible) return false;
       // Skip price filter for CONSULTAR vehicles (precio is null)
       if (v.precio !== null && (v.precio < filters.precioMin || v.precio > filters.precioMax)) return false;
-      if (v.año < filters.añoMin || v.año > filters.añoMax) return false;
+      if (v.anio < filters.anioMin || v.anio > filters.anioMax) return false;
       return true;
     });
   }, [vehicles, filters]);
@@ -102,9 +102,9 @@ export default function AgencyCatalog() {
           <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
         </div>
 
-        <div className="container mx-auto px-4 -mt-16 relative z-10">
+        <div className="container mx-auto px-4 -mt-16 relative z-20">
           <div className="flex flex-col md:flex-row md:items-end gap-4 mb-8">
-            <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-card border-4 border-background overflow-hidden flex items-center justify-center shadow-xl">
+            <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-card border-4 border-background overflow-hidden flex items-center justify-center shadow-xl z-10">
               {agency.logo ? (
                 <img src={agency.logo} alt={agency.nombre} className="w-full h-full object-cover" />
               ) : (

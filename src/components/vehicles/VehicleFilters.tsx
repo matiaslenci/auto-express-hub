@@ -14,8 +14,8 @@ export interface VehicleFiltersState {
   combustible: string;
   precioMin: number;
   precioMax: number;
-  añoMin: number;
-  añoMax: number;
+  anioMin: number;
+  anioMax: number;
   search: string;
 }
 
@@ -46,15 +46,15 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
       combustible: '',
       precioMin: 0,
       precioMax: 5000000,
-      añoMin: 2000,
-      añoMax: currentYear,
+      anioMin: 2000,
+      anioMax: currentYear,
       search: '',
     });
   };
 
   const hasActiveFilters = filters.marca || filters.tipo || filters.transmision ||
     filters.combustible || filters.precioMin > 0 || filters.precioMax < 5000000 ||
-    filters.añoMin > 2000 || filters.añoMax < currentYear || filters.search;
+    filters.anioMin > 2000 || filters.anioMax < currentYear || filters.search;
 
   return (
     <div className="glass-card p-4">
@@ -184,18 +184,18 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
           <div className="flex items-center justify-between">
             <Label>Año</Label>
             <span className="text-sm text-muted-foreground">
-              {filters.añoMin} - {filters.añoMax}
+              {filters.anioMin} - {filters.anioMax}
             </span>
           </div>
           <div className="px-2">
             <Slider
-              value={[filters.añoMin, filters.añoMax]}
+              value={[filters.anioMin, filters.anioMax]}
               min={2000}
               max={currentYear}
               step={1}
               onValueChange={([min, max]) => {
-                updateFilter('añoMin', min);
-                updateFilter('añoMax', max);
+                updateFilter('anioMin', min);
+                updateFilter('anioMax', max);
               }}
             />
           </div>

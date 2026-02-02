@@ -142,7 +142,7 @@ export default function DashboardProfile() {
           </div>
           <div className="p-6 pt-0 -mt-8">
             <div className="flex items-end gap-4">
-              <div className="w-20 h-20 rounded-xl bg-card border-4 border-card overflow-hidden flex items-center justify-center">
+              <div className="w-20 z-30 h-20 rounded-xl bg-card border-4 border-card overflow-hidden flex items-center justify-center">
                 {formData.logo ? (
                   <img src={formData.logo} alt="Logo" className="w-full h-full object-cover" />
                 ) : (

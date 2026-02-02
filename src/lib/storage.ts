@@ -23,7 +23,7 @@ export interface Vehicle {
   agenciaUsername: string;
   marca: string;
   modelo: string;
-  año: number;
+  anio: number;
   precio: number | null;
   moneda: Moneda;
   tipo: string;
@@ -224,7 +224,7 @@ export const seedDemoData = (): void => {
     {
       marca: 'BMW',
       modelo: 'Serie 3',
-      año: 2023,
+      anio: 2023,
       precio: 850000,
       moneda: 'USD' as Moneda,
       tipo: 'Sedán',
@@ -241,7 +241,7 @@ export const seedDemoData = (): void => {
     {
       marca: 'Mercedes-Benz',
       modelo: 'GLC 300',
-      año: 2022,
+      anio: 2022,
       precio: 920000,
       moneda: 'USD' as Moneda,
       tipo: 'SUV',
@@ -258,7 +258,7 @@ export const seedDemoData = (): void => {
     {
       marca: 'Toyota',
       modelo: 'RAV4',
-      año: 2023,
+      anio: 2023,
       precio: 580000,
       moneda: 'ARS' as Moneda,
       tipo: 'SUV',
@@ -274,7 +274,7 @@ export const seedDemoData = (): void => {
     {
       marca: 'Ford',
       modelo: 'Mustang',
-      año: 2021,
+      anio: 2021,
       precio: null,
       moneda: 'CONSULTAR' as Moneda,
       tipo: 'Coupé',

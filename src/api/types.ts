@@ -106,8 +106,8 @@ export interface VehicleFilters {
     tipo?: string;
     precioMin?: number;
     precioMax?: number;
-    añoMin?: number;
-    añoMax?: number;
+    anioMin?: number;
+    anioMax?: number;
     transmision?: string;
     combustible?: string;
     agenciaUsername?: string;

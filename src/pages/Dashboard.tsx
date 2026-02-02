@@ -157,7 +157,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">
-                        {vehicle.marca} {vehicle.modelo} {vehicle.año}
+                        {vehicle.marca} {vehicle.modelo} {vehicle.anio}
                       </p>
                       <div className="flex items-center gap-2 mt-1">
                         <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
