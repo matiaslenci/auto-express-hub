@@ -10,9 +10,8 @@
 - [x] Implementar la funcionalidad de agregar imagenes con el back
 - [ ] Crear seed en el back para demo y eliminar los datos hardcodeados
 - [ ] Agregar al sidebar la opción de cambiar plan (siempre que sea menor al plan actual motivar a subirlo)
-- [ ] Boton para compartir catalogo
-- [ ] Ver detalle da error 404
-- [ ] Que se pueda ver el detalle de los vehiculos desde el dashboard
+- [x] Ver detalle da error 404
+- [x] Que se pueda ver el detalle de los vehiculos desde el dashboard
 
 ## Perfil
 
@@ -37,5 +36,20 @@
 
 ## Detalle de auto
 
-- [ ] No se ve el año del auto
+- [x] No se ve el año del auto
 - [ ] Badge sin sentido al lado del tipo de auto
+- [ ] Ver detalles de mercado libre
+- [ ] Ubicación
+- [ ] Boton de contacto(agregar backend)
+
+## Usuario
+
+- [ ] Login con google
+- [ ] Login con facebook
+
+## Perfil de agencia
+- [ ] Biografia (agregar backend)
+- [ ] Redes sociales/Enlaces (agregar backend)
+- [ ] Lintree (agregar backend)
+- [ ] Boton para compartir catalogo 
+- [ ] Ubicacion de la agencia 
