@@ -54,12 +54,16 @@ export default function DashboardEditVehicle() {
     });
 
     const [initialized, setInitialized] = useState(false);
+    const [marcaPersonalizada, setMarcaPersonalizada] = useState('');
 
     // Load vehicle data into form
     useEffect(() => {
         if (vehicle && !initialized) {
+            // Verificar si la marca del vehículo está en la lista predefinida
+            const marcaEnLista = MARCAS.includes(vehicle.marca || '');
+
             setFormData({
-                marca: vehicle.marca || '',
+                marca: marcaEnLista ? (vehicle.marca || '') : 'Otro',
                 modelo: vehicle.modelo || '',
                 anio: vehicle.anio || new Date().getFullYear(),
                 precio: vehicle.precio,
@@ -72,6 +76,12 @@ export default function DashboardEditVehicle() {
                 descripcion: vehicle.descripcion || '',
                 fotos: vehicle.fotos || [],
             });
+
+            // Si la marca no está en la lista, guardarla como marca personalizada
+            if (!marcaEnLista && vehicle.marca) {
+                setMarcaPersonalizada(vehicle.marca);
+            }
+
             setInitialized(true);
         }
     }, [vehicle, initialized]);
@@ -158,10 +168,25 @@ export default function DashboardEditVehicle() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Usar marca personalizada si se seleccionó "Otro"
+        const marcaFinal = formData.marca === 'Otro' ? marcaPersonalizada : formData.marca;
+
+        if (formData.marca === 'Otro' && !marcaPersonalizada.trim()) {
+            toast({
+                title: 'Error',
+                description: 'Por favor ingresa el nombre de la marca.',
+                variant: 'destructive',
+            });
+            return;
+        }
+
         try {
             await updateVehicleMutation.mutateAsync({
                 id: vehicleId!,
-                data: formData,
+                data: {
+                    ...formData,
+                    marca: marcaFinal,
+                },
             });
 
             toast({
@@ -205,7 +230,12 @@ export default function DashboardEditVehicle() {
                         <div className="grid sm:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <Label htmlFor="marca">Marca *</Label>
-                                <Select value={formData.marca} onValueChange={(v) => updateField('marca', v)} required>
+                                <Select value={formData.marca} onValueChange={(v) => {
+                                    updateField('marca', v);
+                                    if (v !== 'Otro') {
+                                        setMarcaPersonalizada('');
+                                    }
+                                }} required>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Selecciona marca" />
                                     </SelectTrigger>
@@ -215,6 +245,16 @@ export default function DashboardEditVehicle() {
                                         ))}
                                     </SelectContent>
                                 </Select>
+                                {formData.marca === 'Otro' && (
+                                    <Input
+                                        id="marcaPersonalizada"
+                                        placeholder="Ingresa el nombre de la marca"
+                                        value={marcaPersonalizada}
+                                        onChange={(e) => setMarcaPersonalizada(e.target.value)}
+                                        required
+                                        className="input-glow mt-2"
+                                    />
+                                )}
                             </div>
 
                             <div className="space-y-2">

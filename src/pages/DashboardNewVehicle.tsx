@@ -54,6 +54,8 @@ export default function DashboardNewVehicle() {
     fotos: [] as string[],
   });
 
+  const [marcaPersonalizada, setMarcaPersonalizada] = useState('');
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -136,9 +138,22 @@ export default function DashboardNewVehicle() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Usar marca personalizada si se seleccionó "Otro"
+    const marcaFinal = formData.marca === 'Otro' ? marcaPersonalizada : formData.marca;
+
+    if (formData.marca === 'Otro' && !marcaPersonalizada.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Por favor ingresa el nombre de la marca.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     try {
       await createVehicleMutation.mutateAsync({
         ...formData,
+        marca: marcaFinal,
         activo: true,
       });
 
@@ -185,7 +200,12 @@ export default function DashboardNewVehicle() {
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="marca">Marca *</Label>
-                <Select value={formData.marca} onValueChange={(v) => updateField('marca', v)} required>
+                <Select value={formData.marca} onValueChange={(v) => {
+                  updateField('marca', v);
+                  if (v !== 'Otro') {
+                    setMarcaPersonalizada('');
+                  }
+                }} required>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecciona marca" />
                   </SelectTrigger>
@@ -195,6 +215,16 @@ export default function DashboardNewVehicle() {
                     ))}
                   </SelectContent>
                 </Select>
+                {formData.marca === 'Otro' && (
+                  <Input
+                    id="marcaPersonalizada"
+                    placeholder="Ingresa el nombre de la marca"
+                    value={marcaPersonalizada}
+                    onChange={(e) => setMarcaPersonalizada(e.target.value)}
+                    required
+                    className="input-glow mt-2"
+                  />
+                )}
               </div>
 
               <div className="space-y-2">

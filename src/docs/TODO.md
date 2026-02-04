@@ -26,12 +26,14 @@
 - [x] Eliminar tantos detalles naranjas
 - [x] Arreglar badge de tipo de vehiculo(suv, sedan, etc)
 - [ ] Que todas las card tengan el mismo tamaño
+- [ ] Pasar de dolares a pesos en el filtro de precio 
 
 ## Cargar vehiculo
 
 - [x] Cambiar entre precio ARS, USD o Sin precio(modificar backend)
 - [ ] Si es moto o auto
 - [ ] Traer desde el back las marcas
+- [ ] Si selecciona Otro en marcas que pueda agregar la marca
 - [ ] Que se pueda arrastrar imagenes
 
 ## Detalle de auto
