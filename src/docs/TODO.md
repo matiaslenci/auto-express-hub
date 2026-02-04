@@ -22,11 +22,12 @@
 
 - [ ] Hacer tests
 - [x] Modificar los tipos de combustible
-- [ ] Arreglar ui de filtros de precio y año
+- [x] Arreglar ui de filtros de precio y año
 - [x] Eliminar tantos detalles naranjas
 - [x] Arreglar badge de tipo de vehiculo(suv, sedan, etc)
 - [ ] Que todas las card tengan el mismo tamaño
-- [ ] Pasar de dolares a pesos en el filtro de precio 
+- [x] Pasar de dolares a pesos en el filtro de precio 
+- [ ] Arreglar filtro por kilometraje
 
 ## Cargar vehiculo
 

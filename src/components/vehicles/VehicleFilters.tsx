@@ -237,8 +237,7 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
               max={maxPrecio}
               step={stepPrecio}
               onValueChange={([min, max]) => {
-                updateFilter('precioMin', min);
-                updateFilter('precioMax', max);
+                onFiltersChange({ ...filters, precioMin: min, precioMax: max });
               }}
             />
           </div>
@@ -262,8 +261,7 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
               max={currentYear}
               step={1}
               onValueChange={([min, max]) => {
-                updateFilter('anioMin', min);
-                updateFilter('anioMax', max);
+                onFiltersChange({ ...filters, anioMin: min, anioMax: max });
               }}
             />
           </div>
