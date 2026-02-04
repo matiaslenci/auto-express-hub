@@ -27,6 +27,7 @@ interface VehicleFiltersProps {
   filters: VehicleFiltersState;
   onFiltersChange: (filters: VehicleFiltersState) => void;
   marcas: string[];
+  precioMaxCatalogo: number; // Precio del auto más caro (en la moneda del filtro)
 }
 
 const TIPOS = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Van'];
@@ -35,7 +36,7 @@ const COMBUSTIBLES = ['Nafta', 'Diésel', 'Gas', 'Híbrido', 'Eléctrico'];
 
 const currentYear = new Date().getFullYear();
 
-export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFiltersProps) {
+export function VehicleFilters({ filters, onFiltersChange, marcas, precioMaxCatalogo }: VehicleFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const updateFilter = <K extends keyof VehicleFiltersState>(key: K, value: VehicleFiltersState[K]) => {
@@ -49,7 +50,7 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
       transmision: '',
       combustible: '',
       precioMin: 0,
-      precioMax: filters.monedaFiltro === 'USD' ? 50000 : 50000000,
+      precioMax: precioMaxCatalogo,
       monedaFiltro: filters.monedaFiltro,
       anioMin: 2000,
       anioMax: currentYear,
@@ -82,9 +83,9 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
     });
   };
 
-  // Valores máximos del slider según la moneda
-  const maxPrecio = filters.monedaFiltro === 'USD' ? 50000 : 50000000;
-  const stepPrecio = filters.monedaFiltro === 'USD' ? 500 : 500000;
+  // Valores máximos del slider según el catálogo
+  const maxPrecio = precioMaxCatalogo;
+  const stepPrecio = filters.monedaFiltro === 'USD' ? Math.max(100, Math.round(precioMaxCatalogo / 100)) : Math.max(100000, Math.round(precioMaxCatalogo / 100));
 
   const hasActiveFilters = filters.marca || filters.tipo || filters.transmision ||
     filters.combustible || filters.precioMin > 0 || filters.precioMax < maxPrecio ||

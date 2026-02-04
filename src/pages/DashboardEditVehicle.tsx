@@ -23,8 +23,35 @@ const MONEDAS = [
     { value: 'CONSULTAR', label: 'Sin precio - Consultar' },
 ];
 const MARCAS = [
-    'Audi', 'BMW', 'Chevrolet', 'Ford', 'Honda', 'Hyundai', 'Kia',
-    'Mazda', 'Mercedes-Benz', 'Nissan', 'Toyota', 'Volkswagen', 'Otro'
+    "Toyota",
+    "Volkswagen",
+    "Fiat",
+    "Renault",
+    "Peugeot",
+    "Ford",
+    "Chevrolet",
+    "Citroën",
+    "Jeep",
+    "Nissan",
+    "BAIC",
+    "Mercedes-Benz",
+    "Hyundai",
+    "Kia",
+    "Honda",
+    "Audi",
+    "BMW",
+    "Mitsubishi",
+    "Subaru",
+    "Land Rover",
+    "Jaguar",
+    "Volvo",
+    "Suzuki",
+    "Chery",
+    "GWM",
+    "Dodge",
+    "Mini",
+    "Tesla",
+    "Jaguar Land Rover"
 ];
 
 export default function DashboardEditVehicle() {

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Navbar } from '@/components/layout/Navbar';
 import { VehicleCard } from '@/components/vehicles/VehicleCard';
@@ -42,6 +42,45 @@ export default function AgencyCatalog() {
     const uniqueMarcas = [...new Set(vehicles.map(v => v.marca))];
     return uniqueMarcas.sort();
   }, [vehicles]);
+
+  // Calcular el precio máximo del catálogo (convertido a la moneda del filtro)
+  const precioMaxCatalogo = useMemo(() => {
+    if (vehicles.length === 0) return filters.monedaFiltro === 'USD' ? 50000 : 50000000;
+
+    let maxPrecio = 0;
+    for (const v of vehicles) {
+      if (v.precio === null) continue;
+
+      let precioConvertido: number;
+      if (filters.monedaFiltro === 'USD') {
+        // Convertir a USD
+        precioConvertido = v.moneda === 'USD' ? v.precio : v.precio / TIPO_CAMBIO_USD;
+      } else {
+        // Convertir a ARS
+        precioConvertido = v.moneda === 'USD' ? v.precio * TIPO_CAMBIO_USD : v.precio;
+      }
+
+      if (precioConvertido > maxPrecio) {
+        maxPrecio = precioConvertido;
+      }
+    }
+
+    // Redondear hacia arriba para tener un número más limpio
+    if (filters.monedaFiltro === 'USD') {
+      return Math.ceil(maxPrecio / 1000) * 1000; // Redondear a miles de USD
+    } else {
+      return Math.ceil(maxPrecio / 1000000) * 1000000; // Redondear a millones de ARS
+    }
+  }, [vehicles, filters.monedaFiltro]);
+
+  // Sincronizar precioMax del filtro con el precio máximo del catálogo
+  const [initialized, setInitialized] = useState(false);
+  useEffect(() => {
+    if (vehicles.length > 0 && !initialized) {
+      setFilters(prev => ({ ...prev, precioMax: precioMaxCatalogo }));
+      setInitialized(true);
+    }
+  }, [vehicles.length, precioMaxCatalogo, initialized]);
 
   const filteredVehicles = useMemo(() => {
     return vehicles.filter(v => {
@@ -177,6 +216,7 @@ export default function AgencyCatalog() {
                 filters={filters}
                 onFiltersChange={setFilters}
                 marcas={marcas}
+                precioMaxCatalogo={precioMaxCatalogo}
               />
             </div>
           </aside>
@@ -202,6 +242,7 @@ export default function AgencyCatalog() {
                   filters={filters}
                   onFiltersChange={setFilters}
                   marcas={marcas}
+                  precioMaxCatalogo={precioMaxCatalogo}
                 />
                 <Button
                   variant="gradient"
