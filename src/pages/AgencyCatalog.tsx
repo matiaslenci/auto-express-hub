@@ -11,13 +11,17 @@ import { cn } from '@/lib/utils';
 
 const currentYear = new Date().getFullYear();
 
+// Tipo de cambio: 1 USD = 1465 ARS
+const TIPO_CAMBIO_USD = 1465;
+
 const defaultFilters: VehicleFiltersState = {
   marca: '',
   tipo: '',
   transmision: '',
   combustible: '',
   precioMin: 0,
-  precioMax: 5000000,
+  precioMax: 50000000,
+  monedaFiltro: 'ARS',
   anioMin: 2000,
   anioMax: currentYear,
   search: '',
@@ -48,8 +52,33 @@ export default function AgencyCatalog() {
       if (filters.tipo && v.tipo !== filters.tipo) return false;
       if (filters.transmision && v.transmision !== filters.transmision) return false;
       if (filters.combustible && v.combustible !== filters.combustible) return false;
-      // Skip price filter for CONSULTAR vehicles (precio is null)
-      if (v.precio !== null && (v.precio < filters.precioMin || v.precio > filters.precioMax)) return false;
+
+      // Filtro de precio con conversión de moneda
+      if (v.precio !== null) {
+        // Convertir el precio del vehículo a la moneda del filtro
+        let precioConvertido: number;
+
+        if (filters.monedaFiltro === 'USD') {
+          // El filtro está en USD, convertir precio del vehículo a USD
+          if (v.moneda === 'USD') {
+            precioConvertido = v.precio;
+          } else {
+            // ARS a USD
+            precioConvertido = v.precio / TIPO_CAMBIO_USD;
+          }
+        } else {
+          // El filtro está en ARS, convertir precio del vehículo a ARS
+          if (v.moneda === 'ARS' || !v.moneda) {
+            precioConvertido = v.precio;
+          } else {
+            // USD a ARS
+            precioConvertido = v.precio * TIPO_CAMBIO_USD;
+          }
+        }
+
+        if (precioConvertido < filters.precioMin || precioConvertido > filters.precioMax) return false;
+      }
+
       if (v.anio < filters.anioMin || v.anio > filters.anioMax) return false;
       return true;
     });

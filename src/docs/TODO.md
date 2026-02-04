@@ -55,3 +55,6 @@
 - [ ] Lintree (agregar backend)
 - [ ] Boton para compartir catalogo 
 - [ ] Ubicacion de la agencia 
+
+## Cambios futuros
+- [ ] Integrar api de dolarito

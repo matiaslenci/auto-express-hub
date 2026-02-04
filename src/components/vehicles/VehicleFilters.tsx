@@ -14,10 +14,14 @@ export interface VehicleFiltersState {
   combustible: string;
   precioMin: number;
   precioMax: number;
+  monedaFiltro: 'ARS' | 'USD';
   anioMin: number;
   anioMax: number;
   search: string;
 }
+
+// Tipo de cambio: 1 USD = 1465 ARS
+const TIPO_CAMBIO_USD = 1465;
 
 interface VehicleFiltersProps {
   filters: VehicleFiltersState;
@@ -45,15 +49,45 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
       transmision: '',
       combustible: '',
       precioMin: 0,
-      precioMax: 5000000,
+      precioMax: filters.monedaFiltro === 'USD' ? 50000 : 50000000,
+      monedaFiltro: filters.monedaFiltro,
       anioMin: 2000,
       anioMax: currentYear,
       search: '',
     });
   };
 
+  // Cambiar moneda del filtro y convertir valores actuales
+  const handleMonedaChange = (nuevaMoneda: 'ARS' | 'USD') => {
+    if (nuevaMoneda === filters.monedaFiltro) return;
+
+    let newMin: number;
+    let newMax: number;
+
+    if (nuevaMoneda === 'USD') {
+      // Convertir de ARS a USD
+      newMin = Math.round(filters.precioMin / TIPO_CAMBIO_USD);
+      newMax = Math.round(filters.precioMax / TIPO_CAMBIO_USD);
+    } else {
+      // Convertir de USD a ARS
+      newMin = filters.precioMin * TIPO_CAMBIO_USD;
+      newMax = filters.precioMax * TIPO_CAMBIO_USD;
+    }
+
+    onFiltersChange({
+      ...filters,
+      monedaFiltro: nuevaMoneda,
+      precioMin: newMin,
+      precioMax: newMax,
+    });
+  };
+
+  // Valores máximos del slider según la moneda
+  const maxPrecio = filters.monedaFiltro === 'USD' ? 50000 : 50000000;
+  const stepPrecio = filters.monedaFiltro === 'USD' ? 500 : 500000;
+
   const hasActiveFilters = filters.marca || filters.tipo || filters.transmision ||
-    filters.combustible || filters.precioMin > 0 || filters.precioMax < 5000000 ||
+    filters.combustible || filters.precioMin > 0 || filters.precioMax < maxPrecio ||
     filters.anioMin > 2000 || filters.anioMax < currentYear || filters.search;
 
   return (
@@ -159,24 +193,58 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
 
         {/* Price Range */}
         <div className="space-y-4">
+          {/* Currency Toggle */}
+          <div className="flex items-center gap-2">
+            <Label className="flex-shrink-0">Moneda:</Label>
+            <div className="flex rounded-lg border border-border overflow-hidden">
+              <button
+                type="button"
+                onClick={() => handleMonedaChange('ARS')}
+                className={cn(
+                  "px-3 py-1.5 text-sm font-medium transition-colors",
+                  filters.monedaFiltro === 'ARS'
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/50 hover:bg-muted text-muted-foreground"
+                )}
+              >
+                $ ARS
+              </button>
+              <button
+                type="button"
+                onClick={() => handleMonedaChange('USD')}
+                className={cn(
+                  "px-3 py-1.5 text-sm font-medium transition-colors",
+                  filters.monedaFiltro === 'USD'
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/50 hover:bg-muted text-muted-foreground"
+                )}
+              >
+                US$ USD
+              </button>
+            </div>
+          </div>
+
           <div className="flex items-center justify-between">
             <Label>Precio</Label>
             <span className="text-sm text-muted-foreground">
-              ${filters.precioMin.toLocaleString()} - ${filters.precioMax.toLocaleString()}
+              {filters.monedaFiltro === 'USD' ? 'US$' : '$'}{filters.precioMin.toLocaleString()} - {filters.monedaFiltro === 'USD' ? 'US$' : '$'}{filters.precioMax.toLocaleString()}
             </span>
           </div>
           <div className="px-2">
             <Slider
               value={[filters.precioMin, filters.precioMax]}
               min={0}
-              max={5000000}
-              step={50000}
+              max={maxPrecio}
+              step={stepPrecio}
               onValueChange={([min, max]) => {
                 updateFilter('precioMin', min);
                 updateFilter('precioMax', max);
               }}
             />
           </div>
+          <p className="text-xs text-muted-foreground">
+            Cotización: 1 USD = ${TIPO_CAMBIO_USD.toLocaleString()} ARS
+          </p>
         </div>
 
         {/* Year Range */}
