@@ -20,12 +20,11 @@
 
 ## Catalogo
 
-- [ ] Hacer tests
 - [x] Modificar los tipos de combustible
 - [x] Arreglar ui de filtros de precio y año
 - [x] Eliminar tantos detalles naranjas
 - [x] Arreglar badge de tipo de vehiculo(suv, sedan, etc)
-- [ ] Que todas las card tengan el mismo tamaño
+- [x] Que todas las card tengan el mismo tamaño
 - [x] Pasar de dolares a pesos en el filtro de precio 
 - [ ] Arreglar filtro por kilometraje
 
@@ -33,17 +32,17 @@
 
 - [x] Cambiar entre precio ARS, USD o Sin precio(modificar backend)
 - [ ] Si es moto o auto
-- [ ] Traer desde el back las marcas
-- [ ] Si selecciona Otro en marcas que pueda agregar la marca
+- [x] Traer desde el back las marcas
+- [x] Si selecciona Otro en marcas que pueda agregar la marca
 - [ ] Que se pueda arrastrar imagenes
 
 ## Detalle de auto
 
 - [x] No se ve el año del auto
-- [ ] Badge sin sentido al lado del tipo de auto
+- [x] Badge sin sentido al lado del tipo de auto
 - [ ] Ver detalles de mercado libre
 - [ ] Ubicación
-- [ ] Boton de contacto(agregar backend)
+- [x] Boton de contacto(agregar backend)
 
 ## Usuario
 
@@ -55,7 +54,7 @@
 - [ ] Redes sociales/Enlaces (agregar backend)
 - [ ] Lintree (agregar backend)
 - [ ] Boton para compartir catalogo 
-- [ ] Ubicacion de la agencia 
+- [x] Ubicacion de la agencia 
 
 ## Cambios futuros
 - [ ] Integrar api de dolarito

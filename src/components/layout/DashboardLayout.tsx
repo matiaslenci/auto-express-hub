@@ -7,7 +7,6 @@ import {
   LayoutDashboard,
   Plus,
   User,
-  UserCog,
   LogOut,
   Menu,
   X,
@@ -27,7 +26,6 @@ const navItems = [
   { href: '/dashboard/vehiculos', icon: Car, label: 'Vehículos' },
   { href: '/dashboard/vehiculos/nuevo', icon: Plus, label: 'Nuevo vehículo' },
   { href: '/dashboard/perfil', icon: User, label: 'Perfil' },
-  { href: '/onboarding', icon: UserCog, label: 'Completar perfil' },
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
