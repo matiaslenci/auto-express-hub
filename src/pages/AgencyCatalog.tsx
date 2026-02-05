@@ -24,6 +24,8 @@ const defaultFilters: VehicleFiltersState = {
   monedaFiltro: 'ARS',
   anioMin: 2000,
   anioMax: currentYear,
+  kilometrajeMin: 0,
+  kilometrajeMax: 500000,
   search: '',
 };
 
@@ -119,6 +121,12 @@ export default function AgencyCatalog() {
       }
 
       if (v.anio < filters.anioMin || v.anio > filters.anioMax) return false;
+
+      // Filtro de kilometraje
+      if (v.kilometraje !== null && v.kilometraje !== undefined) {
+        if (v.kilometraje < filters.kilometrajeMin || v.kilometraje > filters.kilometrajeMax) return false;
+      }
+
       return true;
     });
   }, [vehicles, filters]);

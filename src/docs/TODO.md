@@ -26,7 +26,7 @@
 - [x] Arreglar badge de tipo de vehiculo(suv, sedan, etc)
 - [x] Que todas las card tengan el mismo tamaño
 - [x] Pasar de dolares a pesos en el filtro de precio 
-- [ ] Arreglar filtro por kilometraje
+- [x] Arreglar filtro por kilometraje
 
 ## Cargar vehiculo
 

@@ -17,6 +17,8 @@ export interface VehicleFiltersState {
   monedaFiltro: 'ARS' | 'USD';
   anioMin: number;
   anioMax: number;
+  kilometrajeMin: number;
+  kilometrajeMax: number;
   search: string;
 }
 
@@ -54,6 +56,8 @@ export function VehicleFilters({ filters, onFiltersChange, marcas, precioMaxCata
       monedaFiltro: filters.monedaFiltro,
       anioMin: 2000,
       anioMax: currentYear,
+      kilometrajeMin: 0,
+      kilometrajeMax: 500000,
       search: '',
     });
   };
@@ -89,7 +93,8 @@ export function VehicleFilters({ filters, onFiltersChange, marcas, precioMaxCata
 
   const hasActiveFilters = filters.marca || filters.tipo || filters.transmision ||
     filters.combustible || filters.precioMin > 0 || filters.precioMax < maxPrecio ||
-    filters.anioMin > 2000 || filters.anioMax < currentYear || filters.search;
+    filters.anioMin > 2000 || filters.anioMax < currentYear ||
+    filters.kilometrajeMin > 0 || filters.kilometrajeMax < 500000 || filters.search;
 
   return (
     <div className="glass-card p-4">
@@ -242,9 +247,9 @@ export function VehicleFilters({ filters, onFiltersChange, marcas, precioMaxCata
               }}
             />
           </div>
-          <p className="text-xs text-muted-foreground">
+          {/*   <p className="text-xs text-muted-foreground">
             Cotización: 1 USD = ${TIPO_CAMBIO_USD.toLocaleString()} ARS
-          </p>
+          </p> */}
         </div>
 
         {/* Year Range */}
@@ -263,6 +268,27 @@ export function VehicleFilters({ filters, onFiltersChange, marcas, precioMaxCata
               step={1}
               onValueChange={([min, max]) => {
                 onFiltersChange({ ...filters, anioMin: min, anioMax: max });
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Kilometraje Range */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Label>Kilometraje</Label>
+            <span className="text-sm text-muted-foreground">
+              {filters.kilometrajeMin.toLocaleString()} - {filters.kilometrajeMax.toLocaleString()} km
+            </span>
+          </div>
+          <div className="px-2">
+            <Slider
+              value={[filters.kilometrajeMin, filters.kilometrajeMax]}
+              min={0}
+              max={500000}
+              step={10000}
+              onValueChange={([min, max]) => {
+                onFiltersChange({ ...filters, kilometrajeMin: min, kilometrajeMax: max });
               }}
             />
           </div>
