@@ -56,7 +56,7 @@ export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardP
         {/* Title & Price */}
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
-            <h3 className="text-lg font-bold group-hover:text-primary transition-colors">
+            <h3 className="text-lg font-bold">
               {vehicle.marca} {vehicle.modelo}
             </h3>
             <p className="text-sm text-muted-foreground">{vehicle.color}</p>

@@ -165,7 +165,7 @@ export default function DashboardVehicles() {
                 style={{ animationDelay: `${filteredVehicles.indexOf(vehicle) * 0.05}s` }}
               >
                 {/* Image */}
-                <div className="relative aspect-video">
+                <div className="relative aspect-[16/10] overflow-hidden">
                   <img
                     src={vehicle.fotos[0] || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=400&fit=crop'}
                     alt={`${vehicle.marca} ${vehicle.modelo}`}

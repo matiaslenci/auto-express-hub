@@ -139,7 +139,7 @@
 
 @layer components {
   .glass-card {
-    @apply bg-card/80 backdrop-blur-xl border border-white/10 rounded-xl;
+    @apply bg-card/80 backdrop-blur-xl border border-border rounded-xl;
     background: var(--gradient-glass);
   }
 
@@ -172,7 +172,13 @@
   }
 
   .vehicle-card {
-    @apply glass-card overflow-hidden hover-lift cursor-pointer;
+    @apply glass-card overflow-hidden cursor-pointer h-full border border-border;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .vehicle-card>div:last-child {
+    flex: 1;
   }
 
   .input-glow:focus {
