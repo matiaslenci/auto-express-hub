@@ -124,13 +124,13 @@ export default function DashboardProfile() {
       <SEO title="Mi Perfil | AgenciaExpress" description="Administra la información de tu agencia." />
       <div className="max-w-3xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold">Perfil de la agencia</h1>
-          <p className="text-muted-foreground">Personaliza cómo se ve tu catálogo</p>
+        <div className="dashboard-page-header">
+          <h1>Perfil de la agencia</h1>
+          <p>Personaliza cómo se ve tu catálogo</p>
         </div>
 
         {/* Preview Card */}
-        <div className="glass-card overflow-hidden mb-8">
+        <div className="glass-card overflow-hidden mb-8 animate-fade-in-up">
           <div className="relative h-32 bg-gradient-to-r from-primary/20 to-primary/5">
             {formData.portada && (
               <img
@@ -164,9 +164,9 @@ export default function DashboardProfile() {
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Info */}
-          <div className="glass-card p-6 space-y-6">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <User className="h-5 w-5 text-primary" />
+          <div className="form-card animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <h2 className="section-title">
+              <User />
               Información básica
             </h2>
 
@@ -218,9 +218,9 @@ export default function DashboardProfile() {
           </div>
 
           {/* Images */}
-          <div className="glass-card p-6 space-y-6">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <Image className="h-5 w-5 text-primary" />
+          <div className="form-card animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <h2 className="section-title">
+              <Image />
               Imágenes
             </h2>
 
@@ -334,7 +334,7 @@ export default function DashboardProfile() {
           </div>
 
           {/* Plan Info */}
-          <div className="glass-card p-6">
+          <div className="glass-card p-6 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-lg font-semibold">Tu plan actual</h2>

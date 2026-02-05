@@ -80,17 +80,17 @@ export default function Dashboard() {
       <SEO title="Dashboard | AgenciaExpress" description="Resumen de tu agencia." />
       <div className="space-y-8">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold mb-2">
+        <div className="dashboard-page-header">
+          <h1>
             Hola, <span className="gradient-text">{user?.nombre}</span>
           </h1>
-          <p className="text-muted-foreground">
+          <p>
             Aquí está el resumen de tu agencia
           </p>
         </div>
 
         {/* Plan Usage */}
-        <div className="glass-card p-6">
+        <div className="glass-card p-6 animate-fade-in-up">
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-sm text-muted-foreground">Plan actual</p>
@@ -131,7 +131,7 @@ export default function Dashboard() {
         </div>
 
         {/* Top Vehicles */}
-        <div className="glass-card p-6">
+        <div className="glass-card p-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
           <div className="flex items-center gap-2 mb-6">
             <BarChart3 className="h-5 w-5 text-primary" />
             <h2 className="text-xl font-bold">Vehículos más vistos</h2>

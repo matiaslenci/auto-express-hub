@@ -126,10 +126,10 @@ export default function DashboardVehicles() {
       <SEO title="Mis Vehículos | AgenciaExpress" description="Gestiona tu inventario de vehículos." />
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="dashboard-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">Mis vehículos</h1>
-            <p className="text-muted-foreground">
+            <h1>Mis vehículos</h1>
+            <p>
               {vehicles.length} vehículo{vehicles.length !== 1 && 's'} en tu inventario
             </p>
           </div>
@@ -159,9 +159,10 @@ export default function DashboardVehicles() {
               <div
                 key={vehicle.id}
                 className={cn(
-                  "glass-card overflow-hidden transition-all duration-300",
+                  "glass-card overflow-hidden transition-all duration-300 animate-fade-in-up",
                   !vehicle.activo && "opacity-60"
                 )}
+                style={{ animationDelay: `${filteredVehicles.indexOf(vehicle) * 0.05}s` }}
               >
                 {/* Image */}
                 <div className="relative aspect-video">
@@ -256,14 +257,14 @@ export default function DashboardVehicles() {
             ))}
           </div>
         ) : (
-          <div className="glass-card p-12 text-center">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-              <Search className="h-8 w-8 text-primary" />
+          <div className="glass-card p-12 empty-state">
+            <div className="empty-state-icon">
+              <Search />
             </div>
-            <h3 className="text-lg font-semibold mb-2">
+            <h3>
               {search ? 'No se encontraron vehículos' : 'Sin vehículos'}
             </h3>
-            <p className="text-muted-foreground mb-6">
+            <p>
               {search
                 ? 'Intenta con otros términos de búsqueda'
                 : 'Comienza agregando tu primer vehículo'}

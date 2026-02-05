@@ -51,7 +51,8 @@ const MARCAS = [
     "Dodge",
     "Mini",
     "Tesla",
-    "Jaguar Land Rover"
+    "Jaguar Land Rover",
+    "Otro"
 ];
 
 export default function DashboardEditVehicle() {
@@ -235,24 +236,23 @@ export default function DashboardEditVehicle() {
         <DashboardLayout>
             <SEO title="Editar Vehículo | AgenciaExpress" description="Edita los datos de tu vehículo." />
             <div className="max-w-3xl mx-auto">
-                {/* Header */}
-                <div className="flex items-center gap-4 mb-8">
+                <div className="dashboard-page-header flex items-center gap-4">
                     <button
                         onClick={() => navigate(-1)}
-                        className="p-2 rounded-lg hover:bg-muted transition-colors"
+                        className="back-button"
                     >
                         <ArrowLeft className="h-5 w-5" />
                     </button>
                     <div>
-                        <h1 className="text-2xl font-bold">Editar vehículo</h1>
-                        <p className="text-muted-foreground">{vehicle.marca} {vehicle.modelo}</p>
+                        <h1>Editar vehículo</h1>
+                        <p>{vehicle.marca} {vehicle.modelo}</p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {/* Basic Info */}
-                    <div className="glass-card p-6 space-y-6">
-                        <h2 className="text-lg font-semibold">Información básica</h2>
+                    <div className="form-card animate-fade-in-up">
+                        <h2 className="section-title">Información básica</h2>
 
                         <div className="grid sm:grid-cols-2 gap-6">
                             <div className="space-y-2">
@@ -348,8 +348,8 @@ export default function DashboardEditVehicle() {
                     </div>
 
                     {/* Specifications */}
-                    <div className="glass-card p-6 space-y-6">
-                        <h2 className="text-lg font-semibold">Especificaciones</h2>
+                    <div className="form-card animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+                        <h2 className="section-title">Especificaciones</h2>
 
                         <div className="grid sm:grid-cols-2 gap-6">
                             <div className="space-y-2">
@@ -424,8 +424,8 @@ export default function DashboardEditVehicle() {
                     </div>
 
                     {/* Description */}
-                    <div className="glass-card p-6 space-y-4">
-                        <h2 className="text-lg font-semibold">Descripción</h2>
+                    <div className="form-card animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+                        <h2 className="section-title">Descripción</h2>
                         <Textarea
                             placeholder="Describe el vehículo, características especiales, historial de servicio, etc."
                             value={formData.descripcion}
@@ -436,8 +436,8 @@ export default function DashboardEditVehicle() {
                     </div>
 
                     {/* Photos */}
-                    <div className="glass-card p-6 space-y-4">
-                        <h2 className="text-lg font-semibold">Fotos</h2>
+                    <div className="form-card animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+                        <h2 className="section-title">Fotos</h2>
                         <p className="text-sm text-muted-foreground">
                             Sube fotos del vehículo (máximo 10, formatos: JPG, PNG, WebP). Haz clic en la estrella para elegir la portada.
                         </p>
