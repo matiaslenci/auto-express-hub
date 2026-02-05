@@ -15,9 +15,15 @@ export function useAuth() {
       const token = getToken();
       if (token) {
         try {
-          // Decode token to get username
+          // Decode token to get username and check expiration
           const payload = JSON.parse(atob(token.split('.')[1]));
-          console.log('Token payload on mount:', payload);
+
+          // Verificar si el token está expirado
+          if (payload.exp && payload.exp * 1000 < Date.now()) {
+            authService.logout();
+            setLoading(false);
+            return;
+          }
 
           if (payload.username) {
             // Fetch agency data using the username from token
