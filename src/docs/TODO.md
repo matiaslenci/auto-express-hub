@@ -35,6 +35,10 @@
 - [x] Traer desde el back las marcas
 - [x] Si selecciona Otro en marcas que pueda agregar la marca
 - [ ] Que se pueda arrastrar imagenes
+- [ ] Que se pueda poner 0km
+- [ ] Que el precio tenga una mascara de puntos
+- [ ] Ubicacion del auto distinta a la de la agencia(back)
+- [ ] Errores en el back deben ser en español
 
 ## Detalle de auto
 
