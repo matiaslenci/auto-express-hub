@@ -59,7 +59,18 @@ export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardP
             <h3 className="text-lg font-bold">
               {vehicle.marca} {vehicle.modelo}
             </h3>
-            <p className="text-sm text-muted-foreground">{vehicle.color}</p>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <span>{vehicle.color}</span>
+              {vehicle.localidad && (
+                <>
+                  <span>•</span>
+                  <span className="flex items-center gap-1">
+                    <MapPin className="h-3 w-3" />
+                    {vehicle.localidad}
+                  </span>
+                </>
+              )}
+            </div>
           </div>
           <div className="text-right">
             <p className="text-xl font-bold text-primary">{formattedPrice}</p>

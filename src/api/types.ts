@@ -61,6 +61,7 @@ export interface VehicleDto {
     kilometraje: number;
     color: string;
     descripcion: string;
+    localidad: string | null;
     fotos: string[];
     activo: boolean;
     vistas: number;
@@ -81,6 +82,7 @@ export interface CreateVehicleDto {
     kilometraje: number;
     color: string;
     descripcion: string;
+    localidad?: string;
     fotos: string[];
     activo?: boolean;
 }
@@ -97,6 +99,7 @@ export interface UpdateVehicleDto {
     kilometraje?: number;
     color?: string;
     descripcion?: string;
+    localidad?: string;
     fotos?: string[];
     activo?: boolean;
 }

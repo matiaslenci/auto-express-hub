@@ -114,6 +114,7 @@ export default function VehicleDetail() {
     { icon: Fuel, label: 'Combustible', value: vehicle.combustible },
     { icon: Car, label: 'Tipo', value: vehicle.tipo },
     { icon: Palette, label: 'Color', value: vehicle.color },
+    ...(vehicle.localidad ? [{ icon: MapPin, label: 'Ubicación', value: vehicle.localidad }] : []),
   ];
 
   return (

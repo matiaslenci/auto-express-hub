@@ -78,6 +78,7 @@ export default function DashboardEditVehicle() {
         kilometraje: 0,
         color: '',
         descripcion: '',
+        localidad: '',
         fotos: [] as string[],
     });
 
@@ -102,6 +103,7 @@ export default function DashboardEditVehicle() {
                 kilometraje: vehicle.kilometraje || 0,
                 color: vehicle.color || '',
                 descripcion: vehicle.descripcion || '',
+                localidad: vehicle.localidad || '',
                 fotos: vehicle.fotos || [],
             });
 
@@ -408,7 +410,7 @@ export default function DashboardEditVehicle() {
                                 </Select>
                             </div>
 
-                            <div className="space-y-2 sm:col-span-2">
+                            <div className="space-y-2">
                                 <Label htmlFor="kilometraje">Kilometraje</Label>
                                 <Input
                                     id="kilometraje"
@@ -418,6 +420,17 @@ export default function DashboardEditVehicle() {
                                     onChange={(e) => updateField('kilometraje', parseInt(e.target.value) || 0)}
                                     className="input-glow"
                                     placeholder="0"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="localidad">Ubicación del vehículo</Label>
+                                <Input
+                                    id="localidad"
+                                    placeholder="Ej: Santa Fe, Rosario, Córdoba"
+                                    value={formData.localidad}
+                                    onChange={(e) => updateField('localidad', e.target.value)}
+                                    className="input-glow"
                                 />
                             </div>
                         </div>
