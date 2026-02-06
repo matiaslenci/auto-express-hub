@@ -36,6 +36,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { PLAN_LIMITS, PLAN_NAMES } from '@/lib/storage';
+import { PlanLimitModal } from '@/components/ui/PlanLimitModal';
 
 import { SEO } from '@/components/common/SEO';
 
@@ -48,6 +50,7 @@ export default function DashboardVehicles() {
   const [search, setSearch] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [vehicleToDelete, setVehicleToDelete] = useState<VehicleDto | null>(null);
+  const [showLimitModal, setShowLimitModal] = useState(false);
   const { toast } = useToast();
 
   if (loading || vehiclesLoading) {
@@ -65,6 +68,15 @@ export default function DashboardVehicles() {
   const filteredVehicles = vehicles.filter(v =>
     `${v.marca} ${v.modelo} ${v.anio}`.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Plan limits calculation
+  const activeVehicles = vehicles.filter(v => v.activo);
+  const limit = PLAN_LIMITS[user?.plan || 'basico'];
+  const canAddMore = limit === Infinity || activeVehicles.length < limit;
+  const planName = PLAN_NAMES[user?.plan || 'basico'];
+  const limitDisplay = limit === Infinity
+    ? 'Sin límite'
+    : `${activeVehicles.length} / ${limit} publicaciones`;
 
   const handleToggleActive = async (vehicle: VehicleDto) => {
     try {
@@ -133,12 +145,37 @@ export default function DashboardVehicles() {
               {vehicles.length} vehículo{vehicles.length !== 1 && 's'} en tu inventario
             </p>
           </div>
-          <Link to="/dashboard/vehiculos/nuevo">
-            <Button variant="gradient" className="gap-2">
-              <Plus className="h-4 w-4" />
-              Nuevo vehículo
-            </Button>
-          </Link>
+          <div className="flex items-center gap-3">
+            {/* Publication counter badge */}
+            <div className={cn(
+              "px-3 py-1.5 rounded-full text-sm font-medium",
+              limit === Infinity
+                ? "bg-primary/10 text-primary"
+                : activeVehicles.length >= (limit as number)
+                  ? "bg-destructive/10 text-destructive"
+                  : "bg-muted text-muted-foreground"
+            )}>
+              {limitDisplay}
+            </div>
+
+            {canAddMore ? (
+              <Link to="/dashboard/vehiculos/nuevo">
+                <Button variant="gradient" className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  Nuevo vehículo
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                variant="gradient"
+                className="gap-2 opacity-50 cursor-not-allowed"
+                onClick={() => setShowLimitModal(true)}
+              >
+                <Plus className="h-4 w-4" />
+                Nuevo vehículo
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Search */}
@@ -301,6 +338,14 @@ export default function DashboardVehicles() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Plan Limit Modal */}
+      <PlanLimitModal
+        isOpen={showLimitModal}
+        onClose={() => setShowLimitModal(false)}
+        plan={user?.plan || 'basico'}
+        limite={limit === Infinity ? 0 : (limit as number)}
+      />
     </DashboardLayout>
   );
 }

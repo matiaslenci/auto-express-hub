@@ -4,7 +4,8 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useCreateVehicle, useVehicles } from '@/hooks/useVehicles';
 import { useUploadVehicleImage } from '@/hooks/useUpload';
-import { PLAN_LIMITS } from '@/lib/storage';
+import { PLAN_LIMITS, PLAN_NAMES } from '@/lib/storage';
+import { PlanLimitModal } from '@/components/ui/PlanLimitModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -68,6 +69,7 @@ export default function DashboardNewVehicle() {
   const { data: vehicles } = useVehicles({ agenciaUsername: user?.username });
   const { uploadAsync, isUploading } = useUploadVehicleImage();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showLimitModal, setShowLimitModal] = useState(false);
 
   const [formData, setFormData] = useState({
     marca: '',
@@ -196,6 +198,12 @@ export default function DashboardNewVehicle() {
 
       navigate('/dashboard/vehiculos');
     } catch (error: any) {
+      // Handle 403 - Plan limit reached
+      if (error.statusCode === 403) {
+        setShowLimitModal(true);
+        return;
+      }
+
       toast({
         title: 'Error',
         description: error.message || 'No se pudo crear el vehículo.',
@@ -552,6 +560,14 @@ export default function DashboardNewVehicle() {
           </div>
         </form>
       </div>
+
+      {/* Plan Limit Modal */}
+      <PlanLimitModal
+        isOpen={showLimitModal}
+        onClose={() => setShowLimitModal(false)}
+        plan={user?.plan || 'basico'}
+        limite={PLAN_LIMITS[user?.plan || 'basico'] as number}
+      />
     </DashboardLayout>
   );
 }
