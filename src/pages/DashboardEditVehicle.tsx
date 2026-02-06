@@ -80,6 +80,7 @@ export default function DashboardEditVehicle() {
         descripcion: '',
         localidad: '',
         fotos: [] as string[],
+        es0km: false,
     });
 
     const [initialized, setInitialized] = useState(false);
@@ -105,6 +106,7 @@ export default function DashboardEditVehicle() {
                 descripcion: vehicle.descripcion || '',
                 localidad: vehicle.localidad || '',
                 fotos: vehicle.fotos || [],
+                es0km: vehicle.kilometraje === 0,
             });
 
             // Si la marca no está en la lista, guardarla como marca personalizada
@@ -412,15 +414,34 @@ export default function DashboardEditVehicle() {
 
                             <div className="space-y-2">
                                 <Label htmlFor="kilometraje">Kilometraje</Label>
-                                <Input
-                                    id="kilometraje"
-                                    type="number"
-                                    min={0}
-                                    value={formData.kilometraje || ''}
-                                    onChange={(e) => updateField('kilometraje', parseInt(e.target.value) || 0)}
-                                    className="input-glow"
-                                    placeholder="0"
-                                />
+                                <div className="flex items-center gap-3">
+                                    <Input
+                                        id="kilometraje"
+                                        type="number"
+                                        min={0}
+                                        value={formData.kilometraje || ''}
+                                        onChange={(e) => updateField('kilometraje', parseInt(e.target.value) || 0)}
+                                        className="input-glow flex-1"
+                                        placeholder="0"
+                                        disabled={formData.kilometraje === 0 && formData.es0km}
+                                    />
+                                    <label className="flex items-center gap-2 cursor-pointer select-none whitespace-nowrap">
+                                        <input
+                                            type="checkbox"
+                                            checked={formData.es0km || false}
+                                            onChange={(e) => {
+                                                const checked = e.target.checked;
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    es0km: checked,
+                                                    kilometraje: checked ? 0 : prev.kilometraje
+                                                }));
+                                            }}
+                                            className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
+                                        />
+                                        <span className="text-sm font-medium">0 km</span>
+                                    </label>
+                                </div>
                             </div>
 
                             <div className="space-y-2">

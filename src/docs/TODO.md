@@ -6,7 +6,7 @@
 
  ## Dashboard
 
-- [ ] Revisar detalles de agregar vehículo
+- [x] Revisar detalles de agregar vehículo
 - [x] Implementar la funcionalidad de agregar imagenes con el back
 - [ ] Crear seed en el back para demo y eliminar los datos hardcodeados
 - [ ] Agregar al sidebar la opción de cambiar plan (siempre que sea menor al plan actual motivar a subirlo)
@@ -34,18 +34,15 @@
 - [ ] Si es moto o auto
 - [x] Traer desde el back las marcas
 - [x] Si selecciona Otro en marcas que pueda agregar la marca
-- [ ] Que se pueda arrastrar imagenes
-- [ ] Que se pueda poner 0km
-- [ ] Que el precio tenga una mascara de puntos
-- [ ] Ubicacion del auto distinta a la de la agencia(back)
-- [ ] Errores en el back deben ser en español
+- [x] Que se pueda poner 0km
+- [x] Ubicacion del auto distinta a la de la agencia(back)
 
 ## Detalle de auto
 
 - [x] No se ve el año del auto
 - [x] Badge sin sentido al lado del tipo de auto
 - [ ] Ver detalles de mercado libre
-- [ ] Ubicación
+- [x] Ubicación
 - [x] Boton de contacto(agregar backend)
 
 ## Usuario
@@ -62,3 +59,5 @@
 
 ## Cambios futuros
 - [ ] Integrar api de dolarito
+- [ ] Que el precio tenga una mascara de puntos
+- [ ] Que se pueda arrastrar imagenes
