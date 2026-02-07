@@ -4,12 +4,12 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { useUpdateAgency } from '@/hooks/useAgency';
 import { useUploadAgencyLogo, useUploadAgencyCover } from '@/hooks/useUpload';
-import { PLAN_NAMES, PLAN_PRICES } from '@/lib/storage';
+import { PLAN_NAMES, PLAN_PRICES, WHATSAPP_SUPPORT } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, User, MapPin, Phone, Image, ExternalLink, Upload, X } from 'lucide-react';
+import { Loader2, User, MapPin, Phone, Image, ExternalLink, Upload, X, Crown, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 import { SEO } from '@/components/common/SEO';
@@ -335,7 +335,7 @@ export default function DashboardProfile() {
 
           {/* Plan Info */}
           <div className="glass-card p-6 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-lg font-semibold">Tu plan actual</h2>
                 <p className="text-muted-foreground">
@@ -346,6 +346,31 @@ export default function DashboardProfile() {
                 {PLAN_NAMES[user?.plan || 'basico']}
               </span>
             </div>
+
+            {user?.plan !== 'premium' && (
+              <div className="pt-4 border-t border-border">
+                <div className="flex items-center gap-3 mb-3">
+                  <Crown className="h-5 w-5 text-primary" />
+                  <p className="text-sm text-muted-foreground">
+                    Actualiza tu plan para publicar más vehículos y llegar a más clientes.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full gap-2"
+                  onClick={() => {
+                    const message = encodeURIComponent(
+                      `Hola! Me gustaría actualizar mi plan de AgenciaExpress. Actualmente tengo el plan ${PLAN_NAMES[user?.plan || 'basico']} y me gustaría conocer las opciones disponibles.`
+                    );
+                    window.open(`https://wa.me/${WHATSAPP_SUPPORT.replace(/[^0-9]/g, '')}?text=${message}`, '_blank');
+                  }}
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Cambiar de plan
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Actions */}

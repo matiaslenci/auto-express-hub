@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Crown, AlertTriangle, MessageCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PLAN_NAMES } from '@/lib/storage';
+import { PLAN_NAMES, WHATSAPP_SUPPORT } from '@/lib/storage';
 
 interface PlanLimitModalProps {
     isOpen: boolean;
@@ -14,11 +14,10 @@ export function PlanLimitModal({ isOpen, onClose, plan, limite }: PlanLimitModal
     if (!isOpen) return null;
 
     const planName = PLAN_NAMES[plan] || 'Básico';
-    const whatsappNumber = '+5493425765843';
     const message = encodeURIComponent(
         `Hola! Me gustaría actualizar mi plan de AgenciaExpress. Actualmente tengo el plan ${planName} y me gustaría conocer las opciones disponibles.`
     );
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
+    const whatsappUrl = `https://wa.me/${WHATSAPP_SUPPORT.replace(/[^0-9]/g, '')}?text=${message}`;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center">

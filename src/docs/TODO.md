@@ -36,6 +36,7 @@
 - [x] Si selecciona Otro en marcas que pueda agregar la marca
 - [x] Que se pueda poner 0km
 - [x] Ubicacion del auto distinta a la de la agencia(back)
+- [ ] Si cargan el auto sin foto, poner una foto por default, quizas el logo
 
 ## Detalle de auto
 

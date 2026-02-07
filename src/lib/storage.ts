@@ -51,10 +51,13 @@ export const PLAN_LIMITS = {
   premium: Infinity,
 } as const;
 
+// WhatsApp de soporte para upgrade de planes
+export const WHATSAPP_SUPPORT = '+5493425765843';
+
 export const PLAN_PRICES = {
-  basico: 29,
-  profesional: 79,
-  premium: 149,
+  basico: 42000,
+  profesional: 100000,
+  premium: 160000,
 } as const;
 
 export const PLAN_NAMES = {
