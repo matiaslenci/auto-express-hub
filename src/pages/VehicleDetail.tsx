@@ -209,6 +209,19 @@ export default function VehicleDetail() {
                 <p className="text-3xl font-bold text-primary">{formattedPrice}</p>
               </div>
 
+              {/* WhatsApp CTA */}
+              {agency.whatsapp && (
+                <Button
+                  variant="whatsapp"
+                  size="xl"
+                  className="w-full gap-3"
+                  onClick={handleWhatsAppClick}
+                >
+                  <MessageCircle className="h-6 w-6" />
+                  Consultar por WhatsApp
+                </Button>
+              )}
+
               {/* Specs Grid */}
               <div className="glass-card p-6">
                 <h2 className="text-lg font-semibold mb-4">Especificaciones</h2>
@@ -258,19 +271,6 @@ export default function VehicleDetail() {
                   </div>
                 </div>
               </div>
-
-              {/* WhatsApp CTA */}
-              {agency.whatsapp && (
-                <Button
-                  variant="whatsapp"
-                  size="xl"
-                  className="w-full gap-3"
-                  onClick={handleWhatsAppClick}
-                >
-                  <MessageCircle className="h-6 w-6" />
-                  Consultar por WhatsApp
-                </Button>
-              )}
             </div>
           </div>
         </div>

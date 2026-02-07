@@ -2,21 +2,21 @@
 
 - [ ] Modificar datos no correctos del Hero como la cantidad de agencias y vehículos
 - [ ] Arreglar el badge del hero en vista mobile
-- [ ] Definir precios y cantidad de publicaciones
+- [x] Definir precios y cantidad de publicaciones
 
  ## Dashboard
 
 - [x] Revisar detalles de agregar vehículo
 - [x] Implementar la funcionalidad de agregar imagenes con el back
 - [ ] Crear seed en el back para demo y eliminar los datos hardcodeados
-- [ ] Agregar al sidebar la opción de cambiar plan (siempre que sea menor al plan actual motivar a subirlo)
+- [x] Agregar al sidebar la opción de cambiar plan (siempre que sea menor al plan actual motivar a subirlo)
 - [x] Ver detalle da error 404
 - [x] Que se pueda ver el detalle de los vehiculos desde el dashboard
 
 ## Perfil
 
 - [x] Poder editar la foto de perfil y portada, agregar desde el backend
-- [ ] Cambiar plan actual
+- [x] Cambiar plan actual
 
 ## Catalogo
 
@@ -46,6 +46,12 @@
 - [x] Ubicación
 - [x] Boton de contacto(agregar backend)
 
+--- 
+# Cambios futuros
+- [ ] Integrar api de dolarito
+- [ ] Que el precio tenga una mascara de puntos
+- [ ] Que se pueda arrastrar imagenes
+
 ## Usuario
 
 - [ ] Login con google
@@ -57,8 +63,3 @@
 - [ ] Lintree (agregar backend)
 - [ ] Boton para compartir catalogo 
 - [x] Ubicacion de la agencia 
-
-## Cambios futuros
-- [ ] Integrar api de dolarito
-- [ ] Que el precio tenga una mascara de puntos
-- [ ] Que se pueda arrastrar imagenes
