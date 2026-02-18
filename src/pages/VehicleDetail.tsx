@@ -197,6 +197,9 @@ export default function VehicleDetail() {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                    {(vehicle as any).tipoVehiculo === 'MOTO' ? '🏍️ Moto' : '🚗 Auto'}
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
                     {vehicle.tipo}
                   </span>
                   <span className="px-3 py-1 rounded-full bg-muted text-sm font-medium">

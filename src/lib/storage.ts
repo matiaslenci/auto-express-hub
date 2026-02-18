@@ -22,6 +22,7 @@ export interface Vehicle {
   id: string;
   agenciaUsername: string;
   marca: string;
+  tipoVehiculo: 'AUTO' | 'MOTO';
   modelo: string;
   anio: number;
   precio: number | null;

@@ -8,6 +8,7 @@ import { X, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface VehicleFiltersState {
+  tipoVehiculo: string;
   marca: string;
   tipo: string;
   transmision: string;
@@ -32,7 +33,8 @@ interface VehicleFiltersProps {
   precioMaxCatalogo: number; // Precio del auto más caro (en la moneda del filtro)
 }
 
-const TIPOS = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Van'];
+const TIPOS_AUTO = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Van'];
+const TIPOS_MOTO = ['Street', 'Naked', 'Deportiva', 'Touring', 'Enduro', 'Cross', 'Custom', 'Scooter', 'Trail', 'Cuatrimoto'];
 const TRANSMISIONES = ['Manual', 'Automática'];
 const COMBUSTIBLES = ['Nafta', 'Diésel', 'Gas', 'Híbrido', 'Eléctrico'];
 
@@ -41,12 +43,20 @@ const currentYear = new Date().getFullYear();
 export function VehicleFilters({ filters, onFiltersChange, marcas, precioMaxCatalogo }: VehicleFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
+  const TIPOS = filters.tipoVehiculo === 'MOTO' ? TIPOS_MOTO : filters.tipoVehiculo === 'AUTO' ? TIPOS_AUTO : [...TIPOS_AUTO, ...TIPOS_MOTO];
+
   const updateFilter = <K extends keyof VehicleFiltersState>(key: K, value: VehicleFiltersState[K]) => {
+    if (key === 'tipoVehiculo') {
+      // Reset tipo when tipoVehiculo changes
+      onFiltersChange({ ...filters, [key]: value, tipo: '' });
+      return;
+    }
     onFiltersChange({ ...filters, [key]: value });
   };
 
   const clearFilters = () => {
     onFiltersChange({
+      tipoVehiculo: '',
       marca: '',
       tipo: '',
       transmision: '',
@@ -91,7 +101,7 @@ export function VehicleFilters({ filters, onFiltersChange, marcas, precioMaxCata
   const maxPrecio = precioMaxCatalogo;
   const stepPrecio = filters.monedaFiltro === 'USD' ? Math.max(100, Math.round(precioMaxCatalogo / 100)) : Math.max(100000, Math.round(precioMaxCatalogo / 100));
 
-  const hasActiveFilters = filters.marca || filters.tipo || filters.transmision ||
+  const hasActiveFilters = filters.tipoVehiculo || filters.marca || filters.tipo || filters.transmision ||
     filters.combustible || filters.precioMin > 0 || filters.precioMax < maxPrecio ||
     filters.anioMin > 2000 || filters.anioMax < currentYear ||
     filters.kilometrajeMin > 0 || filters.kilometrajeMax < 500000 || filters.search;
@@ -131,6 +141,21 @@ export function VehicleFilters({ filters, onFiltersChange, marcas, precioMaxCata
             onChange={(e) => updateFilter('search', e.target.value)}
             className="input-glow"
           />
+        </div>
+
+        {/* Tipo de Vehículo */}
+        <div className="space-y-2">
+          <Label>Tipo de vehículo</Label>
+          <Select value={filters.tipoVehiculo || "all"} onValueChange={(v) => updateFilter('tipoVehiculo', v === "all" ? "" : v)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Todos" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="AUTO">🚗 Autos</SelectItem>
+              <SelectItem value="MOTO">🏍️ Motos</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Marca */}

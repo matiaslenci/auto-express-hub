@@ -47,7 +47,7 @@ export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardP
 
         {/* Type Badge */}
         <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 dark:bg-black/50 backdrop-blur-md text-xs font-medium text-white shadow-lg">
-          {vehicle.tipo}
+          {(vehicle as any).tipoVehiculo === 'MOTO' ? '🏍️' : '🚗'} {vehicle.tipo}
         </span>
       </div>
 

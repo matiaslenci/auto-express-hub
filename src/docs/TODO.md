@@ -12,6 +12,7 @@
 - [x] Agregar al sidebar la opción de cambiar plan (siempre que sea menor al plan actual motivar a subirlo)
 - [x] Ver detalle da error 404
 - [x] Que se pueda ver el detalle de los vehiculos desde el dashboard
+- [ ] Analitycs
 
 ## Perfil
 

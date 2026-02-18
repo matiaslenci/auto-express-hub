@@ -45,12 +45,14 @@ export interface UpdateAgencyDto {
 
 // Vehicle
 export type Moneda = 'ARS' | 'USD' | 'CONSULTAR';
+export type TipoVehiculo = 'AUTO' | 'MOTO';
 
 export interface VehicleDto {
     id: string;
     agenciaId: string;
     agenciaUsername: string;
     marca: string;
+    tipoVehiculo: TipoVehiculo;
     modelo: string;
     anio: number;
     precio: number | null;
@@ -72,6 +74,7 @@ export interface VehicleDto {
 
 export interface CreateVehicleDto {
     marca: string;
+    tipoVehiculo: TipoVehiculo;
     modelo: string;
     anio: number;
     precio?: number | null;
@@ -89,6 +92,7 @@ export interface CreateVehicleDto {
 
 export interface UpdateVehicleDto {
     marca?: string;
+    tipoVehiculo?: TipoVehiculo;
     modelo?: string;
     anio?: number;
     precio?: number | null;

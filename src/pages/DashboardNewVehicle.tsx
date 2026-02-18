@@ -14,7 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Loader2, Plus, X, Image as ImageIcon, Upload, Star } from 'lucide-react';
 
-const TIPOS = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Van'];
+const TIPOS_AUTO = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Van'];
+const TIPOS_MOTO = ['Street', 'Naked', 'Deportiva', 'Touring', 'Enduro', 'Cross', 'Custom', 'Scooter', 'Trail', 'Cuatrimoto'];
 const TRANSMISIONES = ['Manual', 'Automática'];
 const COMBUSTIBLES = ['Nafta', 'Diésel', 'Gas', 'Híbrido', 'Eléctrico'];
 const COLORES = ['Blanco', 'Negro', 'Gris', 'Plata', 'Rojo', 'Azul', 'Verde', 'Otro'];
@@ -23,7 +24,7 @@ const MONEDAS = [
   { value: 'USD', label: 'Dólares (US$)' },
   { value: 'CONSULTAR', label: 'Sin precio - Consultar' },
 ];
-const MARCAS = [
+const MARCAS_AUTO = [
   "Toyota",
   "Volkswagen",
   "Fiat",
@@ -54,9 +55,32 @@ const MARCAS = [
   "Tesla",
   "Jaguar Land Rover",
   "Otro"
+];
 
-]
-  ;
+const MARCAS_MOTO = [
+  "Honda",
+  "Yamaha",
+  "Suzuki",
+  "Kawasaki",
+  "Bajaj",
+  "Zanella",
+  "Motomel",
+  "Corven",
+  "Gilera",
+  "Beta",
+  "Benelli",
+  "Royal Enfield",
+  "KTM",
+  "Ducati",
+  "Harley-Davidson",
+  "BMW",
+  "Triumph",
+  "TVS",
+  "CF Moto",
+  "Kymco",
+  "Voge",
+  "Otro"
+];
 
 import { SEO } from '@/components/common/SEO';
 
@@ -72,6 +96,7 @@ export default function DashboardNewVehicle() {
   const [showLimitModal, setShowLimitModal] = useState(false);
 
   const [formData, setFormData] = useState({
+    tipoVehiculo: 'AUTO' as 'AUTO' | 'MOTO',
     marca: '',
     modelo: '',
     anio: new Date().getFullYear(),
@@ -116,8 +141,18 @@ export default function DashboardNewVehicle() {
     navigate('/dashboard/vehiculos');
   }
 
+  const isMoto = formData.tipoVehiculo === 'MOTO';
+  const MARCAS = isMoto ? MARCAS_MOTO : MARCAS_AUTO;
+  const TIPOS = isMoto ? TIPOS_MOTO : TIPOS_AUTO;
+  const modeloPlaceholder = isMoto ? 'Ej: CB 250 Twister, YBR 125' : 'Ej: Corolla, Civic, Serie 3';
+
   const updateField = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleTipoVehiculoChange = (v: 'AUTO' | 'MOTO') => {
+    setFormData(prev => ({ ...prev, tipoVehiculo: v, marca: '', tipo: '' }));
+    setMarcaPersonalizada('');
   };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -238,6 +273,18 @@ export default function DashboardNewVehicle() {
             <h2 className="section-title">Información básica</h2>
 
             <div className="grid sm:grid-cols-2 gap-6">
+              <div className="space-y-2 sm:col-span-2">
+                <Label>Tipo de vehículo *</Label>
+                <Select value={formData.tipoVehiculo} onValueChange={handleTipoVehiculoChange} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona tipo de vehículo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="AUTO">🚗 Auto</SelectItem>
+                    <SelectItem value="MOTO">🏍️ Moto</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="marca">Marca *</Label>
                 <Select value={formData.marca} onValueChange={(v) => {
@@ -271,7 +318,7 @@ export default function DashboardNewVehicle() {
                 <Label htmlFor="modelo">Modelo *</Label>
                 <Input
                   id="modelo"
-                  placeholder="Ej: Camry, Civic, Serie 3"
+                  placeholder={modeloPlaceholder}
                   value={formData.modelo}
                   onChange={(e) => updateField('modelo', e.target.value)}
                   required
