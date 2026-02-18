@@ -32,7 +32,7 @@
 ## Cargar vehiculo
 
 - [x] Cambiar entre precio ARS, USD o Sin precio(modificar backend)
-- [ ] Si es moto o auto
+- [x] Si es moto o auto
 - [x] Traer desde el back las marcas
 - [x] Si selecciona Otro en marcas que pueda agregar la marca
 - [x] Que se pueda poner 0km
