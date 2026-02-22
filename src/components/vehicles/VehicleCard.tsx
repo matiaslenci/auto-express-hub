@@ -38,7 +38,7 @@ export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardP
       {/* Image */}
       <div className="relative aspect-[16/10] overflow-hidden">
         <img
-          src={vehicle.fotos[0] || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&h=500&fit=crop'}
+          src={vehicle.fotos[0] || '/placeholder-vehicle.svg'}
           alt={`${vehicle.marca} ${vehicle.modelo}`}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />

@@ -13,73 +13,10 @@ import { useToast } from '@/hooks/use-toast';
 import { ArrowLeft, Loader2, Plus, X, Image as ImageIcon, Upload, Star } from 'lucide-react';
 import { SEO } from '@/components/common/SEO';
 
-const TIPOS_AUTO = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Van'];
-const TIPOS_MOTO = ['Street', 'Naked', 'Deportiva', 'Touring', 'Enduro', 'Cross', 'Custom', 'Scooter', 'Trail', 'Cuatrimoto'];
-const TRANSMISIONES = ['Manual', 'Automática'];
-const COMBUSTIBLES = ['Nafta', 'Diésel', 'Gas', 'Híbrido', 'Eléctrico'];
-const COLORES = ['Blanco', 'Negro', 'Gris', 'Plata', 'Rojo', 'Azul', 'Verde', 'Otro'];
-const MONEDAS = [
-    { value: 'ARS', label: 'Pesos argentinos ($)' },
-    { value: 'USD', label: 'Dólares (US$)' },
-    { value: 'CONSULTAR', label: 'Sin precio - Consultar' },
-];
-const MARCAS_AUTO = [
-    "Toyota",
-    "Volkswagen",
-    "Fiat",
-    "Renault",
-    "Peugeot",
-    "Ford",
-    "Chevrolet",
-    "Citroën",
-    "Jeep",
-    "Nissan",
-    "BAIC",
-    "Mercedes-Benz",
-    "Hyundai",
-    "Kia",
-    "Honda",
-    "Audi",
-    "BMW",
-    "Mitsubishi",
-    "Subaru",
-    "Land Rover",
-    "Jaguar",
-    "Volvo",
-    "Suzuki",
-    "Chery",
-    "GWM",
-    "Dodge",
-    "Mini",
-    "Tesla",
-    "Jaguar Land Rover",
-    "Otro"
-];
-
-const MARCAS_MOTO = [
-    "Honda",
-    "Yamaha",
-    "Suzuki",
-    "Kawasaki",
-    "Bajaj",
-    "Zanella",
-    "Motomel",
-    "Corven",
-    "Gilera",
-    "Beta",
-    "Benelli",
-    "Royal Enfield",
-    "KTM",
-    "Ducati",
-    "Harley-Davidson",
-    "BMW",
-    "Triumph",
-    "TVS",
-    "CF Moto",
-    "Kymco",
-    "Voge",
-    "Otro"
-];
+import {
+    TIPOS_AUTO, TIPOS_MOTO, TRANSMISIONES, COMBUSTIBLES, COLORES, MONEDAS,
+    MARCAS_AUTO, MARCAS_MOTO,
+} from '@/lib/constants';
 
 export default function DashboardEditVehicle() {
     const { vehicleId } = useParams<{ vehicleId: string }>();

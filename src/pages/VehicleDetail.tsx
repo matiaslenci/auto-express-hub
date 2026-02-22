@@ -87,7 +87,7 @@ export default function VehicleDetail() {
 
   const images = vehicle.fotos.length > 0
     ? vehicle.fotos
-    : ['https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&h=800&fit=crop'];
+    : ['/placeholder-vehicle.svg'];
 
   const handleWhatsAppClick = () => {
     if (vehicle && agency) {

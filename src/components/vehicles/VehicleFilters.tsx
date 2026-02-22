@@ -23,20 +23,14 @@ export interface VehicleFiltersState {
   search: string;
 }
 
-// Tipo de cambio: 1 USD = 1465 ARS
-const TIPO_CAMBIO_USD = 1465;
+import { TIPOS_AUTO, TIPOS_MOTO, TRANSMISIONES, COMBUSTIBLES, TIPO_CAMBIO_USD } from '@/lib/constants';
 
 interface VehicleFiltersProps {
   filters: VehicleFiltersState;
   onFiltersChange: (filters: VehicleFiltersState) => void;
   marcas: string[];
-  precioMaxCatalogo: number; // Precio del auto más caro (en la moneda del filtro)
+  precioMaxCatalogo: number;
 }
-
-const TIPOS_AUTO = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Van'];
-const TIPOS_MOTO = ['Street', 'Naked', 'Deportiva', 'Touring', 'Enduro', 'Cross', 'Custom', 'Scooter', 'Trail', 'Cuatrimoto'];
-const TRANSMISIONES = ['Manual', 'Automática'];
-const COMBUSTIBLES = ['Nafta', 'Diésel', 'Gas', 'Híbrido', 'Eléctrico'];
 
 const currentYear = new Date().getFullYear();
 

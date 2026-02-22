@@ -9,10 +9,9 @@ import { MapPin, Car, Filter, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-const currentYear = new Date().getFullYear();
+import { TIPO_CAMBIO_USD } from '@/lib/constants';
 
-// Tipo de cambio: 1 USD = 1465 ARS
-const TIPO_CAMBIO_USD = 1465;
+const currentYear = new Date().getFullYear();
 
 const defaultFilters: VehicleFiltersState = {
   tipoVehiculo: '',

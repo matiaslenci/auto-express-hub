@@ -31,7 +31,7 @@ export function Footer() {
 
           {/* Copyright */}
           <p className="text-sm text-muted-foreground">
-            © 2024 AgenciaExpress. Todos los derechos reservados.
+            © {new Date().getFullYear()} AgenciaExpress. Todos los derechos reservados.
           </p>
         </div>
       </div>
