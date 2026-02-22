@@ -17,6 +17,7 @@ const plans = [
 
 import { SEO } from '@/components/common/SEO';
 
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 
 export default function Register() {
   const { register, loading, isAuthenticated } = useAuth();
@@ -42,6 +43,15 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!PASSWORD_REGEX.test(formData.password)) {
+      toast({
+        title: 'Contraseña inválida',
+        description: 'La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&)',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     const result = await register(formData);
 
@@ -168,11 +178,11 @@ export default function Register() {
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Mínimo 8 caracteres"
                   value={formData.password}
                   onChange={(e) => updateField('password', e.target.value)}
                   required
-                  minLength={6}
+                  minLength={8}
                   className="input-glow pr-10"
                 />
                 <button
@@ -183,6 +193,9 @@ export default function Register() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
+              <p className="text-xs text-muted-foreground">
+                Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&)
+              </p>
             </div>
 
             <Button type="submit" variant="gradient" className="w-full" size="lg" disabled={loading}>

@@ -190,10 +190,11 @@ export default function DashboardEditVehicle() {
         }
 
         try {
+            const { es0km, ...vehicleData } = formData;
             await updateVehicleMutation.mutateAsync({
                 id: vehicleId!,
                 data: {
-                    ...formData,
+                    ...vehicleData,
                     marca: marcaFinal,
                 },
             });

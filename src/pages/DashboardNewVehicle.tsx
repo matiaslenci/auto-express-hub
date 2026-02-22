@@ -157,8 +157,9 @@ export default function DashboardNewVehicle() {
     }
 
     try {
+      const { es0km, ...vehicleData } = formData;
       await createVehicleMutation.mutateAsync({
-        ...formData,
+        ...vehicleData,
         marca: marcaFinal,
         activo: true,
       });

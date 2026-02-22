@@ -13,6 +13,8 @@
 - [x] Ver detalle da error 404
 - [x] Que se pueda ver el detalle de los vehiculos desde el dashboard
 - [ ] Analitycs
+- [ ] Bug de login cuando toco el dashboard
+- [ ] Auditar seguridad del front, sobretodo los subdominios variables
 
 ## Perfil
 
