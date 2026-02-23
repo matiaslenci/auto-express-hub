@@ -15,7 +15,7 @@ export function PlanLimitModal({ isOpen, onClose, plan, limite }: PlanLimitModal
 
     const planName = PLAN_NAMES[plan] || 'Básico';
     const message = encodeURIComponent(
-        `Hola! Me gustaría actualizar mi plan de AgenciaExpress. Actualmente tengo el plan ${planName} y me gustaría conocer las opciones disponibles.`
+        `Hola! Me gustaría actualizar mi plan de CatálogoVehículos. Actualmente tengo el plan ${planName} y me gustaría conocer las opciones disponibles.`
     );
     const whatsappUrl = `https://wa.me/${WHATSAPP_SUPPORT.replace(/[^0-9]/g, '')}?text=${message}`;
 

@@ -58,7 +58,7 @@ export default function Register() {
     if (result.success) {
       toast({
         title: "¡Cuenta creada!",
-        description: "Bienvenido a AgenciaExpress.",
+        description: "Bienvenido a CatálogoVehículos.",
       });
       navigate('/dashboard/perfil');
     } else {
@@ -73,8 +73,8 @@ export default function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden px-4 py-12">
       <SEO
-        title="Registrar Agencia - AgenciaExpress"
-        description="Crea tu cuenta en AgenciaExpress y comienza a gestionar tu inventario de vehículos hoy mismo."
+        title="Registrar Agencia - CatálogoVehículos"
+        description="Crea tu cuenta en CatálogoVehículos y comienza a gestionar tu inventario de vehículos hoy mismo."
       />
       {/* Background Effects */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
@@ -87,7 +87,7 @@ export default function Register() {
             <Car className="h-6 w-6 text-primary" />
           </div>
           <span className="text-2xl font-bold">
-            Agencia<span className="text-primary">Express</span>
+            Catálogo<span className="text-primary">Vehículos</span>
           </span>
         </Link>
 
@@ -145,7 +145,7 @@ export default function Register() {
             <div className="space-y-2">
               <Label htmlFor="username">Nombre de usuario (URL)</Label>
               <div className="flex items-center gap-2">
-                <span className="text-muted-foreground text-sm">agencia-express.com/</span>
+                <span className="text-muted-foreground text-sm">catalogovehiculos.com/</span>
                 <Input
                   id="username"
                   placeholder="miagencia"

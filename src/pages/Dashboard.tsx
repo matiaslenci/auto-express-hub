@@ -77,7 +77,7 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout>
-      <SEO title="Dashboard | AgenciaExpress" description="Resumen de tu agencia." />
+      <SEO title="Dashboard | CatálogoVehículos" description="Resumen de tu agencia." />
       <div className="space-y-8">
         {/* Header */}
         <div className="dashboard-page-header">

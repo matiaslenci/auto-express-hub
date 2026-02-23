@@ -11,7 +11,7 @@ const features = [
   {
     icon: Smartphone,
     title: 'URL Personalizada',
-    description: 'Tu catálogo accesible desde agencia-express.com/tuagencia',
+    description: 'Tu catálogo accesible desde catalogovehiculos.com/tuagencia',
   },
   {
     icon: MessageCircle,

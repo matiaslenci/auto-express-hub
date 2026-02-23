@@ -216,7 +216,7 @@ export default function DashboardEditVehicle() {
 
     return (
         <DashboardLayout>
-            <SEO title="Editar Vehículo | AgenciaExpress" description="Edita los datos de tu vehículo." />
+            <SEO title="Editar Vehículo | CatálogoVehículos" description="Edita los datos de tu vehículo." />
             <div className="max-w-3xl mx-auto">
                 <div className="dashboard-page-header flex items-center gap-4">
                     <button

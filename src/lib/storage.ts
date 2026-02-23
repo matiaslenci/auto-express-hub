@@ -1,4 +1,4 @@
-// Storage utilities for Agencia Express
+// Storage utilities for Catálogo Vehículos
 // Uses localStorage for data persistence
 
 export interface Agency {

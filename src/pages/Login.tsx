@@ -48,8 +48,8 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden px-4">
       <SEO
-        title="Iniciar Sesión - AgenciaExpress"
-        description="Ingresa a tu cuenta de AgenciaExpress para gestionar tu inventario."
+        title="Iniciar Sesión - CatálogoVehículos"
+        description="Ingresa a tu cuenta de CatálogoVehículos para gestionar tu inventario."
       />
       {/* Background Effects */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
@@ -62,7 +62,7 @@ export default function Login() {
             <Car className="h-6 w-6 text-primary" />
           </div>
           <span className="text-2xl font-bold">
-            Agencia<span className="text-primary">Express</span>
+            Catálogo<span className="text-primary">Vehículos</span>
           </span>
         </Link>
 

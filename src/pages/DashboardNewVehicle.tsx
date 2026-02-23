@@ -189,7 +189,7 @@ export default function DashboardNewVehicle() {
 
   return (
     <DashboardLayout>
-      <SEO title="Nuevo Vehículo | AgenciaExpress" description="Publica un nuevo vehículo en tu catálogo." />
+      <SEO title="Nuevo Vehículo | CatálogoVehículos" description="Publica un nuevo vehículo en tu catálogo." />
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="dashboard-page-header flex items-center gap-4">

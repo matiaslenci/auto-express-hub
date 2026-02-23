@@ -121,7 +121,7 @@ export default function DashboardProfile() {
 
   return (
     <DashboardLayout>
-      <SEO title="Mi Perfil | AgenciaExpress" description="Administra la información de tu agencia." />
+      <SEO title="Mi Perfil | CatálogoVehículos" description="Administra la información de tu agencia." />
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="dashboard-page-header">
@@ -361,7 +361,7 @@ export default function DashboardProfile() {
                   className="w-full gap-2"
                   onClick={() => {
                     const message = encodeURIComponent(
-                      `Hola! Me gustaría actualizar mi plan de AgenciaExpress. Actualmente tengo el plan ${PLAN_NAMES[user?.plan || 'basico']} y me gustaría conocer las opciones disponibles.`
+                      `Hola! Me gustaría actualizar mi plan de CatálogoVehículos. Actualmente tengo el plan ${PLAN_NAMES[user?.plan || 'basico']} y me gustaría conocer las opciones disponibles.`
                     );
                     window.open(`https://wa.me/${WHATSAPP_SUPPORT.replace(/[^0-9]/g, '')}?text=${message}`, '_blank');
                   }}

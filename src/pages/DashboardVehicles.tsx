@@ -135,7 +135,7 @@ export default function DashboardVehicles() {
 
   return (
     <DashboardLayout>
-      <SEO title="Mis Vehículos | AgenciaExpress" description="Gestiona tu inventario de vehículos." />
+      <SEO title="Mis Vehículos | CatálogoVehículos" description="Gestiona tu inventario de vehículos." />
       <div className="space-y-6">
         {/* Header */}
         <div className="dashboard-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
