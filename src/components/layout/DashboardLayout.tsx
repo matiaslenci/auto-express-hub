@@ -13,7 +13,6 @@ import {
   ExternalLink,
   ChevronRight
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { PLAN_NAMES } from '@/lib/storage';
 
@@ -82,7 +81,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <div className="p-2 rounded-xl bg-primary/10">
                   <Car className="h-5 w-5 text-primary" />
                 </div>
-                <span className="font-bold text-lg">CatálogoVehículos</span>
+                <span className="font-bold text-md">CatálogoVehículos</span>
               </Link>
               <button
                 onClick={() => setSidebarOpen(false)}
