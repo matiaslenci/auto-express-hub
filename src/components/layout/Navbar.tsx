@@ -25,7 +25,7 @@ export function Navbar() {
               <Car className="h-6 w-6 text-primary" />
             </div>
             <span className="text-xl font-bold">
-              Agencia<span className="text-primary">Express</span>
+              Catálogo<span className="text-primary">Vehículos</span>
             </span>
           </Link>
 

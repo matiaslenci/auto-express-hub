@@ -52,14 +52,10 @@ apiClient.interceptors.response.use(
             // Server responded with error status
             const apiError = error.response.data;
 
-            // Handle 401 Unauthorized - clear token and redirect to login
+            // Handle 401 Unauthorized - clear token
+            // The React AuthContext will handle the redirect to login
             if (error.response.status === 401) {
                 removeToken();
-                // Only redirect if not already on login/register page
-                if (!window.location.pathname.includes('/login') &&
-                    !window.location.pathname.includes('/registro')) {
-                    window.location.href = '/login';
-                }
             }
 
             // Format error message
