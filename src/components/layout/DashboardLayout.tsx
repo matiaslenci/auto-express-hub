@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Plus,
   User,
+  BarChart3,
   LogOut,
   Menu,
   X,
@@ -22,6 +23,7 @@ interface DashboardLayoutProps {
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/dashboard/analiticas', icon: BarChart3, label: 'Analíticas' },
   { href: '/dashboard/vehiculos', icon: Car, label: 'Vehículos' },
   { href: '/dashboard/vehiculos/nuevo', icon: Plus, label: 'Nuevo vehículo' },
   { href: '/dashboard/perfil', icon: User, label: 'Perfil' },

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Vehicle } from '@/lib/storage';
-import { MapPin, Gauge, Fuel, Settings2 } from 'lucide-react';
+import { MapPin, Gauge, Fuel, Settings2, Car, Bike } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface VehicleCardProps {
@@ -36,12 +36,23 @@ export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardP
       className={cn("vehicle-card block group", className)}
     >
       {/* Image */}
-      <div className="relative aspect-[16/10] overflow-hidden">
-        <img
-          src={vehicle.fotos[0] || '/placeholder-vehicle.svg'}
-          alt={`${vehicle.marca} ${vehicle.modelo}`}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-        />
+      <div className="relative aspect-[16/10] overflow-hidden bg-muted flex items-center justify-center">
+        {vehicle.fotos.length > 0 ? (
+          <img
+            src={vehicle.fotos[0]}
+            alt={`${vehicle.marca} ${vehicle.modelo}`}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center text-muted-foreground/40 group-hover:scale-110 transition-transform duration-500">
+            {(vehicle as any).tipoVehiculo === 'MOTO' ? (
+              <Bike className="h-16 w-16" strokeWidth={1.5} />
+            ) : (
+              <Car className="h-16 w-16" strokeWidth={1.5} />
+            )}
+            <span className="text-[10px] uppercase tracking-widest mt-2 font-medium">Sin fotos</span>
+          </div>
+        )}
         {/* Overlay Gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 

@@ -14,6 +14,7 @@ import {
   Calendar,
   Palette,
   Car,
+  Bike,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
@@ -85,9 +86,7 @@ export default function VehicleDetail() {
 
   const formattedKm = new Intl.NumberFormat('es-AR').format(vehicle.kilometraje);
 
-  const images = vehicle.fotos.length > 0
-    ? vehicle.fotos
-    : ['/placeholder-vehicle.svg'];
+  const images = vehicle.fotos;
 
   const handleWhatsAppClick = () => {
     if (vehicle && agency) {
@@ -137,11 +136,22 @@ export default function VehicleDetail() {
             <div className="space-y-4">
               {/* Main Image */}
               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden glass-card bg-black/90">
-                <img
-                  src={images[currentImageIndex]}
-                  alt={`${vehicle.marca} ${vehicle.modelo}`}
-                  className="w-full h-full object-contain"
-                />
+                {images.length > 0 ? (
+                  <img
+                    src={images[currentImageIndex]}
+                    alt={`${vehicle.marca} ${vehicle.modelo}`}
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/20">
+                    {(vehicle as any).tipoVehiculo === 'MOTO' ? (
+                      <Bike className="h-32 w-32" strokeWidth={1} />
+                    ) : (
+                      <Car className="h-32 w-32" strokeWidth={1} />
+                    )}
+                    <span className="text-sm uppercase tracking-widest mt-4 font-medium opacity-50">Sin fotos disponibles</span>
+                  </div>
+                )}
 
                 {images.length > 1 && (
                   <>

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { vehicleService } from '@/api/services/vehicle.service';
-import { VehicleDto, CreateVehicleDto, UpdateVehicleDto, VehicleFilters } from '@/api/types';
+import { analyticsService } from '@/api/services/analytics.service';
+import { VehicleDto, CreateVehicleDto, UpdateVehicleDto, VehicleFilters, AgencyAnalyticsSummaryDto, DailyStatsDto } from '@/api/types';
 
 // Query keys
 export const vehicleKeys = {
@@ -87,7 +88,7 @@ export function useDeleteVehicle() {
  */
 export function useTrackView() {
     return useMutation({
-        mutationFn: (id: string) => vehicleService.trackView(id),
+        mutationFn: (id: string) => analyticsService.trackView(id),
     });
 }
 
@@ -96,6 +97,27 @@ export function useTrackView() {
  */
 export function useTrackWhatsAppClick() {
     return useMutation({
-        mutationFn: (id: string) => vehicleService.trackWhatsAppClick(id),
+        mutationFn: (id: string) => analyticsService.trackWhatsAppClick(id),
+    });
+}
+
+/**
+ * Hook to fetch agency analytics summary
+ */
+export function useAgencyAnalytics() {
+    return useQuery({
+        queryKey: ['analytics', 'agency', 'summary'],
+        queryFn: () => analyticsService.getAgencySummary(),
+    });
+}
+
+/**
+ * Hook to fetch vehicle specific analytics
+ */
+export function useVehicleAnalytics(id: string, days: number = 30) {
+    return useQuery({
+        queryKey: ['analytics', 'vehicle', id, days],
+        queryFn: () => analyticsService.getVehicleStats(id, days),
+        enabled: !!id,
     });
 }

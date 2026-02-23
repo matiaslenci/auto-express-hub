@@ -79,5 +79,3 @@ export const MONEDAS = [
     { value: 'CONSULTAR', label: 'Sin precio - Consultar' },
 ];
 
-// === Imagen placeholder para vehículos sin foto ===
-export const VEHICLE_PLACEHOLDER_IMAGE = '/placeholder-vehicle.svg';

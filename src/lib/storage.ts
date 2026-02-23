@@ -56,9 +56,9 @@ export const PLAN_LIMITS = {
 export const WHATSAPP_SUPPORT = '+5493425765843';
 
 export const PLAN_PRICES = {
-  basico: 42000,
-  profesional: 100000,
-  premium: 160000,
+  basico: 17000,
+  profesional: 46000,
+  premium: 78000,
 } as const;
 
 export const PLAN_NAMES = {

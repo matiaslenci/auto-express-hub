@@ -3,8 +3,10 @@ import { Navigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { getVehiclesByAgency, Vehicle, PLAN_LIMITS, PLAN_NAMES } from '@/lib/storage';
-import { Car, Eye, MessageCircle, TrendingUp, BarChart3 } from 'lucide-react';
+import { Car, Bike, Eye, MessageCircle, TrendingUp, BarChart3, ArrowUpRight } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 
 import { SEO } from '@/components/common/SEO';
@@ -132,9 +134,16 @@ export default function Dashboard() {
 
         {/* Top Vehicles */}
         <div className="glass-card p-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
-          <div className="flex items-center gap-2 mb-6">
-            <BarChart3 className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-bold">Vehículos más vistos</h2>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-bold">Vehículos más vistos</h2>
+            </div>
+            <Link to="/dashboard/analiticas">
+              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 gap-1">
+                Ver todas <ArrowUpRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
 
           {topVehicles.length > 0 ? (
@@ -148,12 +157,22 @@ export default function Dashboard() {
                     <span className="w-6 text-center font-bold text-muted-foreground">
                       {index + 1}
                     </span>
-                    <div className="w-16 h-12 rounded-lg overflow-hidden flex-shrink-0">
-                      <img
-                        src={vehicle.fotos[0] || '/placeholder-vehicle.svg'}
-                        alt={`${vehicle.marca} ${vehicle.modelo}`}
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-muted flex items-center justify-center">
+                      {vehicle.fotos.length > 0 ? (
+                        <img
+                          src={vehicle.fotos[0]}
+                          alt={`${vehicle.marca} ${vehicle.modelo}`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="text-muted-foreground/30">
+                          {(vehicle as any).tipoVehiculo === 'MOTO' ? (
+                            <Bike className="h-6 w-6" strokeWidth={1} />
+                          ) : (
+                            <Car className="h-6 w-6" strokeWidth={1} />
+                          )}
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">

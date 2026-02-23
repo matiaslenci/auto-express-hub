@@ -15,7 +15,9 @@ import {
   Edit,
   MoreVertical,
   Power,
-  PowerOff
+  PowerOff,
+  Car,
+  Bike
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -203,11 +205,22 @@ export default function DashboardVehicles() {
               >
                 {/* Image */}
                 <div className="relative aspect-[16/10] overflow-hidden">
-                  <img
-                    src={vehicle.fotos[0] || '/placeholder-vehicle.svg'}
-                    alt={`${vehicle.marca} ${vehicle.modelo}`}
-                    className="w-full h-full object-cover"
-                  />
+                  {vehicle.fotos.length > 0 ? (
+                    <img
+                      src={vehicle.fotos[0]}
+                      alt={`${vehicle.marca} ${vehicle.modelo}`}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-muted text-muted-foreground/30">
+                      {(vehicle as any).tipoVehiculo === 'MOTO' ? (
+                        <Bike className="h-12 w-12" strokeWidth={1} />
+                      ) : (
+                        <Car className="h-12 w-12" strokeWidth={1} />
+                      )}
+                      <span className="text-[10px] uppercase tracking-wider mt-2 font-medium">Sin fotos</span>
+                    </div>
+                  )}
                   {!vehicle.activo && (
                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                       <span className="px-3 py-1 bg-muted rounded-full text-sm font-medium">

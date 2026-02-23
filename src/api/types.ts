@@ -134,3 +134,17 @@ export interface PaginatedResponse<T> {
     page: number;
     limit: number;
 }
+
+// Analytics
+export interface DailyStatsDto {
+    date: string;
+    viewsCount: number;
+    clicksCount: number;
+}
+
+export interface AgencyAnalyticsSummaryDto {
+    topVehicles: (VehicleDto & { viewsCount: number; clicksCount: number })[];
+    totalViews: number;
+    totalClicks: number;
+    conversionRate: number;
+}

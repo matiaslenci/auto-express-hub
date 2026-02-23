@@ -54,6 +54,7 @@
 - [ ] Integrar api de dolarito
 - [ ] Que el precio tenga una mascara de puntos
 - [ ] Que se pueda arrastrar imagenes
+- [ ] Doble publicación(instagram/facebook y la web)
 
 ## Usuario
 
