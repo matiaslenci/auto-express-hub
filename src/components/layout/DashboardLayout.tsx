@@ -53,8 +53,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         </button>
         <div className="flex-1 flex items-center justify-center">
           <Link to="/" className="flex items-center gap-2">
-            <Car className="h-5 w-5 text-primary" />
-            <span className="font-bold">CatálogoVehículos</span>
+            <img src="/assets/icono.png" alt="Logo" className="h-7 w-7" />
+            <span className="text-base font-bold">Catálogo<span className="text-primary">Vehículos</span></span>
           </Link>
         </div>
       </header>
@@ -78,10 +78,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="p-6 border-b border-sidebar-border">
             <div className="flex items-center justify-between">
               <Link to="/" className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-primary/10">
-                  <Car className="h-5 w-5 text-primary" />
-                </div>
-                <span className="font-bold text-md">CatálogoVehículos</span>
+                <img src="/assets/icono.png" alt="Logo" className="h-8 w-8" />
+                <span className="text-base font-bold">Catálogo<span className="text-primary">Vehículos</span></span>
               </Link>
               <button
                 onClick={() => setSidebarOpen(false)}
