@@ -12,7 +12,8 @@ import {
   Menu,
   X,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Shield
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PLAN_NAMES } from '@/lib/storage';
@@ -113,7 +114,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1">
-            {navItems.map((item) => {
+            {[
+              ...navItems,
+              ...(user?.isAdmin ? [{ href: '/dashboard/admin', icon: Shield, label: 'Admin' }] : [])
+            ].map((item) => {
               const isActive = location.pathname === item.href;
               return (
                 <Link

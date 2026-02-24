@@ -15,6 +15,7 @@ import DashboardProfile from "./pages/DashboardProfile";
 import DashboardAnalytics from "./pages/DashboardAnalytics";
 import AgencyCatalog from "./pages/AgencyCatalog";
 import VehicleDetail from "./pages/VehicleDetail";
+import DashboardAdmin from "./pages/DashboardAdmin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="/dashboard/vehiculos/:vehicleId/editar" element={<DashboardEditVehicle />} />
             <Route path="/dashboard/perfil" element={<DashboardProfile />} />
             <Route path="/dashboard/analiticas" element={<DashboardAnalytics />} />
+            <Route path="/dashboard/admin" element={<DashboardAdmin />} />
             <Route path="/:username" element={<AgencyCatalog />} />
             <Route path="/:username/:vehicleId" element={<VehicleDetail />} />
             <Route path="*" element={<NotFound />} />

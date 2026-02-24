@@ -31,6 +31,8 @@ export interface AgencyDto {
     whatsapp?: string;
     plan: 'basico' | 'profesional' | 'premium';
     limitePublicaciones: number;
+    isActive: boolean;
+    isAdmin: boolean;
     createdAt: string;
     updatedAt: string;
 }
