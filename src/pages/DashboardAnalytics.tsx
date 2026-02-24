@@ -28,6 +28,8 @@ import {
 } from 'recharts';
 import { SEO } from '@/components/common/SEO';
 import { cn } from '@/lib/utils';
+import { format, parseISO } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 export default function DashboardAnalytics() {
     const { loading: authLoading, isAuthenticated } = useAuth();
@@ -64,30 +66,25 @@ export default function DashboardAnalytics() {
         },
         {
             label: 'Tasa de Conversión',
-            value: `${summary?.conversionRate.toFixed(1)}%`,
+            value: `${(summary?.conversionRate || 0).toFixed(1)}%`,
             icon: MousePointer2,
             color: 'text-warning',
             bgColor: 'bg-warning/10',
         },
         {
             label: 'Interacción',
-            value: summary?.totalViews ? (summary.totalClicks / summary.totalViews * 10).toFixed(1) : '0',
+            value: summary?.totalViews ? ((summary.totalClicks || 0) / summary.totalViews * 10).toFixed(1) : '0',
             icon: TrendingUp,
             color: 'text-primary',
             bgColor: 'bg-primary/10',
         },
     ];
 
-    // Mock data for the trend chart until the backend provides history
-    const chartData = [
-        { name: 'Lunes', views: 45, clicks: 5 },
-        { name: 'Martes', views: 52, clicks: 8 },
-        { name: 'Miércoles', views: 38, clicks: 4 },
-        { name: 'Jueves', views: 65, clicks: 12 },
-        { name: 'Viernes', views: 88, clicks: 15 },
-        { name: 'Sábado', views: 72, clicks: 10 },
-        { name: 'Domingo', views: 95, clicks: 18 },
-    ];
+    const chartData = summary?.dailyHistory?.map(item => ({
+        name: format(parseISO(item.date), 'dd MMM', { locale: es }),
+        views: item.viewsCount,
+        clicks: item.clicksCount,
+    })) || [];
 
     return (
         <DashboardLayout>
@@ -187,11 +184,11 @@ export default function DashboardAnalytics() {
                         </div>
 
                         <div className="space-y-6">
-                            {summary?.topVehicles.map((vehicle, index) => (
+                            {summary?.topVehicles?.map((vehicle, index) => (
                                 <div key={vehicle.id} className="group relative pr-12">
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 rounded-lg bg-muted overflow-hidden flex-shrink-0 flex items-center justify-center">
-                                            {vehicle.fotos.length > 0 ? (
+                                            {vehicle.fotos?.length > 0 ? (
                                                 <img
                                                     src={vehicle.fotos[0]}
                                                     alt={vehicle.modelo}
@@ -209,12 +206,12 @@ export default function DashboardAnalytics() {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="font-semibold text-sm truncate">{vehicle.marca} {vehicle.modelo}</p>
-                                            <p className="text-xs text-muted-foreground">{vehicle.viewsCount} vistas • {vehicle.clicksCount} clicks</p>
+                                            <p className="text-xs text-muted-foreground">{vehicle.vistas} vistas • {vehicle.clicksWhatsapp} clicks</p>
                                         </div>
                                     </div>
                                     <div className="absolute right-0 top-1/2 -translate-y-1/2 text-right">
                                         <p className="text-sm font-bold text-success">
-                                            {(vehicle.clicksCount / (vehicle.viewsCount || 1) * 100).toFixed(0)}%
+                                            {((vehicle.clicksWhatsapp || 0) / (vehicle.vistas || 1) * 100).toFixed(0)}%
                                         </p>
                                         <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Conv.</p>
                                     </div>

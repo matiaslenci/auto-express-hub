@@ -143,8 +143,9 @@ export interface DailyStatsDto {
 }
 
 export interface AgencyAnalyticsSummaryDto {
-    topVehicles: (VehicleDto & { viewsCount: number; clicksCount: number })[];
+    topVehicles: VehicleDto[];
     totalViews: number;
     totalClicks: number;
     conversionRate: number;
+    dailyHistory: DailyStatsDto[];
 }
