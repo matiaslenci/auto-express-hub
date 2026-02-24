@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
-import { getVehiclesByAgency, Vehicle, PLAN_LIMITS, PLAN_NAMES } from '@/lib/storage';
+import { PLAN_LIMITS, PLAN_NAMES } from '@/lib/storage';
+import { useVehicles, useAgencyAnalytics } from '@/hooks/useVehicles';
+import { VehicleDto } from '@/api/types';
 import { Car, Bike, Eye, MessageCircle, TrendingUp, BarChart3, ArrowUpRight } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -14,15 +16,10 @@ import { SEO } from '@/components/common/SEO';
 export default function Dashboard() {
   const { user, loading, isAuthenticated } = useAuth();
 
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const { data: vehicles = [], isLoading: vehiclesLoading } = useVehicles({ agenciaUsername: user?.username });
+  const { data: summary, isLoading: analyticsLoading } = useAgencyAnalytics();
 
-  useEffect(() => {
-    if (user) {
-      setVehicles(getVehiclesByAgency(user.username));
-    }
-  }, [user]);
-
-  if (loading) {
+  if (loading || vehiclesLoading || analyticsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
@@ -35,14 +32,12 @@ export default function Dashboard() {
   }
 
   const activeVehicles = vehicles.filter(v => v.activo);
-  const totalViews = vehicles.reduce((acc, v) => acc + v.vistas, 0);
-  const totalWhatsappClicks = vehicles.reduce((acc, v) => acc + v.clicksWhatsapp, 0);
+  const totalViews = summary?.totalViews || 0;
+  const totalWhatsappClicks = summary?.totalClicks || 0;
   const limit = PLAN_LIMITS[user?.plan || 'basico'];
   const usagePercent = limit === Infinity ? 0 : (activeVehicles.length / limit) * 100;
 
-  const topVehicles = [...vehicles]
-    .sort((a, b) => b.vistas - a.vistas)
-    .slice(0, 5);
+  const topVehicles = summary?.topVehicles || [];
 
   const stats = [
     {
@@ -158,7 +153,7 @@ export default function Dashboard() {
                       {index + 1}
                     </span>
                     <div className="w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-muted flex items-center justify-center">
-                      {vehicle.fotos.length > 0 ? (
+                      {vehicle.fotos?.length > 0 ? (
                         <img
                           src={vehicle.fotos[0]}
                           alt={`${vehicle.marca} ${vehicle.modelo}`}
