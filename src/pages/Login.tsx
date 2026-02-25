@@ -19,9 +19,7 @@ export default function Login() {
 
   // Redirect when user becomes authenticated
   useEffect(() => {
-    console.log('Login - isAuthenticated:', isAuthenticated, 'loading:', loading);
     if (isAuthenticated && !loading) {
-      console.log('Redirecting to dashboard...');
       navigate('/dashboard', { replace: true });
     }
   }, [isAuthenticated, loading, navigate]);

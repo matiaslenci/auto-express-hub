@@ -30,30 +30,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         const loadUser = async () => {
             const token = getToken();
-            console.log('[AuthProvider] Token encontrado:', !!token);
             if (token) {
                 try {
                     const payload = JSON.parse(atob(token.split('.')[1]));
-                    console.log('[AuthProvider] Payload del token:', payload);
 
                     // Verificar si el token está expirado
                     if (payload.exp && payload.exp * 1000 < Date.now()) {
-                        console.log('[AuthProvider] Token expirado');
                         authService.logout();
                         setLoading(false);
                         return;
                     }
 
                     if (payload.username) {
-                        console.log('[AuthProvider] Buscando agencia para:', payload.username);
                         const agency = await agencyService.getAgencyByUsername(payload.username);
-                        console.log('[AuthProvider] Agencia cargada:', agency);
                         setUser(agency);
-                    } else {
-                        console.log('[AuthProvider] No hay username en el token. Campos:', Object.keys(payload));
                     }
                 } catch (error) {
-                    console.error('[AuthProvider] Error al cargar usuario:', error);
                     // Solo hacer logout si el error es de autenticación (401)
                     const statusCode = (error as any)?.statusCode;
                     if (statusCode === 401) {
@@ -76,7 +68,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             return { success: true };
         } catch (error: any) {
             setLoading(false);
-            console.error('Error de inicio de sesión:', error);
             return {
                 success: false,
                 error: error.message || 'Credenciales incorrectas'
@@ -122,7 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 const updatedUser = await agencyService.getAgencyByUsername(user.username);
                 setUser(updatedUser);
             } catch (error) {
-                console.error('Error al actualizar usuario:', error);
+                // error fetching user
             }
         }
     }, [user]);
