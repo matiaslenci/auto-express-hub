@@ -9,7 +9,7 @@ import { Car, Bike, Eye, MessageCircle, TrendingUp, BarChart3, ArrowUpRight } fr
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { cn } from '@/lib/utils';
+import { cn, resolveImageUrl } from '@/lib/utils';
 
 import { SEO } from '@/components/common/SEO';
 
@@ -155,7 +155,7 @@ export default function Dashboard() {
                     <div className="w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-muted flex items-center justify-center">
                       {vehicle.fotos?.length > 0 ? (
                         <img
-                          src={vehicle.fotos[0]}
+                          src={resolveImageUrl(vehicle.fotos[0])}
                           alt={`${vehicle.marca} ${vehicle.modelo}`}
                           className="w-full h-full object-cover"
                         />

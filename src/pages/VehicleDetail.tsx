@@ -18,7 +18,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, resolveImageUrl } from '@/lib/utils';
 
 export default function VehicleDetail() {
   const { username, vehicleId } = useParams<{ username: string; vehicleId: string }>();
@@ -138,7 +138,7 @@ export default function VehicleDetail() {
               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden glass-card bg-black/90">
                 {images.length > 0 ? (
                   <img
-                    src={images[currentImageIndex]}
+                    src={resolveImageUrl(images[currentImageIndex])}
                     alt={`${vehicle.marca} ${vehicle.modelo}`}
                     className="w-full h-full object-contain"
                   />
@@ -191,7 +191,7 @@ export default function VehicleDetail() {
                       )}
                     >
                       <img
-                        src={img}
+                        src={resolveImageUrl(img)}
                         alt={`Vista ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
@@ -268,7 +268,7 @@ export default function VehicleDetail() {
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-14 h-14 rounded-xl bg-muted overflow-hidden flex items-center justify-center">
                     {agency.logo ? (
-                      <img src={agency.logo} alt={agency.nombre} className="w-full h-full object-cover" />
+                      <img src={resolveImageUrl(agency.logo)} alt={agency.nombre} className="w-full h-full object-cover" />
                     ) : (
                       <Car className="h-7 w-7 text-muted-foreground" />
                     )}

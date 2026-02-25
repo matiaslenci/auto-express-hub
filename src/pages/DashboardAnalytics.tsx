@@ -27,7 +27,7 @@ import {
     Cell
 } from 'recharts';
 import { SEO } from '@/components/common/SEO';
-import { cn } from '@/lib/utils';
+import { cn, resolveImageUrl } from '@/lib/utils';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -190,7 +190,7 @@ export default function DashboardAnalytics() {
                                         <div className="w-12 h-12 rounded-lg bg-muted overflow-hidden flex-shrink-0 flex items-center justify-center">
                                             {vehicle.fotos?.length > 0 ? (
                                                 <img
-                                                    src={vehicle.fotos[0]}
+                                                    src={resolveImageUrl(vehicle.fotos[0])}
                                                     alt={vehicle.modelo}
                                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                                 />

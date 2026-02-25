@@ -68,7 +68,7 @@ export const TIPOS_AUTO = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Va
 export const TIPOS_MOTO = ['Street', 'Naked', 'Deportiva', 'Touring', 'Enduro', 'Cross', 'Custom', 'Scooter', 'Trail', 'Cuatrimoto'] as const;
 
 // === Especificaciones ===
-export const TRANSMISIONES = ['Manual', 'Automática'] as const;
+export const TRANSMISIONES = ['Manual', 'Automático'] as const;
 export const COMBUSTIBLES = ['Nafta', 'Diésel', 'Gas', 'Híbrido', 'Eléctrico'] as const;
 export const COLORES = ['Blanco', 'Negro', 'Gris', 'Plata', 'Rojo', 'Azul', 'Verde', 'Otro'] as const;
 
