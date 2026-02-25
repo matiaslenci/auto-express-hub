@@ -1,6 +1,6 @@
  ## Landing
 
-- [ ] Modificar datos no correctos del Hero como la cantidad de agencias y vehículos
+- [x] Modificar datos no correctos del Hero como la cantidad de agencias y vehículos
 - [ ] Arreglar el badge del hero en vista mobile
 - [x] Definir precios y cantidad de publicaciones
 
@@ -19,7 +19,7 @@
 ## Perfil
 
 - [x] Poder editar la foto de perfil y portada, agregar desde el backend
-- [x] Cambiar plan actual
+- [x] Cambiar plan actual 
 
 ## Catalogo
 
@@ -39,7 +39,7 @@
 - [x] Si selecciona Otro en marcas que pueda agregar la marca
 - [x] Que se pueda poner 0km
 - [x] Ubicacion del auto distinta a la de la agencia(back)
-- [ ] Si cargan el auto sin foto, poner una foto por default, quizas el logo
+- [x] Si cargan el auto sin foto, poner una foto por default, quizas el logo
 
 ## Detalle de auto
 

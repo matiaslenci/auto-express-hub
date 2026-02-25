@@ -89,7 +89,7 @@ export default function AgencyCatalog() {
       if (filters.search && !`${v.marca} ${v.modelo}`.toLowerCase().includes(filters.search.toLowerCase())) {
         return false;
       }
-      if (filters.tipoVehiculo && (v as any).tipoVehiculo !== filters.tipoVehiculo) return false;
+      if (filters.tipoVehiculo && v.tipoVehiculo !== filters.tipoVehiculo) return false;
       if (filters.marca && v.marca !== filters.marca) return false;
       if (filters.tipo && v.tipo !== filters.tipo) return false;
       if (filters.transmision && v.transmision !== filters.transmision) return false;

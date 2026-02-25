@@ -89,7 +89,7 @@ export default function VehicleDetail() {
   const images = vehicle.fotos;
 
   const handleWhatsAppClick = () => {
-    if (vehicle && agency) {
+    if (vehicle && agency && agency.whatsapp && /^\d+$/.test(agency.whatsapp)) {
       trackWhatsAppMutation.mutate(vehicle.id);
       const message = encodeURIComponent(
         `Hola, me interesa el ${vehicle.marca} ${vehicle.modelo} ${vehicle.anio}. ¿Está disponible?`
@@ -144,7 +144,7 @@ export default function VehicleDetail() {
                   />
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/20">
-                    {(vehicle as any).tipoVehiculo === 'MOTO' ? (
+                    {vehicle.tipoVehiculo === 'MOTO' ? (
                       <Bike className="h-32 w-32" strokeWidth={1} />
                     ) : (
                       <Car className="h-32 w-32" strokeWidth={1} />
@@ -207,7 +207,7 @@ export default function VehicleDetail() {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
-                    {(vehicle as any).tipoVehiculo === 'MOTO' ? '🏍️ Moto' : '🚗 Auto'}
+                    {vehicle.tipoVehiculo === 'MOTO' ? '🏍️ Moto' : '🚗 Auto'}
                   </span>
                   <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
                     {vehicle.tipo}

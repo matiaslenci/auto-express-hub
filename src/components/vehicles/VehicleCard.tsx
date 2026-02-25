@@ -45,7 +45,7 @@ export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardP
           />
         ) : (
           <div className="flex flex-col items-center justify-center text-muted-foreground/40 group-hover:scale-110 transition-transform duration-500">
-            {(vehicle as any).tipoVehiculo === 'MOTO' ? (
+            {vehicle.tipoVehiculo === 'MOTO' ? (
               <Bike className="h-16 w-16" strokeWidth={1.5} />
             ) : (
               <Car className="h-16 w-16" strokeWidth={1.5} />
@@ -58,7 +58,7 @@ export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardP
 
         {/* Type Badge */}
         <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 dark:bg-black/50 backdrop-blur-md text-xs font-medium text-white shadow-lg">
-          {(vehicle as any).tipoVehiculo === 'MOTO' ? '🏍️' : '🚗'} {vehicle.tipo}
+          {vehicle.tipoVehiculo === 'MOTO' ? '🏍️' : '🚗'} {vehicle.tipo}
         </span>
       </div>
 

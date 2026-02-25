@@ -161,7 +161,7 @@ export default function Dashboard() {
                         />
                       ) : (
                         <div className="text-muted-foreground/30">
-                          {(vehicle as any).tipoVehiculo === 'MOTO' ? (
+                          {vehicle.tipoVehiculo === 'MOTO' ? (
                             <Bike className="h-6 w-6" strokeWidth={1} />
                           ) : (
                             <Car className="h-6 w-6" strokeWidth={1} />

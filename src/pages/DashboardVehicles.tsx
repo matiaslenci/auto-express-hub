@@ -213,7 +213,7 @@ export default function DashboardVehicles() {
                     />
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center bg-muted text-muted-foreground/30">
-                      {(vehicle as any).tipoVehiculo === 'MOTO' ? (
+                      {vehicle.tipoVehiculo === 'MOTO' ? (
                         <Bike className="h-12 w-12" strokeWidth={1} />
                       ) : (
                         <Car className="h-12 w-12" strokeWidth={1} />

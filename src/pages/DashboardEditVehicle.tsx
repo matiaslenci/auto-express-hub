@@ -54,12 +54,12 @@ export default function DashboardEditVehicle() {
     useEffect(() => {
         if (vehicle && !initialized) {
             // Verificar si la marca del vehículo está en la lista predefinida
-            const tipoVeh = (vehicle as any).tipoVehiculo || 'AUTO';
+            const tipoVeh = vehicle.tipoVehiculo || 'AUTO';
             const marcasList = tipoVeh === 'MOTO' ? MARCAS_MOTO : MARCAS_AUTO;
             const marcaEnLista = marcasList.includes(vehicle.marca || '');
 
             setFormData({
-                tipoVehiculo: (vehicle as any).tipoVehiculo || 'AUTO',
+                tipoVehiculo: vehicle.tipoVehiculo || 'AUTO',
                 marca: marcaEnLista ? (vehicle.marca || '') : 'Otro',
                 modelo: vehicle.modelo || '',
                 anio: vehicle.anio || new Date().getFullYear(),
