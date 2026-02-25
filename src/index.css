@@ -40,12 +40,12 @@
     --gradient-primary: linear-gradient(135deg, hsl(24, 95%, 53%) 0%, hsl(24, 95%, 40%) 100%);
     --gradient-hero: linear-gradient(180deg, hsl(220, 14%, 96%) 0%, hsl(0, 0%, 100%) 100%);
     --gradient-card: linear-gradient(145deg, hsl(0, 0%, 100%) 0%, hsl(220, 14%, 98%) 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
-    
+    --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+
     --shadow-glow: 0 0 40px rgba(249, 115, 22, 0.15);
     --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
     --shadow-card-hover: 0 8px 40px rgba(0, 0, 0, 0.12);
-    
+
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 222 47% 11%;
     --sidebar-primary: 24 95% 53%;
@@ -97,12 +97,12 @@
     --gradient-primary: linear-gradient(135deg, hsl(24, 95%, 53%) 0%, hsl(24, 95%, 40%) 100%);
     --gradient-hero: linear-gradient(180deg, hsl(222, 47%, 6%) 0%, hsl(222, 47%, 11%) 100%);
     --gradient-card: linear-gradient(145deg, hsl(222, 47%, 10%) 0%, hsl(222, 47%, 7%) 100%);
-    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-    
+    --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+
     --shadow-glow: 0 0 40px rgba(249, 115, 22, 0.15);
     --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
     --shadow-card-hover: 0 8px 40px rgba(0, 0, 0, 0.5);
-    
+
     --sidebar-background: 222 47% 7%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 24 95% 53%;
@@ -139,7 +139,7 @@
 
 @layer components {
   .glass-card {
-    @apply bg-card/80 backdrop-blur-xl border border-white/10 rounded-xl;
+    @apply bg-card/80 backdrop-blur-xl border border-border rounded-xl;
     background: var(--gradient-glass);
   }
 
@@ -150,7 +150,7 @@
   .gradient-border {
     @apply relative;
     background: linear-gradient(var(--card), var(--card)) padding-box,
-                linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.3)) border-box;
+      linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary) / 0.3)) border-box;
     border: 1px solid transparent;
   }
 
@@ -172,7 +172,13 @@
   }
 
   .vehicle-card {
-    @apply glass-card overflow-hidden hover-lift cursor-pointer;
+    @apply glass-card overflow-hidden cursor-pointer h-full border border-border;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .vehicle-card>div:last-child {
+    flex: 1;
   }
 
   .input-glow:focus {
@@ -194,15 +200,68 @@
   }
 
   .badge-basico {
-    @apply bg-slate-600/50 text-slate-200 border border-slate-500/50;
+    @apply bg-slate-200 text-slate-700 border border-slate-300 dark:bg-slate-600/50 dark:text-slate-200 dark:border-slate-500/50;
   }
 
   .badge-profesional {
-    @apply bg-blue-600/50 text-blue-200 border border-blue-500/50;
+    @apply bg-blue-100 text-blue-700 border border-blue-300 dark:bg-blue-600/50 dark:text-blue-200 dark:border-blue-500/50;
   }
 
   .badge-premium {
-    @apply bg-gradient-to-r from-amber-500/80 to-orange-500/80 text-white border border-amber-400/50;
+    @apply bg-gradient-to-r from-amber-400 to-orange-400 text-white border border-amber-500 dark:from-amber-500/80 dark:to-orange-500/80 dark:border-amber-400/50;
+  }
+
+  /* Dashboard Page Header - Unified style */
+  .dashboard-page-header {
+    @apply mb-8;
+  }
+
+  .dashboard-page-header h1 {
+    @apply text-2xl md:text-3xl font-bold mb-2 tracking-tight;
+  }
+
+  .dashboard-page-header p {
+    @apply text-muted-foreground;
+  }
+
+  /* Section Title with Icon */
+  .section-title {
+    @apply text-lg font-semibold flex items-center gap-2;
+  }
+
+  .section-title svg {
+    @apply h-5 w-5 text-primary;
+  }
+
+  /* Empty State Container */
+  .empty-state {
+    @apply flex flex-col items-center justify-center py-12 text-center;
+  }
+
+  .empty-state-icon {
+    @apply w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4;
+  }
+
+  .empty-state-icon svg {
+    @apply h-8 w-8 text-primary;
+  }
+
+  .empty-state h3 {
+    @apply text-lg font-semibold mb-2;
+  }
+
+  .empty-state p {
+    @apply text-muted-foreground mb-6 max-w-sm;
+  }
+
+  /* Form Card */
+  .form-card {
+    @apply glass-card p-6 space-y-6;
+  }
+
+  /* Dashboard Action Button */
+  .back-button {
+    @apply p-2 rounded-lg hover:bg-muted transition-colors;
   }
 }
 
@@ -220,6 +279,11 @@
     animation: gradient 8s ease infinite;
   }
 
+  .animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+    opacity: 0;
+  }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -231,14 +295,41 @@
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Custom scrollbar for webkit browsers */

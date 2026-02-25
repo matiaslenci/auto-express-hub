@@ -2,53 +2,41 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Navbar } from '@/components/layout/Navbar';
 import { Button } from '@/components/ui/button';
-import { 
-  getVehicleById, 
-  getAgencyByUsername, 
-  incrementVehicleViews,
-  incrementVehicleWhatsappClicks,
-  Vehicle, 
-  Agency 
-} from '@/lib/storage';
-import { 
-  ArrowLeft, 
-  MessageCircle, 
-  MapPin, 
-  Gauge, 
-  Fuel, 
+import { useVehicle, useTrackView, useTrackWhatsAppClick } from '@/hooks/useVehicles';
+import { useAgency } from '@/hooks/useAgency';
+import {
+  ArrowLeft,
+  MessageCircle,
+  MapPin,
+  Gauge,
+  Fuel,
   Settings2,
   Calendar,
   Palette,
   Car,
+  Bike,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, resolveImageUrl } from '@/lib/utils';
 
 export default function VehicleDetail() {
   const { username, vehicleId } = useParams<{ username: string; vehicleId: string }>();
-  const [vehicle, setVehicle] = useState<Vehicle | null>(null);
-  const [agency, setAgency] = useState<Agency | null>(null);
-  const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  useEffect(() => {
-    if (username && vehicleId) {
-      const foundAgency = getAgencyByUsername(username);
-      const foundVehicle = getVehicleById(vehicleId);
-      
-      if (foundAgency && foundVehicle && foundVehicle.agenciaUsername === foundAgency.username) {
-        setAgency(foundAgency);
-        setVehicle(foundVehicle);
-        
-        // Increment views
-        incrementVehicleViews(vehicleId);
-      }
-    }
-    setLoading(false);
-  }, [username, vehicleId]);
+  const { data: vehicle, isLoading: vehicleLoading } = useVehicle(vehicleId || '');
+  const { data: agency, isLoading: agencyLoading } = useAgency(username || '');
+  const trackViewMutation = useTrackView();
+  const trackWhatsAppMutation = useTrackWhatsAppClick();
 
-  if (loading) {
+  // Track view on mount
+  useEffect(() => {
+    if (vehicleId && vehicle) {
+      trackViewMutation.mutate(vehicleId);
+    }
+  }, [vehicleId, vehicle]);
+
+  if (vehicleLoading || agencyLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
@@ -78,24 +66,36 @@ export default function VehicleDetail() {
     );
   }
 
-  const formattedPrice = new Intl.NumberFormat('es-MX', {
-    style: 'currency',
-    currency: 'MXN',
-    maximumFractionDigits: 0,
-  }).format(vehicle.precio);
+  // Helper para formatear precio según moneda
+  const formatVehiclePrice = (precio: number | null, moneda: string) => {
+    if (moneda === 'CONSULTAR' || precio === null) {
+      return 'Consultar precio';
+    }
 
-  const formattedKm = new Intl.NumberFormat('es-MX').format(vehicle.kilometraje);
+    const currency = moneda === 'USD' ? 'USD' : 'ARS';
+    const formatted = new Intl.NumberFormat('es-AR', {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 0,
+    }).format(precio);
 
-  const images = vehicle.fotos.length > 0 
-    ? vehicle.fotos 
-    : ['https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&h=800&fit=crop'];
+    return moneda === 'USD' ? formatted.replace('US$', 'US$ ') : formatted;
+  };
+
+  const formattedPrice = formatVehiclePrice(vehicle.precio, vehicle.moneda || 'ARS');
+
+  const formattedKm = new Intl.NumberFormat('es-AR').format(vehicle.kilometraje);
+
+  const images = vehicle.fotos;
 
   const handleWhatsAppClick = () => {
-    incrementVehicleWhatsappClicks(vehicle.id);
-    const message = encodeURIComponent(
-      `Hola, me interesa el ${vehicle.marca} ${vehicle.modelo} ${vehicle.año}. ¿Está disponible?`
-    );
-    window.open(`https://wa.me/${agency.whatsapp}?text=${message}`, '_blank');
+    if (vehicle && agency && agency.whatsapp && /^\d+$/.test(agency.whatsapp)) {
+      trackWhatsAppMutation.mutate(vehicle.id);
+      const message = encodeURIComponent(
+        `Hola, me interesa el ${vehicle.marca} ${vehicle.modelo} ${vehicle.anio}. ¿Está disponible?`
+      );
+      window.open(`https://wa.me/${agency.whatsapp}?text=${message}`, '_blank');
+    }
   };
 
   const nextImage = () => {
@@ -107,22 +107,23 @@ export default function VehicleDetail() {
   };
 
   const specs = [
-    { icon: Calendar, label: 'Año', value: vehicle.año },
+    { icon: Calendar, label: 'Año', value: vehicle.anio },
     { icon: Gauge, label: 'Kilometraje', value: `${formattedKm} km` },
     { icon: Settings2, label: 'Transmisión', value: vehicle.transmision },
     { icon: Fuel, label: 'Combustible', value: vehicle.combustible },
     { icon: Car, label: 'Tipo', value: vehicle.tipo },
     { icon: Palette, label: 'Color', value: vehicle.color },
+    ...(vehicle.localidad ? [{ icon: MapPin, label: 'Ubicación', value: vehicle.localidad }] : []),
   ];
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <div className="pt-20 pb-12">
         <div className="container mx-auto px-4">
           {/* Back Button */}
-          <Link 
+          <Link
             to={`/${username}`}
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-6"
           >
@@ -134,13 +135,24 @@ export default function VehicleDetail() {
             {/* Image Gallery */}
             <div className="space-y-4">
               {/* Main Image */}
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden glass-card">
-                <img
-                  src={images[currentImageIndex]}
-                  alt={`${vehicle.marca} ${vehicle.modelo}`}
-                  className="w-full h-full object-cover"
-                />
-                
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden glass-card bg-black/90">
+                {images.length > 0 ? (
+                  <img
+                    src={resolveImageUrl(images[currentImageIndex])}
+                    alt={`${vehicle.marca} ${vehicle.modelo}`}
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/20">
+                    {vehicle.tipoVehiculo === 'MOTO' ? (
+                      <Bike className="h-32 w-32" strokeWidth={1} />
+                    ) : (
+                      <Car className="h-32 w-32" strokeWidth={1} />
+                    )}
+                    <span className="text-sm uppercase tracking-widest mt-4 font-medium opacity-50">Sin fotos disponibles</span>
+                  </div>
+                )}
+
                 {images.length > 1 && (
                   <>
                     <button
@@ -155,7 +167,7 @@ export default function VehicleDetail() {
                     >
                       <ChevronRight className="h-6 w-6" />
                     </button>
-                    
+
                     {/* Image Counter */}
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-black/50 backdrop-blur-sm text-white text-sm">
                       {currentImageIndex + 1} / {images.length}
@@ -173,13 +185,13 @@ export default function VehicleDetail() {
                       onClick={() => setCurrentImageIndex(index)}
                       className={cn(
                         "flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all",
-                        currentImageIndex === index 
-                          ? "border-primary" 
+                        currentImageIndex === index
+                          ? "border-primary"
                           : "border-transparent opacity-60 hover:opacity-100"
                       )}
                     >
                       <img
-                        src={img}
+                        src={resolveImageUrl(img)}
                         alt={`Vista ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
@@ -195,10 +207,13 @@ export default function VehicleDetail() {
               <div>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                    {vehicle.tipoVehiculo === 'MOTO' ? '🏍️ Moto' : '🚗 Auto'}
+                  </span>
+                  <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
                     {vehicle.tipo}
                   </span>
                   <span className="px-3 py-1 rounded-full bg-muted text-sm font-medium">
-                    {vehicle.año}
+                    {vehicle.anio}
                   </span>
                 </div>
                 <h1 className="text-3xl md:text-4xl font-bold mb-2">
@@ -206,6 +221,19 @@ export default function VehicleDetail() {
                 </h1>
                 <p className="text-3xl font-bold text-primary">{formattedPrice}</p>
               </div>
+
+              {/* WhatsApp CTA */}
+              {agency.whatsapp && (
+                <Button
+                  variant="whatsapp"
+                  size="xl"
+                  className="w-full gap-3"
+                  onClick={handleWhatsAppClick}
+                >
+                  <MessageCircle className="h-6 w-6" />
+                  Consultar por WhatsApp
+                </Button>
+              )}
 
               {/* Specs Grid */}
               <div className="glass-card p-6">
@@ -240,7 +268,7 @@ export default function VehicleDetail() {
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-14 h-14 rounded-xl bg-muted overflow-hidden flex items-center justify-center">
                     {agency.logo ? (
-                      <img src={agency.logo} alt={agency.nombre} className="w-full h-full object-cover" />
+                      <img src={resolveImageUrl(agency.logo)} alt={agency.nombre} className="w-full h-full object-cover" />
                     ) : (
                       <Car className="h-7 w-7 text-muted-foreground" />
                     )}
@@ -256,19 +284,6 @@ export default function VehicleDetail() {
                   </div>
                 </div>
               </div>
-
-              {/* WhatsApp CTA */}
-              {agency.whatsapp && (
-                <Button 
-                  variant="whatsapp" 
-                  size="xl" 
-                  className="w-full gap-3"
-                  onClick={handleWhatsAppClick}
-                >
-                  <MessageCircle className="h-6 w-6" />
-                  Consultar por WhatsApp
-                </Button>
-              )}
             </div>
           </div>
         </div>

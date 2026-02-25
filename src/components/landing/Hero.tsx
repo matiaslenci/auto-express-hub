@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Car, Users, TrendingUp } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export function Hero() {
   return (
@@ -34,7 +34,7 @@ export function Hero() {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
             <Link to="/registro">
               <Button variant="hero" size="xl" className="group">
                 Comenzar gratis
@@ -46,31 +46,6 @@ export function Hero() {
                 Ver demo
               </Button>
             </Link>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-8 max-w-lg mx-auto animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Users className="h-5 w-5 text-primary" />
-                <span className="text-2xl md:text-3xl font-bold">500+</span>
-              </div>
-              <p className="text-sm text-muted-foreground">Agencias activas</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Car className="h-5 w-5 text-primary" />
-                <span className="text-2xl md:text-3xl font-bold">10k+</span>
-              </div>
-              <p className="text-sm text-muted-foreground">Vehículos</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <TrendingUp className="h-5 w-5 text-primary" />
-                <span className="text-2xl md:text-3xl font-bold">95%</span>
-              </div>
-              <p className="text-sm text-muted-foreground">Satisfacción</p>
-            </div>
           </div>
         </div>
       </div>

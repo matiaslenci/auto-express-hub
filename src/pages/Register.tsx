@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,14 +17,13 @@ const plans = [
 
 import { SEO } from '@/components/common/SEO';
 
-// ... existing imports
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 
 export default function Register() {
   const { register, loading, isAuthenticated } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-
   const [formData, setFormData] = useState({
     nombre: '',
     username: '',
@@ -33,6 +32,11 @@ export default function Register() {
     plan: 'basico' as 'basico' | 'profesional' | 'premium',
   });
 
+  // Redirect if already authenticated
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
   const updateField = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -40,14 +44,23 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!PASSWORD_REGEX.test(formData.password)) {
+      toast({
+        title: 'Contraseña inválida',
+        description: 'La contraseña debe tener al menos 8 caracteres, incluyendo una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&)',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     const result = await register(formData);
 
     if (result.success) {
       toast({
         title: "¡Cuenta creada!",
-        description: "Bienvenido a AgenciaExpress.",
+        description: "Bienvenido a CatálogoVehículos.",
       });
-      navigate('/dashboard');
+      navigate('/dashboard/perfil');
     } else {
       toast({
         title: "Error",
@@ -60,8 +73,8 @@ export default function Register() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden px-4 py-12">
       <SEO
-        title="Registrar Agencia - AgenciaExpress"
-        description="Crea tu cuenta en AgenciaExpress y comienza a gestionar tu inventario de vehículos hoy mismo."
+        title="Registrar Agencia - CatálogoVehículos"
+        description="Crea tu cuenta en CatálogoVehículos y comienza a gestionar tu inventario de vehículos hoy mismo."
       />
       {/* Background Effects */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
@@ -74,7 +87,7 @@ export default function Register() {
             <Car className="h-6 w-6 text-primary" />
           </div>
           <span className="text-2xl font-bold">
-            Agencia<span className="text-primary">Express</span>
+            Catálogo<span className="text-primary">Vehículos</span>
           </span>
         </Link>
 
@@ -132,7 +145,7 @@ export default function Register() {
             <div className="space-y-2">
               <Label htmlFor="username">Nombre de usuario (URL)</Label>
               <div className="flex items-center gap-2">
-                <span className="text-muted-foreground text-sm">agencia-express.com/@</span>
+                <span className="text-muted-foreground text-sm">catalogovehiculos.com/</span>
                 <Input
                   id="username"
                   placeholder="miagencia"
@@ -165,11 +178,11 @@ export default function Register() {
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder="Mínimo 8 caracteres"
                   value={formData.password}
                   onChange={(e) => updateField('password', e.target.value)}
                   required
-                  minLength={6}
+                  minLength={8}
                   className="input-glow pr-10"
                 />
                 <button
@@ -180,6 +193,9 @@ export default function Register() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
+              <p className="text-xs text-muted-foreground">
+                Mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&)
+              </p>
             </div>
 
             <Button type="submit" variant="gradient" className="w-full" size="lg" disabled={loading}>

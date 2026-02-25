@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" fill="none">
+  <rect width="800" height="500" fill="#1a1a2e"/>
+  <rect width="800" height="500" fill="url(#grad)" opacity="0.5"/>
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="800" y2="500">
+      <stop offset="0%" stop-color="#16213e"/>
+      <stop offset="100%" stop-color="#0f3460"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(400,220)" opacity="0.3">
+    <path d="M-60,30 L-80,0 L-60,-30 L60,-30 L80,0 L60,30 Z" stroke="#94a3b8" stroke-width="2" fill="none"/>
+    <circle cx="-40" cy="30" r="12" stroke="#94a3b8" stroke-width="2" fill="none"/>
+    <circle cx="40" cy="30" r="12" stroke="#94a3b8" stroke-width="2" fill="none"/>
+    <line x1="-20" y1="-30" x2="-10" y2="0" stroke="#94a3b8" stroke-width="1.5"/>
+    <line x1="20" y1="-30" x2="10" y2="0" stroke="#94a3b8" stroke-width="1.5"/>
+  </g>
+  <text x="400" y="290" text-anchor="middle" fill="#64748b" font-family="system-ui, sans-serif" font-size="16">Sin imagen</text>
+</svg>

@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Navigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
-import { updateAgency, PLAN_NAMES, PLAN_PRICES } from '@/lib/storage';
+import { useUpdateAgency } from '@/hooks/useAgency';
+import { useUploadAgencyLogo, useUploadAgencyCover } from '@/hooks/useUpload';
+import { PLAN_NAMES, PLAN_PRICES, WHATSAPP_SUPPORT } from '@/lib/storage';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, User, MapPin, Phone, Image, ExternalLink } from 'lucide-react';
+import { Loader2, User, MapPin, Phone, Image, ExternalLink, Upload, X, Crown, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 import { SEO } from '@/components/common/SEO';
@@ -15,7 +17,11 @@ import { SEO } from '@/components/common/SEO';
 export default function DashboardProfile() {
   const { user, loading, isAuthenticated, refreshUser } = useAuth();
   const { toast } = useToast();
-  const [submitting, setSubmitting] = useState(false);
+  const updateAgencyMutation = useUpdateAgency();
+  const { uploadAsync: uploadLogo, isUploading: isUploadingLogo } = useUploadAgencyLogo();
+  const { uploadAsync: uploadCover, isUploading: isUploadingCover } = useUploadAgencyCover();
+  const logoInputRef = useRef<HTMLInputElement>(null);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     nombre: '',
@@ -55,24 +61,59 @@ export default function DashboardProfile() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
 
     try {
-      updateAgency(user!.username, formData);
-      refreshUser();
+      await updateAgencyMutation.mutateAsync(formData);
+      await refreshUser();
       toast({
         title: 'Perfil actualizado',
         description: 'Los cambios han sido guardados correctamente.',
       });
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: 'Error',
-        description: 'No se pudo actualizar el perfil.',
+        description: error.message || 'No se pudo actualizar el perfil.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const response = await uploadLogo(file);
+      updateField('logo', response.url);
+      toast({ title: 'Logo subido correctamente' });
+    } catch (error: any) {
+      toast({
+        title: 'Error al subir logo',
+        description: error.message || 'No se pudo subir el logo.',
         variant: 'destructive',
       });
     }
 
-    setSubmitting(false);
+    if (logoInputRef.current) logoInputRef.current.value = '';
+  };
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const response = await uploadCover(file);
+      updateField('portada', response.url);
+      toast({ title: 'Portada subida correctamente' });
+    } catch (error: any) {
+      toast({
+        title: 'Error al subir portada',
+        description: error.message || 'No se pudo subir la portada.',
+        variant: 'destructive',
+      });
+    }
+
+    if (coverInputRef.current) coverInputRef.current.value = '';
   };
 
   const planClass = user?.plan === 'premium' ? 'badge-premium' :
@@ -80,16 +121,16 @@ export default function DashboardProfile() {
 
   return (
     <DashboardLayout>
-      <SEO title="Mi Perfil | AgenciaExpress" description="Administra la información de tu agencia." />
+      <SEO title="Mi Perfil | CatálogoVehículos" description="Administra la información de tu agencia." />
       <div className="max-w-3xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold">Perfil de la agencia</h1>
-          <p className="text-muted-foreground">Personaliza cómo se ve tu catálogo</p>
+        <div className="dashboard-page-header">
+          <h1>Perfil de la agencia</h1>
+          <p>Personaliza cómo se ve tu catálogo</p>
         </div>
 
         {/* Preview Card */}
-        <div className="glass-card overflow-hidden mb-8">
+        <div className="glass-card overflow-hidden mb-8 animate-fade-in-up">
           <div className="relative h-32 bg-gradient-to-r from-primary/20 to-primary/5">
             {formData.portada && (
               <img
@@ -101,7 +142,7 @@ export default function DashboardProfile() {
           </div>
           <div className="p-6 pt-0 -mt-8">
             <div className="flex items-end gap-4">
-              <div className="w-20 h-20 rounded-xl bg-card border-4 border-card overflow-hidden flex items-center justify-center">
+              <div className="w-20 z-30 h-20 rounded-xl bg-card border-4 border-card overflow-hidden flex items-center justify-center">
                 {formData.logo ? (
                   <img src={formData.logo} alt="Logo" className="w-full h-full object-cover" />
                 ) : (
@@ -123,9 +164,9 @@ export default function DashboardProfile() {
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Info */}
-          <div className="glass-card p-6 space-y-6">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <User className="h-5 w-5 text-primary" />
+          <div className="form-card animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <h2 className="section-title">
+              <User />
               Información básica
             </h2>
 
@@ -151,7 +192,7 @@ export default function DashboardProfile() {
                     id="ubicacion"
                     value={formData.ubicacion}
                     onChange={(e) => updateField('ubicacion', e.target.value)}
-                    placeholder="Ciudad de México, CDMX"
+                    placeholder="Buenos Aires, CABA"
                     className="input-glow"
                   />
                 </div>
@@ -165,11 +206,11 @@ export default function DashboardProfile() {
                     id="whatsapp"
                     value={formData.whatsapp}
                     onChange={(e) => updateField('whatsapp', e.target.value)}
-                    placeholder="5215512345678"
+                    placeholder="5491112345678"
                     className="input-glow"
                   />
                   <p className="text-xs text-muted-foreground">
-                    Incluye código de país sin + (ej: 521 para México)
+                    Incluye código de país sin + (ej: 549 para Argentina)
                   </p>
                 </div>
               </div>
@@ -177,46 +218,124 @@ export default function DashboardProfile() {
           </div>
 
           {/* Images */}
-          <div className="glass-card p-6 space-y-6">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <Image className="h-5 w-5 text-primary" />
+          <div className="form-card animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <h2 className="section-title">
+              <Image />
               Imágenes
             </h2>
 
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="logo">Logo (URL)</Label>
-                <Input
-                  id="logo"
-                  value={formData.logo}
-                  onChange={(e) => updateField('logo', e.target.value)}
-                  placeholder="https://ejemplo.com/logo.png"
-                  className="input-glow"
-                />
+            <div className="space-y-6">
+              {/* Logo Upload */}
+              <div className="space-y-3">
+                <Label>Logo de la agencia</Label>
+                <div className="flex items-center gap-4">
+                  <div className="w-20 h-20 rounded-xl bg-muted border overflow-hidden flex items-center justify-center">
+                    {formData.logo ? (
+                      <img src={formData.logo} alt="Logo" className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="h-8 w-8 text-muted-foreground" />
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <input
+                      ref={logoInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handleLogoUpload}
+                      className="hidden"
+                      id="logo-upload"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => logoInputRef.current?.click()}
+                      disabled={isUploadingLogo}
+                      className="gap-2"
+                    >
+                      {isUploadingLogo ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Subiendo...</>
+                      ) : (
+                        <><Upload className="h-4 w-4" /> Subir logo</>
+                      )}
+                    </Button>
+                    {formData.logo && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => updateField('logo', '')}
+                        className="gap-2 text-destructive"
+                      >
+                        <X className="h-4 w-4" /> Eliminar
+                      </Button>
+                    )}
+                  </div>
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  Recomendado: imagen cuadrada de al menos 200x200px
+                  Recomendado: imagen cuadrada de al menos 200x200px (JPG, PNG, WebP)
                 </p>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="portada">Imagen de portada (URL)</Label>
-                <Input
-                  id="portada"
-                  value={formData.portada}
-                  onChange={(e) => updateField('portada', e.target.value)}
-                  placeholder="https://ejemplo.com/portada.jpg"
-                  className="input-glow"
-                />
+              {/* Cover Upload */}
+              <div className="space-y-3">
+                <Label>Imagen de portada</Label>
+                <div className="space-y-3">
+                  <div className="w-full h-32 rounded-xl bg-muted border overflow-hidden">
+                    {formData.portada ? (
+                      <img src={formData.portada} alt="Portada" className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Image className="h-8 w-8 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <input
+                      ref={coverInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handleCoverUpload}
+                      className="hidden"
+                      id="cover-upload"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => coverInputRef.current?.click()}
+                      disabled={isUploadingCover}
+                      className="gap-2"
+                    >
+                      {isUploadingCover ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Subiendo...</>
+                      ) : (
+                        <><Upload className="h-4 w-4" /> Subir portada</>
+                      )}
+                    </Button>
+                    {formData.portada && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => updateField('portada', '')}
+                        className="gap-2 text-destructive"
+                      >
+                        <X className="h-4 w-4" /> Eliminar
+                      </Button>
+                    )}
+                  </div>
+                </div>
                 <p className="text-xs text-muted-foreground">
-                  Recomendado: 1200x400px o proporción similar
+                  Recomendado: 1200x400px o proporción similar (JPG, PNG, WebP)
                 </p>
               </div>
             </div>
           </div>
 
           {/* Plan Info */}
-          <div className="glass-card p-6">
-            <div className="flex items-center justify-between">
+          <div className="glass-card p-6 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+            <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-lg font-semibold">Tu plan actual</h2>
                 <p className="text-muted-foreground">
@@ -227,12 +346,37 @@ export default function DashboardProfile() {
                 {PLAN_NAMES[user?.plan || 'basico']}
               </span>
             </div>
+
+            {user?.plan !== 'premium' && (
+              <div className="pt-4 border-t border-border">
+                <div className="flex items-center gap-3 mb-3">
+                  <Crown className="h-5 w-5 text-primary" />
+                  <p className="text-sm text-muted-foreground">
+                    Actualiza tu plan para publicar más vehículos y llegar a más clientes.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full gap-2"
+                  onClick={() => {
+                    const message = encodeURIComponent(
+                      `Hola! Me gustaría actualizar mi plan de CatálogoVehículos. Actualmente tengo el plan ${PLAN_NAMES[user?.plan || 'basico']} y me gustaría conocer las opciones disponibles.`
+                    );
+                    window.open(`https://wa.me/${WHATSAPP_SUPPORT.replace(/[^0-9]/g, '')}?text=${message}`, '_blank');
+                  }}
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  Cambiar de plan
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Actions */}
           <div className="flex gap-4">
             <a
-              href={`/@${user?.username}`}
+              href={`/${user?.username}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1"
@@ -246,9 +390,9 @@ export default function DashboardProfile() {
               type="submit"
               variant="gradient"
               className="flex-1"
-              disabled={submitting}
+              disabled={updateAgencyMutation.isPending}
             >
-              {submitting ? (
+              {updateAgencyMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
                   Guardando...

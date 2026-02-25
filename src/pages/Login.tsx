@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -17,9 +17,12 @@ export default function Login() {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  if (isAuthenticated) {
-    navigate('/dashboard');
-  }
+  // Redirect when user becomes authenticated
+  useEffect(() => {
+    if (isAuthenticated && !loading) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, loading, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +33,7 @@ export default function Login() {
         title: "Bienvenido",
         description: "Has iniciado sesión correctamente.",
       });
-      navigate('/dashboard');
+      // Navigation will happen via useEffect when isAuthenticated becomes true
     } else {
       toast({
         title: "Error",
@@ -43,8 +46,8 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden px-4">
       <SEO
-        title="Iniciar Sesión - AgenciaExpress"
-        description="Ingresa a tu cuenta de AgenciaExpress para gestionar tu inventario."
+        title="Iniciar Sesión - CatálogoVehículos"
+        description="Ingresa a tu cuenta de CatálogoVehículos para gestionar tu inventario."
       />
       {/* Background Effects */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
@@ -57,7 +60,7 @@ export default function Login() {
             <Car className="h-6 w-6 text-primary" />
           </div>
           <span className="text-2xl font-bold">
-            Agencia<span className="text-primary">Express</span>
+            Catálogo<span className="text-primary">Vehículos</span>
           </span>
         </Link>
 
@@ -125,12 +128,7 @@ export default function Login() {
             </p>
           </div>
 
-          {/* Demo credentials */}
-          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-            <p className="text-sm text-muted-foreground text-center">
-              <strong>Demo:</strong> demo@autosdeluxe.com / demo123
-            </p>
-          </div>
+
         </div>
       </div>
     </div>

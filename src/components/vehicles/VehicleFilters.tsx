@@ -8,53 +8,97 @@ import { X, Filter, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface VehicleFiltersState {
+  tipoVehiculo: string;
   marca: string;
   tipo: string;
   transmision: string;
   combustible: string;
   precioMin: number;
   precioMax: number;
-  añoMin: number;
-  añoMax: number;
+  monedaFiltro: 'ARS' | 'USD';
+  anioMin: number;
+  anioMax: number;
+  kilometrajeMin: number;
+  kilometrajeMax: number;
   search: string;
 }
+
+import { TIPOS_AUTO, TIPOS_MOTO, TRANSMISIONES, COMBUSTIBLES, TIPO_CAMBIO_USD } from '@/lib/constants';
 
 interface VehicleFiltersProps {
   filters: VehicleFiltersState;
   onFiltersChange: (filters: VehicleFiltersState) => void;
   marcas: string[];
+  precioMaxCatalogo: number;
 }
-
-const TIPOS = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Van'];
-const TRANSMISIONES = ['Manual', 'Automática'];
-const COMBUSTIBLES = ['Gasolina', 'Diésel', 'Híbrido', 'Eléctrico'];
 
 const currentYear = new Date().getFullYear();
 
-export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFiltersProps) {
+export function VehicleFilters({ filters, onFiltersChange, marcas, precioMaxCatalogo }: VehicleFiltersProps) {
   const [isExpanded, setIsExpanded] = useState(true);
 
+  const TIPOS = filters.tipoVehiculo === 'MOTO' ? TIPOS_MOTO : filters.tipoVehiculo === 'AUTO' ? TIPOS_AUTO : [...TIPOS_AUTO, ...TIPOS_MOTO];
+
   const updateFilter = <K extends keyof VehicleFiltersState>(key: K, value: VehicleFiltersState[K]) => {
+    if (key === 'tipoVehiculo') {
+      // Reset tipo when tipoVehiculo changes
+      onFiltersChange({ ...filters, [key]: value, tipo: '' });
+      return;
+    }
     onFiltersChange({ ...filters, [key]: value });
   };
 
   const clearFilters = () => {
     onFiltersChange({
+      tipoVehiculo: '',
       marca: '',
       tipo: '',
       transmision: '',
       combustible: '',
       precioMin: 0,
-      precioMax: 5000000,
-      añoMin: 2000,
-      añoMax: currentYear,
+      precioMax: precioMaxCatalogo,
+      monedaFiltro: filters.monedaFiltro,
+      anioMin: 2000,
+      anioMax: currentYear,
+      kilometrajeMin: 0,
+      kilometrajeMax: 500000,
       search: '',
     });
   };
 
-  const hasActiveFilters = filters.marca || filters.tipo || filters.transmision || 
-    filters.combustible || filters.precioMin > 0 || filters.precioMax < 5000000 ||
-    filters.añoMin > 2000 || filters.añoMax < currentYear || filters.search;
+  // Cambiar moneda del filtro y convertir valores actuales
+  const handleMonedaChange = (nuevaMoneda: 'ARS' | 'USD') => {
+    if (nuevaMoneda === filters.monedaFiltro) return;
+
+    let newMin: number;
+    let newMax: number;
+
+    if (nuevaMoneda === 'USD') {
+      // Convertir de ARS a USD
+      newMin = Math.round(filters.precioMin / TIPO_CAMBIO_USD);
+      newMax = Math.round(filters.precioMax / TIPO_CAMBIO_USD);
+    } else {
+      // Convertir de USD a ARS
+      newMin = filters.precioMin * TIPO_CAMBIO_USD;
+      newMax = filters.precioMax * TIPO_CAMBIO_USD;
+    }
+
+    onFiltersChange({
+      ...filters,
+      monedaFiltro: nuevaMoneda,
+      precioMin: newMin,
+      precioMax: newMax,
+    });
+  };
+
+  // Valores máximos del slider según el catálogo
+  const maxPrecio = precioMaxCatalogo;
+  const stepPrecio = filters.monedaFiltro === 'USD' ? Math.max(100, Math.round(precioMaxCatalogo / 100)) : Math.max(100000, Math.round(precioMaxCatalogo / 100));
+
+  const hasActiveFilters = filters.tipoVehiculo || filters.marca || filters.tipo || filters.transmision ||
+    filters.combustible || filters.precioMin > 0 || filters.precioMax < maxPrecio ||
+    filters.anioMin > 2000 || filters.anioMax < currentYear ||
+    filters.kilometrajeMin > 0 || filters.kilometrajeMax < 500000 || filters.search;
 
   return (
     <div className="glass-card p-4">
@@ -91,6 +135,21 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
             onChange={(e) => updateFilter('search', e.target.value)}
             className="input-glow"
           />
+        </div>
+
+        {/* Tipo de Vehículo */}
+        <div className="space-y-2">
+          <Label>Tipo de vehículo</Label>
+          <Select value={filters.tipoVehiculo || "all"} onValueChange={(v) => updateFilter('tipoVehiculo', v === "all" ? "" : v)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Todos" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="AUTO">🚗 Autos</SelectItem>
+              <SelectItem value="MOTO">🏍️ Motos</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Marca */}
@@ -159,24 +218,57 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
 
         {/* Price Range */}
         <div className="space-y-4">
+          {/* Currency Toggle */}
+          <div className="flex items-center gap-2">
+            <Label className="flex-shrink-0">Moneda:</Label>
+            <div className="flex rounded-lg border border-border overflow-hidden">
+              <button
+                type="button"
+                onClick={() => handleMonedaChange('ARS')}
+                className={cn(
+                  "px-3 py-1.5 text-sm font-medium transition-colors",
+                  filters.monedaFiltro === 'ARS'
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/50 hover:bg-muted text-muted-foreground"
+                )}
+              >
+                $ ARS
+              </button>
+              <button
+                type="button"
+                onClick={() => handleMonedaChange('USD')}
+                className={cn(
+                  "px-3 py-1.5 text-sm font-medium transition-colors",
+                  filters.monedaFiltro === 'USD'
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/50 hover:bg-muted text-muted-foreground"
+                )}
+              >
+                US$ USD
+              </button>
+            </div>
+          </div>
+
           <div className="flex items-center justify-between">
             <Label>Precio</Label>
             <span className="text-sm text-muted-foreground">
-              ${filters.precioMin.toLocaleString()} - ${filters.precioMax.toLocaleString()}
+              {filters.monedaFiltro === 'USD' ? 'US$' : '$'}{filters.precioMin.toLocaleString()} - {filters.monedaFiltro === 'USD' ? 'US$' : '$'}{filters.precioMax.toLocaleString()}
             </span>
           </div>
           <div className="px-2">
             <Slider
               value={[filters.precioMin, filters.precioMax]}
               min={0}
-              max={5000000}
-              step={50000}
+              max={maxPrecio}
+              step={stepPrecio}
               onValueChange={([min, max]) => {
-                updateFilter('precioMin', min);
-                updateFilter('precioMax', max);
+                onFiltersChange({ ...filters, precioMin: min, precioMax: max });
               }}
             />
           </div>
+          {/*   <p className="text-xs text-muted-foreground">
+            Cotización: 1 USD = ${TIPO_CAMBIO_USD.toLocaleString()} ARS
+          </p> */}
         </div>
 
         {/* Year Range */}
@@ -184,18 +276,38 @@ export function VehicleFilters({ filters, onFiltersChange, marcas }: VehicleFilt
           <div className="flex items-center justify-between">
             <Label>Año</Label>
             <span className="text-sm text-muted-foreground">
-              {filters.añoMin} - {filters.añoMax}
+              {filters.anioMin} - {filters.anioMax}
             </span>
           </div>
           <div className="px-2">
             <Slider
-              value={[filters.añoMin, filters.añoMax]}
+              value={[filters.anioMin, filters.anioMax]}
               min={2000}
               max={currentYear}
               step={1}
               onValueChange={([min, max]) => {
-                updateFilter('añoMin', min);
-                updateFilter('añoMax', max);
+                onFiltersChange({ ...filters, anioMin: min, anioMax: max });
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Kilometraje Range */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Label>Kilometraje</Label>
+            <span className="text-sm text-muted-foreground">
+              {filters.kilometrajeMin.toLocaleString()} - {filters.kilometrajeMax.toLocaleString()} km
+            </span>
+          </div>
+          <div className="px-2">
+            <Slider
+              value={[filters.kilometrajeMin, filters.kilometrajeMax]}
+              min={0}
+              max={500000}
+              step={10000}
+              onValueChange={([min, max]) => {
+                onFiltersChange({ ...filters, kilometrajeMin: min, kilometrajeMax: max });
               }}
             />
           </div>

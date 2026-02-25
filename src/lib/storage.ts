@@ -1,4 +1,4 @@
-// Storage utilities for Agencia Express
+// Storage utilities for Catálogo Vehículos
 // Uses localStorage for data persistence
 
 export interface Agency {
@@ -16,19 +16,24 @@ export interface Agency {
   createdAt: string;
 }
 
+export type Moneda = 'ARS' | 'USD' | 'CONSULTAR';
+
 export interface Vehicle {
   id: string;
   agenciaUsername: string;
   marca: string;
+  tipoVehiculo: 'AUTO' | 'MOTO';
   modelo: string;
-  año: number;
-  precio: number;
+  anio: number;
+  precio: number | null;
+  moneda: Moneda;
   tipo: string;
   transmision: string;
   combustible: string;
   kilometraje: number;
   color: string;
   descripcion: string;
+  localidad?: string;
   fotos: string[];
   activo: boolean;
   vistas: number;
@@ -47,10 +52,13 @@ export const PLAN_LIMITS = {
   premium: Infinity,
 } as const;
 
+// WhatsApp de soporte para upgrade de planes
+export const WHATSAPP_SUPPORT = '+5493425765843';
+
 export const PLAN_PRICES = {
-  basico: 29,
-  profesional: 79,
-  premium: 149,
+  basico: 17000,
+  profesional: 46000,
+  premium: 78000,
 } as const;
 
 export const PLAN_NAMES = {
@@ -93,7 +101,7 @@ export const updateAgency = (username: string, updates: Partial<Agency>): Agency
   const agencies = getAgencies();
   const index = agencies.findIndex(a => a.username === username);
   if (index === -1) return undefined;
-  
+
   agencies[index] = { ...agencies[index], ...updates };
   saveAgencies(agencies);
   return agencies[index];
@@ -139,7 +147,7 @@ export const updateVehicle = (id: string, updates: Partial<Vehicle>): Vehicle | 
   const vehicles = getVehicles();
   const index = vehicles.findIndex(v => v.id === id);
   if (index === -1) return undefined;
-  
+
   vehicles[index] = { ...vehicles[index], ...updates };
   saveVehicles(vehicles);
   return vehicles[index];
@@ -149,7 +157,7 @@ export const deleteVehicle = (id: string): boolean => {
   const vehicles = getVehicles();
   const index = vehicles.findIndex(v => v.id === id);
   if (index === -1) return false;
-  
+
   vehicles.splice(index, 1);
   saveVehicles(vehicles);
   return true;
@@ -197,99 +205,4 @@ export const logout = (): void => {
   clearCurrentUser();
 };
 
-// Seed demo data
-export const seedDemoData = (): void => {
-  const agencies = getAgencies();
-  if (agencies.length > 0) return;
 
-  // Create demo agency
-  const demoAgency = createAgency({
-    username: 'autosdeluxe',
-    email: 'demo@autosdeluxe.com',
-    password: 'demo123',
-    nombre: 'Autos DeLuxe',
-    logo: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=100&h=100&fit=crop',
-    portada: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&h=400&fit=crop',
-    ubicacion: 'Ciudad de México, CDMX',
-    whatsapp: '5215512345678',
-    plan: 'profesional',
-    limitePublicaciones: PLAN_LIMITS.profesional,
-  });
-
-  // Create demo vehicles
-  const demoVehicles = [
-    {
-      marca: 'BMW',
-      modelo: 'Serie 3',
-      año: 2023,
-      precio: 850000,
-      tipo: 'Sedán',
-      transmision: 'Automática',
-      combustible: 'Gasolina',
-      kilometraje: 15000,
-      color: 'Blanco',
-      descripcion: 'BMW Serie 3 en excelentes condiciones, único dueño, mantenimiento de agencia.',
-      fotos: [
-        'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1617531653332-bd46c24f2068?w=800&h=600&fit=crop',
-      ],
-    },
-    {
-      marca: 'Mercedes-Benz',
-      modelo: 'GLC 300',
-      año: 2022,
-      precio: 920000,
-      tipo: 'SUV',
-      transmision: 'Automática',
-      combustible: 'Gasolina',
-      kilometraje: 25000,
-      color: 'Negro',
-      descripcion: 'Mercedes GLC 300 AMG Line, interiores de piel, techo panorámico.',
-      fotos: [
-        'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=800&h=600&fit=crop',
-        'https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=800&h=600&fit=crop',
-      ],
-    },
-    {
-      marca: 'Toyota',
-      modelo: 'RAV4',
-      año: 2023,
-      precio: 580000,
-      tipo: 'SUV',
-      transmision: 'Automática',
-      combustible: 'Híbrido',
-      kilometraje: 8000,
-      color: 'Gris',
-      descripcion: 'Toyota RAV4 Híbrida XLE, excelente rendimiento de combustible.',
-      fotos: [
-        'https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb?w=800&h=600&fit=crop',
-      ],
-    },
-    {
-      marca: 'Ford',
-      modelo: 'Mustang',
-      año: 2021,
-      precio: 780000,
-      tipo: 'Coupé',
-      transmision: 'Manual',
-      combustible: 'Gasolina',
-      kilometraje: 32000,
-      color: 'Rojo',
-      descripcion: 'Ford Mustang GT Premium, motor V8 5.0L, sonido impresionante.',
-      fotos: [
-        'https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?w=800&h=600&fit=crop',
-      ],
-    },
-  ];
-
-  demoVehicles.forEach((v, i) => {
-    createVehicle({
-      ...v,
-      agenciaUsername: demoAgency.username,
-      activo: true,
-    });
-  });
-};
-
-// Initialize
-seedDemoData();

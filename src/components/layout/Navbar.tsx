@@ -2,7 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { Car, Menu, X, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, X, LogOut, LayoutDashboard } from 'lucide-react';
 import { useState } from 'react';
 
 export function Navbar() {
@@ -21,11 +21,9 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="p-2 rounded-xl bg-primary/10 group-hover:bg-primary/20 transition-colors">
-              <Car className="h-6 w-6 text-primary" />
-            </div>
+            <img src="/assets/icono.png" alt="Logo" className="h-9 w-9" />
             <span className="text-xl font-bold">
-              Agencia<span className="text-primary">Express</span>
+              Catálogo<span className="text-primary">Vehículos</span>
             </span>
           </Link>
 

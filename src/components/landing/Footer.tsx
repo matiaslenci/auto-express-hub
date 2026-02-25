@@ -12,7 +12,7 @@ export function Footer() {
               <Car className="h-5 w-5 text-primary" />
             </div>
             <span className="text-xl font-bold">
-              Agencia<span className="text-primary">Express</span>
+              Catálogo<span className="text-primary">Vehículos</span>
             </span>
           </Link>
 
@@ -31,7 +31,7 @@ export function Footer() {
 
           {/* Copyright */}
           <p className="text-sm text-muted-foreground">
-            © 2024 AgenciaExpress. Todos los derechos reservados.
+            © {new Date().getFullYear()} CatálogoVehículos. Todos los derechos reservados.
           </p>
         </div>
       </div>

@@ -11,7 +11,7 @@ interface SEOProps {
 export const SEO = ({
     title,
     description,
-    name = 'AgenciaExpress',
+    name = 'CatálogoVehículos',
     type = 'website',
     image = '/placeholder.svg'
 }: SEOProps) => {

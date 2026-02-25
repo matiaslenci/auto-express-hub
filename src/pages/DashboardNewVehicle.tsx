@@ -1,24 +1,23 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
-import { createVehicle, getActiveVehiclesByAgency, PLAN_LIMITS } from '@/lib/storage';
+import { useCreateVehicle, useVehicles } from '@/hooks/useVehicles';
+import { useUploadVehicleImage } from '@/hooks/useUpload';
+import { PLAN_LIMITS, PLAN_NAMES } from '@/lib/storage';
+import { PlanLimitModal } from '@/components/ui/PlanLimitModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { ArrowLeft, Loader2, Plus, X, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Loader2, Plus, X, Image as ImageIcon, Upload, Star } from 'lucide-react';
 
-const TIPOS = ['Sedán', 'SUV', 'Pickup', 'Hatchback', 'Coupé', 'Van'];
-const TRANSMISIONES = ['Manual', 'Automática'];
-const COMBUSTIBLES = ['Gasolina', 'Diésel', 'Híbrido', 'Eléctrico'];
-const COLORES = ['Blanco', 'Negro', 'Gris', 'Plata', 'Rojo', 'Azul', 'Verde', 'Otro'];
-const MARCAS = [
-  'Audi', 'BMW', 'Chevrolet', 'Ford', 'Honda', 'Hyundai', 'Kia',
-  'Mazda', 'Mercedes-Benz', 'Nissan', 'Toyota', 'Volkswagen', 'Otro'
-];
+import {
+  TIPOS_AUTO, TIPOS_MOTO, TRANSMISIONES, COMBUSTIBLES, COLORES, MONEDAS,
+  MARCAS_AUTO, MARCAS_MOTO,
+} from '@/lib/constants';
 
 import { SEO } from '@/components/common/SEO';
 
@@ -26,23 +25,32 @@ export default function DashboardNewVehicle() {
   const { user, loading, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [submitting, setSubmitting] = useState(false);
+
+  const createVehicleMutation = useCreateVehicle();
+  const { data: vehicles } = useVehicles({ agenciaUsername: user?.username });
+  const { uploadAsync, isUploading } = useUploadVehicleImage();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showLimitModal, setShowLimitModal] = useState(false);
 
   const [formData, setFormData] = useState({
+    tipoVehiculo: 'AUTO' as 'AUTO' | 'MOTO',
     marca: '',
     modelo: '',
-    año: new Date().getFullYear(),
-    precio: 0,
+    anio: new Date().getFullYear(),
+    precio: null as number | null,
+    moneda: 'ARS' as 'ARS' | 'USD' | 'CONSULTAR',
     tipo: '',
     transmision: '',
     combustible: '',
     kilometraje: 0,
     color: '',
     descripcion: '',
+    localidad: '',
     fotos: [] as string[],
+    es0km: false,
   });
 
-  const [newPhotoUrl, setNewPhotoUrl] = useState('');
+  const [marcaPersonalizada, setMarcaPersonalizada] = useState('');
 
   if (loading) {
     return (
@@ -57,7 +65,7 @@ export default function DashboardNewVehicle() {
   }
 
   // Check plan limits
-  const activeVehicles = getActiveVehiclesByAgency(user?.username || '');
+  const activeVehicles = vehicles?.filter(v => v.activo) || [];
   const limit = PLAN_LIMITS[user?.plan || 'basico'];
   const canAddMore = limit === Infinity || activeVehicles.length < limit;
 
@@ -70,14 +78,49 @@ export default function DashboardNewVehicle() {
     navigate('/dashboard/vehiculos');
   }
 
+  const isMoto = formData.tipoVehiculo === 'MOTO';
+  const MARCAS = isMoto ? MARCAS_MOTO : MARCAS_AUTO;
+  const TIPOS = isMoto ? TIPOS_MOTO : TIPOS_AUTO;
+  const modeloPlaceholder = isMoto ? 'Ej: CB 250 Twister, YBR 125' : 'Ej: Corolla, Civic, Serie 3';
+
   const updateField = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const addPhoto = () => {
-    if (newPhotoUrl && formData.fotos.length < 10) {
-      setFormData(prev => ({ ...prev, fotos: [...prev.fotos, newPhotoUrl] }));
-      setNewPhotoUrl('');
+  const handleTipoVehiculoChange = (v: 'AUTO' | 'MOTO') => {
+    setFormData(prev => ({ ...prev, tipoVehiculo: v, marca: '', tipo: '' }));
+    setMarcaPersonalizada('');
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    for (const file of Array.from(files)) {
+      if (formData.fotos.length >= 10) {
+        toast({
+          title: 'Límite alcanzado',
+          description: 'Máximo 10 fotos por vehículo.',
+          variant: 'destructive',
+        });
+        break;
+      }
+
+      try {
+        const response = await uploadAsync(file);
+        setFormData(prev => ({ ...prev, fotos: [...prev.fotos, response.url] }));
+      } catch (error: any) {
+        toast({
+          title: 'Error al subir imagen',
+          description: error.message || 'No se pudo subir la imagen.',
+          variant: 'destructive',
+        });
+      }
+    }
+
+    // Reset input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -88,14 +131,36 @@ export default function DashboardNewVehicle() {
     }));
   };
 
+  const setAsCover = (index: number) => {
+    if (index === 0) return; // Already cover
+    setFormData(prev => {
+      const newFotos = [...prev.fotos];
+      const [photo] = newFotos.splice(index, 1);
+      newFotos.unshift(photo);
+      return { ...prev, fotos: newFotos };
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitting(true);
+
+    // Usar marca personalizada si se seleccionó "Otro"
+    const marcaFinal = formData.marca === 'Otro' ? marcaPersonalizada : formData.marca;
+
+    if (formData.marca === 'Otro' && !marcaPersonalizada.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Por favor ingresa el nombre de la marca.',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     try {
-      createVehicle({
-        ...formData,
-        agenciaUsername: user?.username || '',
+      const { es0km, ...vehicleData } = formData;
+      await createVehicleMutation.mutateAsync({
+        ...vehicleData,
+        marca: marcaFinal,
         activo: true,
       });
 
@@ -105,46 +170,67 @@ export default function DashboardNewVehicle() {
       });
 
       navigate('/dashboard/vehiculos');
-    } catch (error) {
+    } catch (error: any) {
+      // Handle 403 - Plan limit reached
+      if (error.statusCode === 403) {
+        setShowLimitModal(true);
+        return;
+      }
+
       toast({
         title: 'Error',
-        description: 'No se pudo crear el vehículo.',
+        description: error.message || 'No se pudo crear el vehículo.',
         variant: 'destructive',
       });
     }
-
-    setSubmitting(false);
   };
 
 
 
   return (
     <DashboardLayout>
-      <SEO title="Nuevo Vehículo | AgenciaExpress" description="Publica un nuevo vehículo en tu catálogo." />
+      <SEO title="Nuevo Vehículo | CatálogoVehículos" description="Publica un nuevo vehículo en tu catálogo." />
       <div className="max-w-3xl mx-auto">
         {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
+        <div className="dashboard-page-header flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="p-2 rounded-lg hover:bg-muted transition-colors"
+            className="back-button"
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold">Nuevo vehículo</h1>
-            <p className="text-muted-foreground">Agrega un vehículo a tu catálogo</p>
+            <h1>Nuevo vehículo</h1>
+            <p>Agrega un vehículo a tu catálogo</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Info */}
-          <div className="glass-card p-6 space-y-6">
-            <h2 className="text-lg font-semibold">Información básica</h2>
+          <div className="form-card animate-fade-in-up">
+            <h2 className="section-title">Información básica</h2>
 
             <div className="grid sm:grid-cols-2 gap-6">
+              <div className="space-y-2 sm:col-span-2">
+                <Label>Tipo de vehículo *</Label>
+                <Select value={formData.tipoVehiculo} onValueChange={handleTipoVehiculoChange} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona tipo de vehículo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="AUTO">🚗 Auto</SelectItem>
+                    <SelectItem value="MOTO">🏍️ Moto</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="marca">Marca *</Label>
-                <Select value={formData.marca} onValueChange={(v) => updateField('marca', v)} required>
+                <Select value={formData.marca} onValueChange={(v) => {
+                  updateField('marca', v);
+                  if (v !== 'Otro') {
+                    setMarcaPersonalizada('');
+                  }
+                }} required>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecciona marca" />
                   </SelectTrigger>
@@ -154,13 +240,23 @@ export default function DashboardNewVehicle() {
                     ))}
                   </SelectContent>
                 </Select>
+                {formData.marca === 'Otro' && (
+                  <Input
+                    id="marcaPersonalizada"
+                    placeholder="Ingresa el nombre de la marca"
+                    value={marcaPersonalizada}
+                    onChange={(e) => setMarcaPersonalizada(e.target.value)}
+                    required
+                    className="input-glow mt-2"
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="modelo">Modelo *</Label>
                 <Input
                   id="modelo"
-                  placeholder="Ej: Camry, Civic, Serie 3"
+                  placeholder={modeloPlaceholder}
                   value={formData.modelo}
                   onChange={(e) => updateField('modelo', e.target.value)}
                   required
@@ -169,38 +265,59 @@ export default function DashboardNewVehicle() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="año">Año *</Label>
+                <Label htmlFor="anio">Año *</Label>
                 <Input
-                  id="año"
+                  id="anio"
                   type="number"
                   min={1990}
                   max={new Date().getFullYear() + 1}
-                  value={formData.año}
-                  onChange={(e) => updateField('año', parseInt(e.target.value))}
+                  value={formData.anio}
+                  onChange={(e) => updateField('anio', parseInt(e.target.value))}
                   required
                   className="input-glow"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="precio">Precio (MXN) *</Label>
-                <Input
-                  id="precio"
-                  type="number"
-                  min={0}
-                  value={formData.precio || ''}
-                  onChange={(e) => updateField('precio', parseInt(e.target.value) || 0)}
-                  required
-                  className="input-glow"
-                  placeholder="0"
-                />
+                <Label>Moneda *</Label>
+                <Select value={formData.moneda} onValueChange={(v: 'ARS' | 'USD' | 'CONSULTAR') => {
+                  updateField('moneda', v);
+                  if (v === 'CONSULTAR') {
+                    updateField('precio', null);
+                  }
+                }} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona moneda" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {MONEDAS.map((m) => (
+                      <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
+
+              {formData.moneda !== 'CONSULTAR' && (
+                <div className="space-y-2">
+                  <Label htmlFor="precio">Precio ({formData.moneda === 'USD' ? 'USD' : 'ARS'}) *</Label>
+                  <Input
+                    id="precio"
+                    type="number"
+                    min={0}
+                    value={formData.precio || ''}
+                    onChange={(e) => updateField('precio', parseInt(e.target.value) || 0)}
+                    required
+                    className="input-glow"
+                    placeholder="0"
+                  />
+                </div>
+              )}
             </div>
           </div>
 
           {/* Specifications */}
-          <div className="glass-card p-6 space-y-6">
-            <h2 className="text-lg font-semibold">Especificaciones</h2>
+          <div className="form-card animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+            <h2 className="section-title">Especificaciones</h2>
 
             <div className="grid sm:grid-cols-2 gap-6">
               <div className="space-y-2">
@@ -259,24 +376,54 @@ export default function DashboardNewVehicle() {
                 </Select>
               </div>
 
-              <div className="space-y-2 sm:col-span-2">
+              <div className="space-y-2">
                 <Label htmlFor="kilometraje">Kilometraje</Label>
+                <div className="flex items-center gap-3">
+                  <Input
+                    id="kilometraje"
+                    type="number"
+                    min={0}
+                    value={formData.kilometraje || ''}
+                    onChange={(e) => updateField('kilometraje', parseInt(e.target.value) || 0)}
+                    className="input-glow flex-1"
+                    placeholder="0"
+                    disabled={formData.kilometraje === 0 && formData.es0km}
+                  />
+                  <label className="flex items-center gap-2 cursor-pointer select-none whitespace-nowrap">
+                    <input
+                      type="checkbox"
+                      checked={formData.es0km || false}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setFormData(prev => ({
+                          ...prev,
+                          es0km: checked,
+                          kilometraje: checked ? 0 : prev.kilometraje
+                        }));
+                      }}
+                      className="w-4 h-4 rounded border-border text-primary focus:ring-primary"
+                    />
+                    <span className="text-sm font-medium">0 km</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="localidad">Ubicación del vehículo</Label>
                 <Input
-                  id="kilometraje"
-                  type="number"
-                  min={0}
-                  value={formData.kilometraje || ''}
-                  onChange={(e) => updateField('kilometraje', parseInt(e.target.value) || 0)}
+                  id="localidad"
+                  placeholder="Ej: Santa Fe, Rosario, Córdoba"
+                  value={formData.localidad}
+                  onChange={(e) => updateField('localidad', e.target.value)}
                   className="input-glow"
-                  placeholder="0"
                 />
               </div>
             </div>
           </div>
 
           {/* Description */}
-          <div className="glass-card p-6 space-y-4">
-            <h2 className="text-lg font-semibold">Descripción</h2>
+          <div className="form-card animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+            <h2 className="section-title">Descripción</h2>
             <Textarea
               placeholder="Describe el vehículo, características especiales, historial de servicio, etc."
               value={formData.descripcion}
@@ -287,27 +434,41 @@ export default function DashboardNewVehicle() {
           </div>
 
           {/* Photos */}
-          <div className="glass-card p-6 space-y-4">
-            <h2 className="text-lg font-semibold">Fotos</h2>
+          <div className="form-card animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+            <h2 className="section-title">Fotos</h2>
             <p className="text-sm text-muted-foreground">
-              Agrega URLs de fotos del vehículo (máximo 10)
+              Sube fotos del vehículo (máximo 10, formatos: JPG, PNG, WebP). Haz clic en la estrella para elegir la portada.
             </p>
 
-            {/* Add Photo */}
-            <div className="flex gap-2">
-              <Input
-                placeholder="https://ejemplo.com/foto.jpg"
-                value={newPhotoUrl}
-                onChange={(e) => setNewPhotoUrl(e.target.value)}
-                className="input-glow"
+            {/* Upload Button */}
+            <div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                onChange={handleFileSelect}
+                className="hidden"
+                id="photo-upload"
               />
               <Button
                 type="button"
                 variant="outline"
-                onClick={addPhoto}
-                disabled={!newPhotoUrl || formData.fotos.length >= 10}
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading || formData.fotos.length >= 10}
+                className="gap-2"
               >
-                <Plus className="h-4 w-4" />
+                {isUploading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Subiendo...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="h-4 w-4" />
+                    Subir fotos
+                  </>
+                )}
               </Button>
             </div>
 
@@ -315,19 +476,36 @@ export default function DashboardNewVehicle() {
             {formData.fotos.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {formData.fotos.map((foto, index) => (
-                  <div key={index} className="relative group aspect-video rounded-lg overflow-hidden">
+                  <div key={index} className={`relative group aspect-video rounded-lg overflow-hidden ${index === 0 ? 'ring-2 ring-primary' : ''}`}>
                     <img
                       src={foto}
                       alt={`Foto ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
-                    <button
-                      type="button"
-                      onClick={() => removePhoto(index)}
-                      className="absolute top-2 right-2 p-1 rounded-full bg-destructive text-destructive-foreground opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
+                    {index === 0 && (
+                      <div className="absolute top-2 left-2 px-2 py-0.5 rounded bg-primary text-primary-foreground text-xs font-medium">
+                        Portada
+                      </div>
+                    )}
+                    <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {index !== 0 && (
+                        <button
+                          type="button"
+                          onClick={() => setAsCover(index)}
+                          className="p-1 rounded-full bg-amber-500 text-white hover:bg-amber-600 transition-colors"
+                          title="Establecer como portada"
+                        >
+                          <Star className="h-4 w-4" />
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removePhoto(index)}
+                        className="p-1 rounded-full bg-destructive text-destructive-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -353,9 +531,9 @@ export default function DashboardNewVehicle() {
               type="submit"
               variant="gradient"
               className="flex-1"
-              disabled={submitting}
+              disabled={createVehicleMutation.isPending}
             >
-              {submitting ? (
+              {createVehicleMutation.isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
                   Guardando...
@@ -367,6 +545,14 @@ export default function DashboardNewVehicle() {
           </div>
         </form>
       </div>
+
+      {/* Plan Limit Modal */}
+      <PlanLimitModal
+        isOpen={showLimitModal}
+        onClose={() => setShowLimitModal(false)}
+        plan={user?.plan || 'basico'}
+        limite={PLAN_LIMITS[user?.plan || 'basico'] as number}
+      />
     </DashboardLayout>
   );
 }

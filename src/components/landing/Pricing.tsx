@@ -2,11 +2,12 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { PLAN_PRICES } from '@/lib/storage';
 
 const plans = [
   {
     name: 'Básico',
-    price: 29,
+    price: PLAN_PRICES.basico,
     description: 'Perfecto para empezar',
     features: [
       '10 publicaciones activas',
@@ -20,7 +21,7 @@ const plans = [
   },
   {
     name: 'Profesional',
-    price: 79,
+    price: PLAN_PRICES.profesional,
     description: 'Para agencias en crecimiento',
     features: [
       '50 publicaciones activas',
@@ -35,7 +36,7 @@ const plans = [
   },
   {
     name: 'Premium',
-    price: 149,
+    price: PLAN_PRICES.premium,
     description: 'Sin límites para tu negocio',
     features: [
       'Publicaciones ilimitadas',
@@ -90,12 +91,11 @@ export function Pricing() {
                 </div>
               )}
 
-              {/* Plan Header */}
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
                 <p className="text-muted-foreground mb-4">{plan.description}</p>
                 <div className="flex items-baseline justify-center gap-1">
-                  <span className="text-4xl font-bold">${plan.price}</span>
+                  <span className="text-4xl font-bold">${plan.price.toLocaleString('es-AR')}</span>
                   <span className="text-muted-foreground">/mes</span>
                 </div>
               </div>

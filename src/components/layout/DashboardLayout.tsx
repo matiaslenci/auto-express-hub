@@ -2,18 +2,19 @@ import { ReactNode, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import { 
-  Car, 
-  LayoutDashboard, 
-  Plus, 
-  User, 
-  LogOut, 
-  Menu, 
-  X, 
+import {
+  Car,
+  LayoutDashboard,
+  Plus,
+  User,
+  BarChart3,
+  LogOut,
+  Menu,
+  X,
   ExternalLink,
-  ChevronRight
+  ChevronRight,
+  Shield
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { PLAN_NAMES } from '@/lib/storage';
 
@@ -23,6 +24,7 @@ interface DashboardLayoutProps {
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { href: '/dashboard/analiticas', icon: BarChart3, label: 'Analíticas' },
   { href: '/dashboard/vehiculos', icon: Car, label: 'Vehículos' },
   { href: '/dashboard/vehiculos/nuevo', icon: Plus, label: 'Nuevo vehículo' },
   { href: '/dashboard/perfil', icon: User, label: 'Perfil' },
@@ -39,8 +41,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
     navigate('/');
   };
 
-  const planClass = user?.plan === 'premium' ? 'badge-premium' : 
-                    user?.plan === 'profesional' ? 'badge-profesional' : 'badge-basico';
+  const planClass = user?.plan === 'premium' ? 'badge-premium' :
+    user?.plan === 'profesional' ? 'badge-profesional' : 'badge-basico';
 
   return (
     <div className="min-h-screen bg-background">
@@ -54,15 +56,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         </button>
         <div className="flex-1 flex items-center justify-center">
           <Link to="/" className="flex items-center gap-2">
-            <Car className="h-5 w-5 text-primary" />
-            <span className="font-bold">AgenciaExpress</span>
+            <img src="/assets/icono.png" alt="Logo" className="h-7 w-7" />
+            <span className="text-base font-bold">Catálogo<span className="text-primary">Vehículos</span></span>
           </Link>
         </div>
       </header>
 
       {/* Sidebar Overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
           onClick={() => setSidebarOpen(false)}
         />
@@ -79,10 +81,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="p-6 border-b border-sidebar-border">
             <div className="flex items-center justify-between">
               <Link to="/" className="flex items-center gap-2">
-                <div className="p-2 rounded-xl bg-primary/10">
-                  <Car className="h-5 w-5 text-primary" />
-                </div>
-                <span className="font-bold text-lg">AgenciaExpress</span>
+                <img src="/assets/icono.png" alt="Logo" className="h-8 w-8" />
+                <span className="text-base font-bold">Catálogo<span className="text-primary">Vehículos</span></span>
               </Link>
               <button
                 onClick={() => setSidebarOpen(false)}
@@ -114,7 +114,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* Navigation */}
           <nav className="flex-1 p-4 space-y-1">
-            {navItems.map((item) => {
+            {[
+              ...navItems,
+              ...(user?.isAdmin ? [{ href: '/dashboard/admin', icon: Shield, label: 'Admin' }] : [])
+            ].map((item) => {
               const isActive = location.pathname === item.href;
               return (
                 <Link
@@ -123,8 +126,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   onClick={() => setSidebarOpen(false)}
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200",
-                    isActive 
-                      ? "bg-primary text-primary-foreground shadow-lg" 
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-lg"
                       : "hover:bg-sidebar-accent text-sidebar-foreground"
                   )}
                 >
@@ -143,7 +146,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <ThemeToggle />
             </div>
             <Link
-              to={`/@${user?.username}`}
+              to={`/${user?.username}`}
               target="_blank"
               className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-sidebar-accent transition-colors text-sidebar-foreground"
             >

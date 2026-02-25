@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
-import { getVehiclesByAgency, Vehicle, deleteVehicle, updateVehicle } from '@/lib/storage';
+import { useVehicles, useDeleteVehicle, useUpdateVehicle } from '@/hooks/useVehicles';
+import { VehicleDto } from '@/api/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -14,7 +15,9 @@ import {
   Edit,
   MoreVertical,
   Power,
-  PowerOff
+  PowerOff,
+  Car,
+  Bike
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -34,31 +37,25 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import { cn, resolveImageUrl } from '@/lib/utils';
+import { PLAN_LIMITS, PLAN_NAMES } from '@/lib/storage';
+import { PlanLimitModal } from '@/components/ui/PlanLimitModal';
 
 import { SEO } from '@/components/common/SEO';
 
 export default function DashboardVehicles() {
   const { user, loading, isAuthenticated } = useAuth();
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const { data: vehicles = [], isLoading: vehiclesLoading } = useVehicles({ agenciaUsername: user?.username });
+  const deleteVehicleMutation = useDeleteVehicle();
+  const updateVehicleMutation = useUpdateVehicle();
+
   const [search, setSearch] = useState('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [vehicleToDelete, setVehicleToDelete] = useState<Vehicle | null>(null);
+  const [vehicleToDelete, setVehicleToDelete] = useState<VehicleDto | null>(null);
+  const [showLimitModal, setShowLimitModal] = useState(false);
   const { toast } = useToast();
 
-  useEffect(() => {
-    if (user) {
-      loadVehicles();
-    }
-  }, [user]);
-
-  const loadVehicles = () => {
-    if (user) {
-      setVehicles(getVehiclesByAgency(user.username));
-    }
-  };
-
-  if (loading) {
+  if (loading || vehiclesLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
@@ -71,59 +68,116 @@ export default function DashboardVehicles() {
   }
 
   const filteredVehicles = vehicles.filter(v =>
-    `${v.marca} ${v.modelo} ${v.año}`.toLowerCase().includes(search.toLowerCase())
+    `${v.marca} ${v.modelo} ${v.anio}`.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleToggleActive = (vehicle: Vehicle) => {
-    updateVehicle(vehicle.id, { activo: !vehicle.activo });
-    loadVehicles();
-    toast({
-      title: vehicle.activo ? 'Vehículo desactivado' : 'Vehículo activado',
-      description: vehicle.activo ? 'Ya no aparecerá en tu catálogo' : 'Ahora aparece en tu catálogo',
-    });
+  // Plan limits calculation
+  const activeVehicles = vehicles.filter(v => v.activo);
+  const limit = PLAN_LIMITS[user?.plan || 'basico'];
+  const canAddMore = limit === Infinity || activeVehicles.length < limit;
+  const planName = PLAN_NAMES[user?.plan || 'basico'];
+  const limitDisplay = limit === Infinity
+    ? 'Sin límite'
+    : `${activeVehicles.length} / ${limit} publicaciones`;
+
+  const handleToggleActive = async (vehicle: VehicleDto) => {
+    try {
+      await updateVehicleMutation.mutateAsync({
+        id: vehicle.id,
+        data: { activo: !vehicle.activo }
+      });
+      toast({
+        title: vehicle.activo ? 'Vehículo desactivado' : 'Vehículo activado',
+        description: vehicle.activo ? 'Ya no aparecerá en tu catálogo' : 'Ahora aparece en tu catálogo',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'No se pudo actualizar el vehículo',
+        variant: 'destructive',
+      });
+    }
   };
 
-  const handleDeleteClick = (vehicle: Vehicle) => {
+  const handleDeleteClick = (vehicle: VehicleDto) => {
     setVehicleToDelete(vehicle);
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (vehicleToDelete) {
-      deleteVehicle(vehicleToDelete.id);
-      loadVehicles();
-      toast({
-        title: 'Vehículo eliminado',
-        description: 'El vehículo ha sido eliminado de tu inventario.',
-      });
+      try {
+        await deleteVehicleMutation.mutateAsync(vehicleToDelete.id);
+        toast({
+          title: 'Vehículo eliminado',
+          description: 'El vehículo ha sido eliminado de tu inventario.',
+        });
+      } catch (error: any) {
+        toast({
+          title: 'Error',
+          description: error.message || 'No se pudo eliminar el vehículo',
+          variant: 'destructive',
+        });
+      }
     }
     setDeleteDialogOpen(false);
     setVehicleToDelete(null);
   };
 
-  const formatPrice = (price: number) =>
-    new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }).format(price);
+  const formatPrice = (price: number | null, moneda: string = 'ARS') => {
+    if (moneda === 'CONSULTAR' || price === null) {
+      return 'Consultar';
+    }
+    const currency = moneda === 'USD' ? 'USD' : 'ARS';
+    const formatted = new Intl.NumberFormat('es-AR', { style: 'currency', currency, maximumFractionDigits: 0 }).format(price);
+    return moneda === 'USD' ? formatted.replace('US$', 'US$ ') : formatted;
+  };
 
 
 
   return (
     <DashboardLayout>
-      <SEO title="Mis Vehículos | AgenciaExpress" description="Gestiona tu inventario de vehículos." />
+      <SEO title="Mis Vehículos | CatálogoVehículos" description="Gestiona tu inventario de vehículos." />
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="dashboard-page-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">Mis vehículos</h1>
-            <p className="text-muted-foreground">
+            <h1>Mis vehículos</h1>
+            <p>
               {vehicles.length} vehículo{vehicles.length !== 1 && 's'} en tu inventario
             </p>
           </div>
-          <Link to="/dashboard/vehiculos/nuevo">
-            <Button variant="gradient" className="gap-2">
-              <Plus className="h-4 w-4" />
-              Nuevo vehículo
-            </Button>
-          </Link>
+          <div className="flex items-center gap-3">
+            {/* Publication counter badge */}
+            <div className={cn(
+              "px-3 py-1.5 rounded-full text-sm font-medium",
+              limit === Infinity
+                ? "bg-primary/10 text-primary"
+                : activeVehicles.length >= (limit as number)
+                  ? "bg-destructive/10 text-destructive"
+                  : "bg-muted text-muted-foreground"
+            )}>
+              {limitDisplay}
+            </div>
+
+            {canAddMore ? (
+              <Link to="/dashboard/vehiculos/nuevo">
+                <Button variant="gradient" className="gap-2">
+                  <Plus className="h-4 w-4" />
+                  Nuevo vehículo
+                </Button>
+              </Link>
+            ) : (
+              <Button
+                variant="gradient"
+                className="gap-2 opacity-50 cursor-not-allowed"
+                onClick={() => setShowLimitModal(true)}
+              >
+                <Plus className="h-4 w-4" />
+                Nuevo vehículo
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Search */}
@@ -144,17 +198,29 @@ export default function DashboardVehicles() {
               <div
                 key={vehicle.id}
                 className={cn(
-                  "glass-card overflow-hidden transition-all duration-300",
+                  "glass-card overflow-hidden transition-all duration-300 animate-fade-in-up",
                   !vehicle.activo && "opacity-60"
                 )}
+                style={{ animationDelay: `${filteredVehicles.indexOf(vehicle) * 0.05}s` }}
               >
                 {/* Image */}
-                <div className="relative aspect-video">
-                  <img
-                    src={vehicle.fotos[0] || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=600&h=400&fit=crop'}
-                    alt={`${vehicle.marca} ${vehicle.modelo}`}
-                    className="w-full h-full object-cover"
-                  />
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  {vehicle.fotos.length > 0 ? (
+                    <img
+                      src={resolveImageUrl(vehicle.fotos[0])}
+                      alt={`${vehicle.marca} ${vehicle.modelo}`}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-muted text-muted-foreground/30">
+                      {vehicle.tipoVehiculo === 'MOTO' ? (
+                        <Bike className="h-12 w-12" strokeWidth={1} />
+                      ) : (
+                        <Car className="h-12 w-12" strokeWidth={1} />
+                      )}
+                      <span className="text-[10px] uppercase tracking-wider mt-2 font-medium">Sin fotos</span>
+                    </div>
+                  )}
                   {!vehicle.activo && (
                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                       <span className="px-3 py-1 bg-muted rounded-full text-sm font-medium">
@@ -171,10 +237,10 @@ export default function DashboardVehicles() {
                       <h3 className="font-bold">
                         {vehicle.marca} {vehicle.modelo}
                       </h3>
-                      <p className="text-sm text-muted-foreground">{vehicle.año}</p>
+                      <p className="text-sm text-muted-foreground">{vehicle.anio}</p>
                     </div>
                     <p className="text-lg font-bold text-primary">
-                      {formatPrice(vehicle.precio)}
+                      {formatPrice(vehicle.precio, vehicle.moneda)}
                     </p>
                   </div>
 
@@ -205,6 +271,13 @@ export default function DashboardVehicles() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        <DropdownMenuItem asChild>
+                          <Link to={`/${user?.username}/${vehicle.id}`}>
+                            <Eye className="h-4 w-4 mr-2" />
+                            Ver detalles
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleToggleActive(vehicle)}>
                           {vehicle.activo ? (
                             <>
@@ -234,14 +307,14 @@ export default function DashboardVehicles() {
             ))}
           </div>
         ) : (
-          <div className="glass-card p-12 text-center">
-            <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-              <Search className="h-8 w-8 text-primary" />
+          <div className="glass-card p-12 empty-state">
+            <div className="empty-state-icon">
+              <Search />
             </div>
-            <h3 className="text-lg font-semibold mb-2">
+            <h3>
               {search ? 'No se encontraron vehículos' : 'Sin vehículos'}
             </h3>
-            <p className="text-muted-foreground mb-6">
+            <p>
               {search
                 ? 'Intenta con otros términos de búsqueda'
                 : 'Comienza agregando tu primer vehículo'}
@@ -278,6 +351,14 @@ export default function DashboardVehicles() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Plan Limit Modal */}
+      <PlanLimitModal
+        isOpen={showLimitModal}
+        onClose={() => setShowLimitModal(false)}
+        plan={user?.plan || 'basico'}
+        limite={limit === Infinity ? 0 : (limit as number)}
+      />
     </DashboardLayout>
   );
 }

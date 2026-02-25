@@ -2,25 +2,24 @@ import { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
-import { getVehiclesByAgency, Vehicle, PLAN_LIMITS, PLAN_NAMES } from '@/lib/storage';
-import { Car, Eye, MessageCircle, TrendingUp, BarChart3 } from 'lucide-react';
+import { PLAN_LIMITS, PLAN_NAMES } from '@/lib/storage';
+import { useVehicles, useAgencyAnalytics } from '@/hooks/useVehicles';
+import { VehicleDto } from '@/api/types';
+import { Car, Bike, Eye, MessageCircle, TrendingUp, BarChart3, ArrowUpRight } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { cn, resolveImageUrl } from '@/lib/utils';
 
 import { SEO } from '@/components/common/SEO';
 
 export default function Dashboard() {
   const { user, loading, isAuthenticated } = useAuth();
 
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const { data: vehicles = [], isLoading: vehiclesLoading } = useVehicles({ agenciaUsername: user?.username });
+  const { data: summary, isLoading: analyticsLoading } = useAgencyAnalytics();
 
-  useEffect(() => {
-    if (user) {
-      setVehicles(getVehiclesByAgency(user.username));
-    }
-  }, [user]);
-
-  if (loading) {
+  if (loading || vehiclesLoading || analyticsLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
@@ -33,14 +32,12 @@ export default function Dashboard() {
   }
 
   const activeVehicles = vehicles.filter(v => v.activo);
-  const totalViews = vehicles.reduce((acc, v) => acc + v.vistas, 0);
-  const totalWhatsappClicks = vehicles.reduce((acc, v) => acc + v.clicksWhatsapp, 0);
+  const totalViews = summary?.totalViews || 0;
+  const totalWhatsappClicks = summary?.totalClicks || 0;
   const limit = PLAN_LIMITS[user?.plan || 'basico'];
   const usagePercent = limit === Infinity ? 0 : (activeVehicles.length / limit) * 100;
 
-  const topVehicles = [...vehicles]
-    .sort((a, b) => b.vistas - a.vistas)
-    .slice(0, 5);
+  const topVehicles = summary?.topVehicles || [];
 
   const stats = [
     {
@@ -77,20 +74,20 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout>
-      <SEO title="Dashboard | AgenciaExpress" description="Resumen de tu agencia." />
+      <SEO title="Dashboard | CatálogoVehículos" description="Resumen de tu agencia." />
       <div className="space-y-8">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold mb-2">
+        <div className="dashboard-page-header">
+          <h1>
             Hola, <span className="gradient-text">{user?.nombre}</span>
           </h1>
-          <p className="text-muted-foreground">
+          <p>
             Aquí está el resumen de tu agencia
           </p>
         </div>
 
         {/* Plan Usage */}
-        <div className="glass-card p-6">
+        <div className="glass-card p-6 animate-fade-in-up">
           <div className="flex items-center justify-between mb-4">
             <div>
               <p className="text-sm text-muted-foreground">Plan actual</p>
@@ -131,10 +128,17 @@ export default function Dashboard() {
         </div>
 
         {/* Top Vehicles */}
-        <div className="glass-card p-6">
-          <div className="flex items-center gap-2 mb-6">
-            <BarChart3 className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-bold">Vehículos más vistos</h2>
+        <div className="glass-card p-6 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-primary" />
+              <h2 className="text-xl font-bold">Vehículos más vistos</h2>
+            </div>
+            <Link to="/dashboard/analiticas">
+              <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80 gap-1">
+                Ver todas <ArrowUpRight className="h-4 w-4" />
+              </Button>
+            </Link>
           </div>
 
           {topVehicles.length > 0 ? (
@@ -148,16 +152,26 @@ export default function Dashboard() {
                     <span className="w-6 text-center font-bold text-muted-foreground">
                       {index + 1}
                     </span>
-                    <div className="w-16 h-12 rounded-lg overflow-hidden flex-shrink-0">
-                      <img
-                        src={vehicle.fotos[0] || 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=100&h=75&fit=crop'}
-                        alt={`${vehicle.marca} ${vehicle.modelo}`}
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="w-16 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-muted flex items-center justify-center">
+                      {vehicle.fotos?.length > 0 ? (
+                        <img
+                          src={resolveImageUrl(vehicle.fotos[0])}
+                          alt={`${vehicle.marca} ${vehicle.modelo}`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="text-muted-foreground/30">
+                          {vehicle.tipoVehiculo === 'MOTO' ? (
+                            <Bike className="h-6 w-6" strokeWidth={1} />
+                          ) : (
+                            <Car className="h-6 w-6" strokeWidth={1} />
+                          )}
+                        </div>
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">
-                        {vehicle.marca} {vehicle.modelo} {vehicle.año}
+                        {vehicle.marca} {vehicle.modelo} {vehicle.anio}
                       </p>
                       <div className="flex items-center gap-2 mt-1">
                         <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
