@@ -2,7 +2,7 @@ import { useState, useRef } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
-import { useCreateVehicle, useVehicles } from '@/hooks/useVehicles';
+import { useCreateVehicle, useMyVehicles } from '@/hooks/useVehicles';
 import { useUploadVehicleImage } from '@/hooks/useUpload';
 import { PLAN_LIMITS, PLAN_NAMES } from '@/lib/storage';
 import { PlanLimitModal } from '@/components/ui/PlanLimitModal';
@@ -27,7 +27,7 @@ export default function DashboardNewVehicle() {
   const { toast } = useToast();
 
   const createVehicleMutation = useCreateVehicle();
-  const { data: vehicles } = useVehicles({ agenciaUsername: user?.username });
+  const { data: vehicles } = useMyVehicles();
   const { uploadAsync, isUploading } = useUploadVehicleImage();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showLimitModal, setShowLimitModal] = useState(false);

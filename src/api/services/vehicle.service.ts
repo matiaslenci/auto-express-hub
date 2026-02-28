@@ -12,13 +12,22 @@ export const vehicleService = {
     },
 
     /**
-     * Get all vehicles with optional filters
+     * Get all vehicles with optional filters (public)
      * GET /vehicles
      */
     async getVehicles(filters?: VehicleFilters): Promise<VehicleDto[]> {
         const response = await apiClient.get<VehicleDto[]>('/vehicles', {
             params: filters,
         });
+        return response.data;
+    },
+
+    /**
+     * Get vehicles owned by the authenticated user (requires JWT)
+     * GET /vehicles/my-vehicles
+     */
+    async getMyVehicles(): Promise<VehicleDto[]> {
+        const response = await apiClient.get<VehicleDto[]>('/vehicles/my-vehicles');
         return response.data;
     },
 

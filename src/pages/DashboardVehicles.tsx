@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
-import { useVehicles, useDeleteVehicle, useUpdateVehicle } from '@/hooks/useVehicles';
+import { useMyVehicles, useDeleteVehicle, useUpdateVehicle } from '@/hooks/useVehicles';
 import { VehicleDto } from '@/api/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,7 +45,7 @@ import { SEO } from '@/components/common/SEO';
 
 export default function DashboardVehicles() {
   const { user, loading, isAuthenticated } = useAuth();
-  const { data: vehicles = [], isLoading: vehiclesLoading } = useVehicles({ agenciaUsername: user?.username });
+  const { data: vehicles = [], isLoading: vehiclesLoading } = useMyVehicles();
   const deleteVehicleMutation = useDeleteVehicle();
   const updateVehicleMutation = useUpdateVehicle();
 

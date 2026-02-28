@@ -13,12 +13,22 @@ export const vehicleKeys = {
 };
 
 /**
- * Hook to fetch all vehicles with optional filters
+ * Hook to fetch all vehicles with optional filters (public)
  */
 export function useVehicles(filters?: VehicleFilters) {
     return useQuery({
         queryKey: vehicleKeys.list(filters),
         queryFn: () => vehicleService.getVehicles(filters),
+    });
+}
+
+/**
+ * Hook to fetch vehicles owned by the authenticated user (dashboard)
+ */
+export function useMyVehicles() {
+    return useQuery({
+        queryKey: ['vehicles', 'my-vehicles'] as const,
+        queryFn: () => vehicleService.getMyVehicles(),
     });
 }
 

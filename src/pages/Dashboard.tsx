@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { PLAN_LIMITS, PLAN_NAMES } from '@/lib/storage';
-import { useVehicles, useAgencyAnalytics } from '@/hooks/useVehicles';
+import { useMyVehicles, useAgencyAnalytics } from '@/hooks/useVehicles';
 import { VehicleDto } from '@/api/types';
 import { Car, Bike, Eye, MessageCircle, TrendingUp, BarChart3, ArrowUpRight } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
@@ -16,7 +16,7 @@ import { SEO } from '@/components/common/SEO';
 export default function Dashboard() {
   const { user, loading, isAuthenticated } = useAuth();
 
-  const { data: vehicles = [], isLoading: vehiclesLoading } = useVehicles({ agenciaUsername: user?.username });
+  const { data: vehicles = [], isLoading: vehiclesLoading } = useMyVehicles();
   const { data: summary, isLoading: analyticsLoading } = useAgencyAnalytics();
 
   if (loading || vehiclesLoading || analyticsLoading) {
