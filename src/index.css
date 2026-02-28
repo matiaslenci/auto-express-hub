@@ -199,6 +199,10 @@
     @apply px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider;
   }
 
+  .badge-gratuito {
+    @apply bg-emerald-100 text-emerald-700 border border-emerald-300 dark:bg-emerald-600/50 dark:text-emerald-200 dark:border-emerald-500/50;
+  }
+
   .badge-basico {
     @apply bg-slate-200 text-slate-700 border border-slate-300 dark:bg-slate-600/50 dark:text-slate-200 dark:border-slate-500/50;
   }

@@ -29,7 +29,7 @@ export default function Register() {
     username: '',
     email: '',
     password: '',
-    plan: 'basico' as 'basico' | 'profesional' | 'premium',
+    plan: 'gratuito' as 'gratuito' | 'basico' | 'profesional' | 'premium',
   });
 
   // Redirect if already authenticated

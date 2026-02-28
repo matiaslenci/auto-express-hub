@@ -15,7 +15,7 @@ interface AuthContextType {
         password: string;
         username: string;
         nombre: string;
-        plan: 'basico' | 'profesional' | 'premium';
+        plan: 'gratuito' | 'basico' | 'profesional' | 'premium';
     }) => Promise<{ success: boolean; error?: string }>;
     refreshUser: () => Promise<void>;
 }
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password: string;
         username: string;
         nombre: string;
-        plan: 'basico' | 'profesional' | 'premium';
+        plan: 'gratuito' | 'basico' | 'profesional' | 'premium';
     }): Promise<{ success: boolean; error?: string }> => {
         try {
             const registerData: RegisterDto = {

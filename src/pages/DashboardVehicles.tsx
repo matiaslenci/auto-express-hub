@@ -81,6 +81,12 @@ export default function DashboardVehicles() {
     : `${activeVehicles.length} / ${limit} publicaciones`;
 
   const handleToggleActive = async (vehicle: VehicleDto) => {
+    // Prevent activating if plan limit would be exceeded
+    if (!vehicle.activo && !canAddMore) {
+      setShowLimitModal(true);
+      return;
+    }
+
     try {
       await updateVehicleMutation.mutateAsync({
         id: vehicle.id,

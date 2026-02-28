@@ -11,7 +11,7 @@ export interface Agency {
   portada: string;
   ubicacion: string;
   whatsapp: string;
-  plan: 'basico' | 'profesional' | 'premium';
+  plan: 'gratuito' | 'basico' | 'profesional' | 'premium';
   limitePublicaciones: number;
   createdAt: string;
 }
@@ -47,6 +47,7 @@ const CURRENT_USER_KEY = 'agencia_express_current_user';
 
 // Plan limits
 export const PLAN_LIMITS = {
+  gratuito: 3,
   basico: 10,
   profesional: 50,
   premium: Infinity,
@@ -56,12 +57,14 @@ export const PLAN_LIMITS = {
 export const WHATSAPP_SUPPORT = '+5493425765843';
 
 export const PLAN_PRICES = {
+  gratuito: 0,
   basico: 17000,
   profesional: 46000,
   premium: 78000,
 } as const;
 
 export const PLAN_NAMES = {
+  gratuito: 'Gratuito',
   basico: 'Básico',
   profesional: 'Profesional',
   premium: 'Premium',

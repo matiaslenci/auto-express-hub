@@ -21,7 +21,7 @@ export const adminApi = {
     /**
      * Update agency plan
      */
-    updateAgencyPlan: async (id: string, plan: 'basico' | 'profesional' | 'premium'): Promise<AgencyDto> => {
+    updateAgencyPlan: async (id: string, plan: 'gratuito' | 'basico' | 'profesional' | 'premium'): Promise<AgencyDto> => {
         const response = await axiosClient.patch(`/admin/agencies/${id}/plan`, { plan });
         return response.data;
     }

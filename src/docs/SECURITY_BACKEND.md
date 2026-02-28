@@ -149,8 +149,8 @@ export class RegisterDto {
   @MinLength(2, { message: 'El nombre debe tener al menos 2 caracteres' })
   nombre: string;
 
-  @IsIn(['basico', 'profesional', 'premium'], {
-    message: 'El plan debe ser basico, profesional o premium'
+  @IsIn(['gratuito', 'basico', 'profesional', 'premium'], {
+    message: 'El plan debe ser gratuito, basico, profesional o premium'
   })
   plan: string;
 }

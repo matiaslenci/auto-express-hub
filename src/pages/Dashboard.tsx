@@ -96,7 +96,8 @@ export default function Dashboard() {
             <div className={cn(
               "badge-plan",
               user?.plan === 'premium' ? 'badge-premium' :
-                user?.plan === 'profesional' ? 'badge-profesional' : 'badge-basico'
+                user?.plan === 'profesional' ? 'badge-profesional' :
+                  user?.plan === 'basico' ? 'badge-basico' : 'badge-gratuito'
             )}>
               {user?.plan === 'premium' ? 'Sin límites' : `${activeVehicles.length}/${limit} publicaciones`}
             </div>

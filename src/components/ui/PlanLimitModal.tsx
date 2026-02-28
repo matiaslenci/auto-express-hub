@@ -6,7 +6,7 @@ import { PLAN_NAMES, WHATSAPP_SUPPORT } from '@/lib/storage';
 interface PlanLimitModalProps {
     isOpen: boolean;
     onClose: () => void;
-    plan: 'basico' | 'profesional' | 'premium';
+    plan: 'gratuito' | 'basico' | 'profesional' | 'premium';
     limite: number;
 }
 
@@ -63,7 +63,7 @@ export function PlanLimitModal({ isOpen, onClose, plan, limite }: PlanLimitModal
                         <div className="text-sm">
                             <p className="font-medium">¿Necesitas más publicaciones?</p>
                             <p className="text-muted-foreground">
-                                Plan Profesional: 50 | Plan Premium: Ilimitadas
+                                Plan Básico: 10 | Plan Profesional: 50 | Plan Premium: Ilimitadas
                             </p>
                         </div>
                     </div>

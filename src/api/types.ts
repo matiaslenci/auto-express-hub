@@ -6,7 +6,7 @@ export interface RegisterDto {
     password: string;
     username: string;
     nombre: string;
-    plan: 'basico' | 'profesional' | 'premium';
+    plan: 'gratuito' | 'basico' | 'profesional' | 'premium';
 }
 
 export interface LoginDto {
@@ -29,7 +29,7 @@ export interface AgencyDto {
     portada?: string;
     ubicacion?: string;
     whatsapp?: string;
-    plan: 'basico' | 'profesional' | 'premium';
+    plan: 'gratuito' | 'basico' | 'profesional' | 'premium';
     limitePublicaciones: number;
     isActive: boolean;
     isAdmin: boolean;

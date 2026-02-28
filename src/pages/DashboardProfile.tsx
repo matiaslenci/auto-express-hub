@@ -117,7 +117,8 @@ export default function DashboardProfile() {
   };
 
   const planClass = user?.plan === 'premium' ? 'badge-premium' :
-    user?.plan === 'profesional' ? 'badge-profesional' : 'badge-basico';
+    user?.plan === 'profesional' ? 'badge-profesional' :
+      user?.plan === 'basico' ? 'badge-basico' : 'badge-gratuito';
 
   return (
     <DashboardLayout>
@@ -339,7 +340,10 @@ export default function DashboardProfile() {
               <div>
                 <h2 className="text-lg font-semibold">Tu plan actual</h2>
                 <p className="text-muted-foreground">
-                  {PLAN_NAMES[user?.plan || 'basico']} - ${PLAN_PRICES[user?.plan || 'basico']}/mes
+                  {user?.plan === 'gratuito'
+                    ? 'Gratuito - Gratis'
+                    : `${PLAN_NAMES[user?.plan || 'gratuito']} - $${PLAN_PRICES[user?.plan || 'gratuito']}/mes`
+                  }
                 </p>
               </div>
               <span className={cn("badge-plan text-base px-4 py-2", planClass)}>

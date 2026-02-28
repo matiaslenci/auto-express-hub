@@ -42,7 +42,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   const planClass = user?.plan === 'premium' ? 'badge-premium' :
-    user?.plan === 'profesional' ? 'badge-profesional' : 'badge-basico';
+    user?.plan === 'profesional' ? 'badge-profesional' :
+      user?.plan === 'basico' ? 'badge-basico' : 'badge-gratuito';
 
   return (
     <div className="min-h-screen bg-background">

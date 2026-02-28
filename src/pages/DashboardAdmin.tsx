@@ -3,7 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { adminApi } from '@/api/adminApi';
+import { vehicleService } from '@/api/services/vehicle.service';
 import { AgencyDto } from '@/api/types';
+import { PLAN_LIMITS } from '@/lib/storage';
 import { useToast } from '@/hooks/use-toast';
 import {
     Table,
@@ -58,12 +60,41 @@ export default function DashboardAdmin() {
     });
 
     const planMutation = useMutation({
-        mutationFn: ({ id, plan }: { id: string; plan: 'basico' | 'profesional' | 'premium' }) =>
+        mutationFn: ({ id, plan }: { id: string; plan: 'gratuito' | 'basico' | 'profesional' | 'premium' }) =>
             adminApi.updateAgencyPlan(id, plan),
-        onSuccess: (updatedAgency) => {
+        onSuccess: async (updatedAgency) => {
             queryClient.setQueryData(['admin-agencies'], (old: AgencyDto[] = []) =>
                 old.map((agency) => (agency.id === updatedAgency.id ? updatedAgency : agency))
             );
+
+            // Hard downgrade: deactivate excess vehicles
+            const newLimit = PLAN_LIMITS[updatedAgency.plan];
+            if (newLimit !== Infinity) {
+                try {
+                    const vehicles = await vehicleService.getVehicles({ agenciaUsername: updatedAgency.username });
+                    const activeVehicles = vehicles
+                        .filter(v => v.activo)
+                        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+                    if (activeVehicles.length > newLimit) {
+                        const vehiclesToDeactivate = activeVehicles.slice(newLimit);
+                        await Promise.all(
+                            vehiclesToDeactivate.map(v => vehicleService.updateVehicle(v.id, { activo: false }))
+                        );
+                        toast({
+                            title: 'Vehículos desactivados',
+                            description: `Se desactivaron ${vehiclesToDeactivate.length} vehículo(s) que excedían el límite del nuevo plan.`,
+                        });
+                    }
+                } catch (error) {
+                    toast({
+                        title: 'Advertencia',
+                        description: 'No se pudieron desactivar los vehículos excedentes automáticamente.',
+                        variant: 'destructive',
+                    });
+                }
+            }
+
             toast({
                 title: 'Plan actualizado',
                 description: `Plan de ${updatedAgency.username} cambiado a ${updatedAgency.plan}.`,
@@ -151,6 +182,7 @@ export default function DashboardAdmin() {
                                                             <SelectValue />
                                                         </SelectTrigger>
                                                         <SelectContent>
+                                                            <SelectItem value="gratuito">Gratuito</SelectItem>
                                                             <SelectItem value="basico">Básico</SelectItem>
                                                             <SelectItem value="profesional">Profesional</SelectItem>
                                                             <SelectItem value="premium">Premium</SelectItem>
