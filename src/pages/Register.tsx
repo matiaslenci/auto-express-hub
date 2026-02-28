@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { PLAN_PRICES, PLAN_LIMITS } from '@/lib/storage';
 
 const plans = [
+  { id: 'gratuito', name: 'Gratuito', price: PLAN_PRICES.gratuito, limit: PLAN_LIMITS.gratuito },
   { id: 'basico', name: 'Básico', price: PLAN_PRICES.basico, limit: PLAN_LIMITS.basico },
   { id: 'profesional', name: 'Profesional', price: PLAN_PRICES.profesional, limit: PLAN_LIMITS.profesional },
   { id: 'premium', name: 'Premium', price: PLAN_PRICES.premium, limit: 'Ilimitadas' },
@@ -102,7 +103,7 @@ export default function Register() {
             {/* Plan Selection */}
             <div className="space-y-3">
               <Label>Selecciona tu plan</Label>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {plans.map((plan) => (
                   <button
                     key={plan.id}
@@ -121,7 +122,7 @@ export default function Register() {
                       </div>
                     )}
                     <p className="font-semibold text-sm">{plan.name}</p>
-                    <p className="text-lg font-bold text-primary">${plan.price}</p>
+                    <p className="text-lg font-bold text-primary">{plan.price === 0 ? 'Gratis' : `$${plan.price}`}</p>
                     <p className="text-xs text-muted-foreground">{plan.limit} pub.</p>
                   </button>
                 ))}
