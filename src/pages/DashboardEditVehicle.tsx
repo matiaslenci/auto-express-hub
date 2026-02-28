@@ -63,7 +63,7 @@ export default function DashboardEditVehicle() {
                 marca: marcaEnLista ? (vehicle.marca || '') : 'Otro',
                 modelo: vehicle.modelo || '',
                 anio: vehicle.anio || new Date().getFullYear(),
-                precio: vehicle.precio,
+                precio: vehicle.precio != null ? Math.trunc(vehicle.precio) : null,
                 moneda: vehicle.moneda || 'ARS',
                 tipo: vehicle.tipo || '',
                 transmision: vehicle.transmision || '',
