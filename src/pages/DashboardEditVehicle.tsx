@@ -133,7 +133,7 @@ export default function DashboardEditVehicle() {
             if (formData.fotos.length >= 10) {
                 toast({
                     title: 'Límite alcanzado',
-                    description: 'Máximo 10 fotos por vehículo.',
+                    description: 'Máximo 20 fotos por vehículo.',
                     variant: 'destructive',
                 });
                 break;
@@ -469,7 +469,7 @@ export default function DashboardEditVehicle() {
                     <div className="form-card animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
                         <h2 className="section-title">Fotos</h2>
                         <p className="text-sm text-muted-foreground">
-                            Sube fotos del vehículo (máximo 10, formatos: JPG, PNG, WebP). Haz clic en la estrella para elegir la portada.
+                            Sube fotos del vehículo (máximo 20, formatos: JPG, PNG, WebP). Haz clic en la estrella para elegir la portada.
                         </p>
 
                         {/* Upload Button */}
