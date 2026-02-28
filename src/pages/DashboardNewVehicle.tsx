@@ -302,10 +302,13 @@ export default function DashboardNewVehicle() {
                   <Label htmlFor="precio">Precio ({formData.moneda === 'USD' ? 'USD' : 'ARS'}) *</Label>
                   <Input
                     id="precio"
-                    type="number"
-                    min={0}
-                    value={formData.precio || ''}
-                    onChange={(e) => updateField('precio', parseInt(e.target.value) || 0)}
+                    type="text"
+                    inputMode="numeric"
+                    value={formData.precio ?? ''}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[.,\s]/g, '');
+                      updateField('precio', raw === '' ? null : parseInt(raw, 10) || 0);
+                    }}
                     required
                     className="input-glow"
                     placeholder="0"
@@ -381,10 +384,13 @@ export default function DashboardNewVehicle() {
                 <div className="flex items-center gap-3">
                   <Input
                     id="kilometraje"
-                    type="number"
-                    min={0}
+                    type="text"
+                    inputMode="numeric"
                     value={formData.kilometraje || ''}
-                    onChange={(e) => updateField('kilometraje', parseInt(e.target.value) || 0)}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/[.,\s]/g, '');
+                      updateField('kilometraje', parseInt(raw, 10) || 0);
+                    }}
                     className="input-glow flex-1"
                     placeholder="0"
                     disabled={formData.kilometraje === 0 && formData.es0km}
