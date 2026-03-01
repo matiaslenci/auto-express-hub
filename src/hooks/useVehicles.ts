@@ -33,6 +33,17 @@ export function useMyVehicles() {
 }
 
 /**
+ * Hook to fetch vehicles for a specific agency by username (catalog)
+ */
+export function useAgencyVehicles(username: string) {
+    return useQuery({
+        queryKey: ['vehicles', 'agency', username] as const,
+        queryFn: () => vehicleService.getVehiclesByUsername(username),
+        enabled: !!username,
+    });
+}
+
+/**
  * Hook to fetch a single vehicle by ID
  */
 export function useVehicle(id: string) {

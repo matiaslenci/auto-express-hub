@@ -4,7 +4,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { VehicleCard } from '@/components/vehicles/VehicleCard';
 import { VehicleFilters, VehicleFiltersState } from '@/components/vehicles/VehicleFilters';
 import { useAgency } from '@/hooks/useAgency';
-import { useVehicles } from '@/hooks/useVehicles';
+import { useAgencyVehicles } from '@/hooks/useVehicles';
 import { MapPin, Car, Filter, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn, resolveImageUrl } from '@/lib/utils';
@@ -32,13 +32,13 @@ const defaultFilters: VehicleFiltersState = {
 export default function AgencyCatalog() {
   const { username } = useParams<{ username: string }>();
   const { data: agency, isLoading: agencyLoading } = useAgency(username || '');
-  const { data: allVehicles = [], isLoading: vehiclesLoading } = useVehicles({ agenciaUsername: username });
+  const { data: allVehicles = [], isLoading: vehiclesLoading } = useAgencyVehicles(username || '');
 
   const [filters, setFilters] = useState<VehicleFiltersState>(defaultFilters);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
 
-  // Filter only active vehicles
-  const vehicles = useMemo(() => allVehicles.filter(v => v.activo), [allVehicles]);
+  // The new endpoint only returns active vehicles, and may omit the 'activo' boolean
+  const vehicles = useMemo(() => allVehicles.filter(v => v.activo !== false), [allVehicles]);
 
   const marcas = useMemo(() => {
     const uniqueMarcas = [...new Set(vehicles.map(v => v.marca))];

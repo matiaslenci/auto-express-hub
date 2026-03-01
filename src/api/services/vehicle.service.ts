@@ -23,6 +23,15 @@ export const vehicleService = {
     },
 
     /**
+     * Get vehicles for a specific agency by username (public)
+     * GET /vehicles/user/:username
+     */
+    async getVehiclesByUsername(username: string): Promise<VehicleDto[]> {
+        const response = await apiClient.get<VehicleDto[]>(`/vehicles/user/${username}`);
+        return response.data;
+    },
+
+    /**
      * Get vehicles owned by the authenticated user (requires JWT)
      * GET /vehicles/my-vehicles
      */
