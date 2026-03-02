@@ -10,6 +10,8 @@ export const vehicleKeys = {
     list: (filters?: VehicleFilters) => [...vehicleKeys.lists(), filters] as const,
     details: () => [...vehicleKeys.all, 'detail'] as const,
     detail: (id: string) => [...vehicleKeys.details(), id] as const,
+    myVehicles: () => [...vehicleKeys.all, 'my-vehicles'] as const,
+    agency: (username: string) => [...vehicleKeys.all, 'agency', username] as const,
 };
 
 /**
@@ -27,7 +29,7 @@ export function useVehicles(filters?: VehicleFilters) {
  */
 export function useMyVehicles() {
     return useQuery({
-        queryKey: ['vehicles', 'my-vehicles'] as const,
+        queryKey: vehicleKeys.myVehicles(),
         queryFn: () => vehicleService.getMyVehicles(),
     });
 }
@@ -37,7 +39,7 @@ export function useMyVehicles() {
  */
 export function useAgencyVehicles(username: string) {
     return useQuery({
-        queryKey: ['vehicles', 'agency', username] as const,
+        queryKey: vehicleKeys.agency(username),
         queryFn: () => vehicleService.getVehiclesByUsername(username),
         enabled: !!username,
     });
@@ -64,7 +66,7 @@ export function useCreateVehicle() {
         mutationFn: (data: CreateVehicleDto) => vehicleService.createVehicle(data),
         onSuccess: () => {
             // Invalidate all vehicle lists
-            queryClient.invalidateQueries({ queryKey: vehicleKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
         },
     });
 }
@@ -80,7 +82,7 @@ export function useUpdateVehicle() {
             vehicleService.updateVehicle(id, data),
         onSuccess: (updatedVehicle) => {
             // Invalidate lists
-            queryClient.invalidateQueries({ queryKey: vehicleKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
             // Update the specific vehicle in cache
             queryClient.setQueryData(vehicleKeys.detail(updatedVehicle.id), updatedVehicle);
         },
@@ -97,7 +99,7 @@ export function useDeleteVehicle() {
         mutationFn: (id: string) => vehicleService.deleteVehicle(id),
         onSuccess: (_, deletedId) => {
             // Invalidate all vehicle lists
-            queryClient.invalidateQueries({ queryKey: vehicleKeys.lists() });
+            queryClient.invalidateQueries({ queryKey: vehicleKeys.all });
             // Remove from cache
             queryClient.removeQueries({ queryKey: vehicleKeys.detail(deletedId) });
         },
