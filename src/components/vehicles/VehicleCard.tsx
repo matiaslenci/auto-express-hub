@@ -52,29 +52,21 @@ export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardP
             <span className="text-[10px] uppercase tracking-widest mt-2 font-medium">Sin fotos</span>
           </div>
         )}
-
-        {/* Overlay Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-        {/* Type Badge */}
-        <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-black/70 dark:bg-black/50 backdrop-blur-md text-xs font-medium text-white shadow-lg">
-          {vehicle.tipoVehiculo === 'MOTO' ? '🏍️' : '🚗'} {vehicle.tipo}
-        </span>
-
-        {/* Price Badge (overlay on image) */}
-        <span className="absolute bottom-3 right-3 px-3 py-1 rounded-full bg-primary text-primary-foreground text-sm font-bold shadow-lg">
-          {formattedPrice}
-        </span>
       </div>
 
       {/* Content */}
       <div className="p-4">
-        {/* Title + Year */}
+        {/* Title + Price + Year */}
         <div className="mb-3">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="text-base font-bold leading-tight line-clamp-1">
-              {vehicle.marca} {vehicle.modelo}
-            </h3>
+            <div>
+              <h3 className="text-base font-bold leading-tight line-clamp-1">
+                {vehicle.marca} {vehicle.modelo}
+              </h3>
+              <p className="text-lg font-bold text-primary mt-1">
+                {formattedPrice}
+              </p>
+            </div>
             <span className="flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap shrink-0">
               <Calendar className="h-3 w-3" />
               {vehicle.anio}
