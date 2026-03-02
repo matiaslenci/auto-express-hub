@@ -16,13 +16,16 @@ import {
   Car,
   Bike,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  X,
+  Maximize2
 } from 'lucide-react';
 import { cn, resolveImageUrl } from '@/lib/utils';
 
 export default function VehicleDetail() {
   const { username, vehicleId } = useParams<{ username: string; vehicleId: string }>();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   const { data: vehicle, isLoading: vehicleLoading } = useVehicle(vehicleId || '');
   const { data: agency, isLoading: agencyLoading } = useAgency(username || '');
@@ -35,6 +38,26 @@ export default function VehicleDetail() {
       trackViewMutation.mutate(vehicleId);
     }
   }, [vehicleId, vehicle]);
+
+  // Handle keyboard navigation for the image viewer
+  useEffect(() => {
+    if (!isViewerOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsViewerOpen(false);
+      if (e.key === 'ArrowRight') nextImage();
+      if (e.key === 'ArrowLeft') prevImage();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    // Prevent scrolling behind the modal
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = 'auto';
+    };
+  }, [isViewerOpen, currentImageIndex]);
 
   if (vehicleLoading || agencyLoading) {
     return (
@@ -135,13 +158,24 @@ export default function VehicleDetail() {
             {/* Image Gallery */}
             <div className="space-y-4">
               {/* Main Image */}
-              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden glass-card bg-black/90">
+              <div
+                className={cn(
+                  "relative aspect-[4/3] rounded-2xl overflow-hidden glass-card bg-black/90 group",
+                  images.length > 0 && "cursor-zoom-in"
+                )}
+                onClick={() => images.length > 0 && setIsViewerOpen(true)}
+              >
                 {images.length > 0 ? (
-                  <img
-                    src={resolveImageUrl(images[currentImageIndex])}
-                    alt={`${vehicle.marca} ${vehicle.modelo}`}
-                    className="w-full h-full object-contain"
-                  />
+                  <>
+                    <img
+                      src={resolveImageUrl(images[currentImageIndex])}
+                      alt={`${vehicle.marca} ${vehicle.modelo}`}
+                      className="w-full h-full object-contain transition-transform duration-500"
+                    />
+                    <div className="absolute top-4 right-4 p-2 rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Maximize2 className="h-5 w-5" />
+                    </div>
+                  </>
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground/20">
                     {vehicle.tipoVehiculo === 'MOTO' ? (
@@ -156,13 +190,13 @@ export default function VehicleDetail() {
                 {images.length > 1 && (
                   <>
                     <button
-                      onClick={prevImage}
+                      onClick={(e) => { e.stopPropagation(); prevImage(); }}
                       className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-black/70 transition-colors"
                     >
                       <ChevronLeft className="h-6 w-6" />
                     </button>
                     <button
-                      onClick={nextImage}
+                      onClick={(e) => { e.stopPropagation(); nextImage(); }}
                       className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/50 backdrop-blur-sm text-white hover:bg-black/70 transition-colors"
                     >
                       <ChevronRight className="h-6 w-6" />
@@ -206,9 +240,9 @@ export default function VehicleDetail() {
               {/* Title & Price */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+                  {/*    <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
                     {vehicle.tipoVehiculo === 'MOTO' ? '🏍️ Moto' : '🚗 Auto'}
-                  </span>
+                  </span> */}
                   <span className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
                     {vehicle.tipo}
                   </span>
@@ -288,6 +322,46 @@ export default function VehicleDetail() {
           </div>
         </div>
       </div>
+
+      {/* Full Screen Image Viewer Modal */}
+      {isViewerOpen && images.length > 0 && (
+        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center animate-fade-in">
+          <button
+            onClick={() => setIsViewerOpen(false)}
+            className="absolute top-6 right-6 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-50 focus:outline-none"
+          >
+            <X className="h-6 w-6" />
+          </button>
+
+          <img
+            src={resolveImageUrl(images[currentImageIndex])}
+            alt={`${vehicle.marca} ${vehicle.modelo} fullscreen`}
+            className="w-full h-full max-w-[90vw] max-h-[90vh] object-contain select-none"
+          />
+
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                className="absolute left-6 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors focus:outline-none"
+              >
+                <ChevronLeft className="h-8 w-8" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                className="absolute right-6 top-1/2 -translate-y-1/2 p-4 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors focus:outline-none"
+              >
+                <ChevronRight className="h-8 w-8" />
+              </button>
+
+              {/* Image Counter */}
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md text-white font-medium">
+                {currentImageIndex + 1} / {images.length}
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
