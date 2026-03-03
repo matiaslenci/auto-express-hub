@@ -238,16 +238,18 @@ export default function DashboardVehicles() {
 
                 {/* Content */}
                 <div className="p-4">
-                  <div className="flex items-start justify-between gap-2 mb-3">
-                    <div>
-                      <h3 className="font-bold">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-1 sm:gap-3 mb-3">
+                    <div className="flex-1 min-w-0 pr-0 sm:pr-2">
+                      <h3 className="font-bold truncate" title={`${vehicle.marca} ${vehicle.modelo}`}>
                         {vehicle.marca} {vehicle.modelo}
                       </h3>
                       <p className="text-sm text-muted-foreground">{vehicle.anio}</p>
                     </div>
-                    <p className="text-lg font-bold text-primary">
-                      {formatPrice(vehicle.precio, vehicle.moneda)}
-                    </p>
+                    <div className="shrink-0 text-left sm:text-right w-full sm:w-auto mt-1 sm:mt-0 max-w-full sm:max-w-[50%]">
+                      <p className="text-lg font-bold text-primary break-words">
+                        {formatPrice(vehicle.precio, vehicle.moneda)}
+                      </p>
+                    </div>
                   </div>
 
                   {/* Stats */}

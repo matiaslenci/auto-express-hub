@@ -58,19 +58,24 @@ export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardP
       <div className="p-4">
         {/* Title + Price + Year */}
         <div className="mb-3">
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <h3 className="text-base font-bold leading-tight line-clamp-1">
+          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-1 sm:gap-2">
+            <div className="flex-1 min-w-0 pr-0 sm:pr-2">
+              <h3 className="text-base font-bold leading-tight line-clamp-1" title={`${vehicle.marca} ${vehicle.modelo}`}>
                 {vehicle.marca} {vehicle.modelo}
               </h3>
-              <p className="text-lg font-bold text-primary mt-1">
+              <p className="text-lg font-bold text-primary mt-1 break-words sm:hidden">
                 {formattedPrice}
               </p>
             </div>
-            <span className="flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap shrink-0">
-              <Calendar className="h-3 w-3" />
-              {vehicle.anio}
-            </span>
+            <div className="flex flex-row items-center justify-between w-full sm:w-auto sm:flex-col sm:items-end gap-1">
+              <p className="text-lg font-bold text-primary break-words hidden sm:block">
+                {formattedPrice}
+              </p>
+              <span className="flex items-center gap-1 text-xs text-muted-foreground whitespace-nowrap shrink-0">
+                <Calendar className="h-3 w-3" />
+                {vehicle.anio}
+              </span>
+            </div>
           </div>
 
           {/* Color + Location */}

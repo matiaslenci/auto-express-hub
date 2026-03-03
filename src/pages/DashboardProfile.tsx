@@ -141,20 +141,20 @@ export default function DashboardProfile() {
               />
             )}
           </div>
-          <div className="p-6 pt-0 -mt-8">
-            <div className="flex items-end gap-4">
-              <div className="w-20 z-30 h-20 rounded-xl bg-card border-4 border-card overflow-hidden flex items-center justify-center">
+          <div className="p-6 pt-0 -mt-8 sm:-mt-10">
+            <div className="flex flex-col sm:flex-row sm:items-end gap-4">
+              <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 z-30 rounded-xl bg-card border-4 border-card overflow-hidden flex items-center justify-center relative shadow-sm">
                 {formData.logo ? (
                   <img src={formData.logo} alt="Logo" className="w-full h-full object-cover" />
                 ) : (
-                  <User className="h-8 w-8 text-muted-foreground" />
+                  <User className="h-10 w-10 text-muted-foreground" />
                 )}
               </div>
-              <div className="flex-1">
-                <h2 className="text-xl font-bold">{formData.nombre || 'Tu Agencia'}</h2>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span>@{user?.username}</span>
-                  <span className={cn("badge-plan", planClass)}>
+              <div className="flex-1 min-w-0 pt-2 sm:pt-0">
+                <h2 className="text-xl sm:text-2xl font-bold truncate">{formData.nombre || 'Tu Agencia'}</h2>
+                <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mt-1">
+                  <span className="truncate max-w-[200px] sm:max-w-full">@{user?.username}</span>
+                  <span className={cn("badge-plan shrink-0", planClass)}>
                     {PLAN_NAMES[user?.plan || 'basico']}
                   </span>
                 </div>
