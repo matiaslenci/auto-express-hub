@@ -88,13 +88,13 @@ export default function Dashboard() {
 
         {/* Plan Usage */}
         <div className="glass-card p-6 animate-fade-in-up">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div>
               <p className="text-sm text-muted-foreground">Plan actual</p>
               <p className="text-xl font-bold">{PLAN_NAMES[user?.plan || 'basico']}</p>
             </div>
             <div className={cn(
-              "badge-plan",
+              "badge-plan self-start sm:self-auto",
               user?.plan === 'premium' ? 'badge-premium' :
                 user?.plan === 'profesional' ? 'badge-profesional' :
                   user?.plan === 'basico' ? 'badge-basico' : 'badge-gratuito'

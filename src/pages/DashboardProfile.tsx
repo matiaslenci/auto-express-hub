@@ -336,7 +336,7 @@ export default function DashboardProfile() {
 
           {/* Plan Info */}
           <div className="glass-card p-6 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
               <div>
                 <h2 className="text-lg font-semibold">Tu plan actual</h2>
                 <p className="text-muted-foreground">
@@ -346,7 +346,7 @@ export default function DashboardProfile() {
                   }
                 </p>
               </div>
-              <span className={cn("badge-plan text-base px-4 py-2", planClass)}>
+              <span className={cn("badge-plan self-start sm:self-auto text-base px-4 py-2", planClass)}>
                 {PLAN_NAMES[user?.plan || 'basico']}
               </span>
             </div>
