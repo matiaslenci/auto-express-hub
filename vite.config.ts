@@ -26,12 +26,17 @@ export default defineConfig(({ mode }) => ({
         display: "standalone",
         icons: [
           {
-            src: "/assets/icono.png",
+            src: "/assets/icono-pwa.png",
             sizes: "192x192",
             type: "image/png"
           },
           {
-            src: "/assets/icono.png",
+            src: "/assets/icono-pwa.png",
+            sizes: "512x512",
+            type: "image/png"
+          },
+          {
+            src: "/assets/icono-pwa-maskable.png",
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable"
