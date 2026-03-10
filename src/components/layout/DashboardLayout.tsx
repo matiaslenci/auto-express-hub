@@ -15,7 +15,7 @@ import {
   ChevronRight,
   Shield
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, buildImageUrl } from '@/lib/utils';
 import { PLAN_NAMES } from '@/lib/storage';
 
 interface DashboardLayoutProps {
@@ -99,7 +99,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden">
                 {user?.logo ? (
-                  <img src={user.logo} alt={user.nombre} className="w-full h-full object-cover" />
+                  <img src={buildImageUrl('agencies', user.logo)} alt={user.nombre} className="w-full h-full object-cover" />
                 ) : (
                   <User className="h-5 w-5 text-primary" />
                 )}

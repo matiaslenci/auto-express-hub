@@ -4,9 +4,11 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/contexts/AuthContext';
 import { adminApi } from '@/api/adminApi';
 import { vehicleService } from '@/api/services/vehicle.service';
+import { uploadService } from '@/api/services/upload.service';
 import { AgencyDto } from '@/api/types';
 import { PLAN_LIMITS } from '@/lib/storage';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
 import {
     Table,
     TableBody,
@@ -25,6 +27,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { SEO } from '@/components/common/SEO';
+import { Loader2, Trash2 } from 'lucide-react';
 
 export default function DashboardAdmin() {
     const { user, loading: authLoading, isAuthenticated } = useAuth();
@@ -35,6 +38,30 @@ export default function DashboardAdmin() {
         queryKey: ['admin-agencies'],
         queryFn: adminApi.getAllAgencies,
         enabled: isAuthenticated && !!user?.isAdmin,
+    });
+
+    const cleanupMutation = useMutation({
+        mutationFn: () => uploadService.cleanupOrphanFiles(),
+        onSuccess: (data) => {
+            toast({
+                title: data.count > 0
+                    ? `Se eliminaron ${data.count} archivo(s) huérfano(s)`
+                    : 'No se encontraron archivos huérfanos',
+                description: data.count > 0
+                    ? `Archivos eliminados: ${data.deleted.join(', ')}`
+                    : 'El almacenamiento está limpio.',
+            });
+        },
+        onError: (error: any) => {
+            const status = error?.response?.status || error?.statusCode;
+            toast({
+                title: 'Error',
+                description: status === 403
+                    ? 'No tenés permisos de administrador.'
+                    : error.message || 'No se pudo ejecutar la limpieza.',
+                variant: 'destructive',
+            });
+        },
     });
 
     const statusMutation = useMutation({
@@ -133,6 +160,34 @@ export default function DashboardAdmin() {
                 <div className="dashboard-page-header">
                     <h1>Panel de Administración</h1>
                     <p>Gestiona todas las agencias registradas en la plataforma</p>
+                </div>
+
+                {/* Herramientas */}
+                <div className="glass-card p-6">
+                    <h2 className="text-lg font-semibold mb-4">Herramientas</h2>
+                    <div className="flex items-center gap-4">
+                        <Button
+                            variant="outline"
+                            onClick={() => cleanupMutation.mutate()}
+                            disabled={cleanupMutation.isPending}
+                            className="gap-2"
+                        >
+                            {cleanupMutation.isPending ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    Limpiando...
+                                </>
+                            ) : (
+                                <>
+                                    <Trash2 className="h-4 w-4" />
+                                    Limpiar almacenamiento
+                                </>
+                            )}
+                        </Button>
+                        <p className="text-sm text-muted-foreground">
+                            Elimina archivos de imagen que no están asociados a ningún vehículo ni agencia.
+                        </p>
+                    </div>
                 </div>
 
                 <div className="glass-card overflow-hidden">

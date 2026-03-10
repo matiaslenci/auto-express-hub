@@ -60,4 +60,13 @@ export const uploadService = {
     async deleteImage(folder: 'vehicles' | 'agencies', filename: string): Promise<void> {
         await apiClient.delete(`/uploads/${folder}/${filename}`);
     },
+
+    /**
+     * Cleanup orphan files (admin only)
+     * POST /uploads/cleanup
+     */
+    async cleanupOrphanFiles(): Promise<{ deleted: string[]; count: number }> {
+        const response = await apiClient.post<{ deleted: string[]; count: number }>('/uploads/cleanup');
+        return response.data;
+    },
 };
