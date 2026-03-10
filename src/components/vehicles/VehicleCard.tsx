@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { VehicleDto } from '@/api/types';
 import { MapPin, Gauge, Fuel, Settings2, Car, Bike, Calendar } from 'lucide-react';
-import { cn, resolveImageUrl } from '@/lib/utils';
+import { cn, buildImageUrl } from '@/lib/utils';
 
 interface VehicleCardProps {
   vehicle: VehicleDto;
@@ -38,7 +38,7 @@ export function VehicleCard({ vehicle, agencyUsername, className }: VehicleCardP
       <div className="relative aspect-[16/10] overflow-hidden bg-muted flex items-center justify-center">
         {vehicle.fotos.length > 0 ? (
           <img
-            src={resolveImageUrl(vehicle.fotos[0])}
+            src={buildImageUrl('vehicles', vehicle.fotos[0])}
             alt={`${vehicle.marca} ${vehicle.modelo}`}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />

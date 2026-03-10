@@ -1,7 +1,6 @@
 import apiClient from '../client';
 
 export interface UploadResponse {
-    url: string;
     filename: string;
 }
 

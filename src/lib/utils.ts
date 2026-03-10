@@ -8,14 +8,13 @@ export function cn(...inputs: ClassValue[]) {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000';
 
 /**
- * Resolves an image URL from the backend.
- * If the URL is a relative path (e.g. /uploads/...), it prefixes it with
- * the API base URL so the browser fetches from the correct origin.
- * If it's already an absolute URL (http/https), it's returned as-is.
+ * Builds a full image URL from a folder and filename.
+ * The backend now stores only filenames (e.g. "a0eebc99.webp").
+ * This function constructs the complete URL for rendering.
+ * If the value is already a full URL (legacy data), it's returned as-is.
  */
-export function resolveImageUrl(url: string | null | undefined): string | undefined {
-  if (!url) return undefined;
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  // Relative path — prefix with backend URL
-  return `${API_BASE_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+export function buildImageUrl(folder: string, filename: string | null | undefined): string | undefined {
+  if (!filename) return undefined;
+  if (filename.startsWith('http')) return filename; // backwards compat with old full URLs
+  return `${API_BASE_URL}/uploads/${folder}/${filename}`;
 }

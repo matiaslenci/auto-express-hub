@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { buildImageUrl } from '@/lib/utils';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
@@ -108,7 +109,7 @@ export default function DashboardNewVehicle() {
 
       try {
         const response = await uploadAsync(file);
-        setFormData(prev => ({ ...prev, fotos: [...prev.fotos, response.url] }));
+        setFormData(prev => ({ ...prev, fotos: [...prev.fotos, response.filename] }));
       } catch (error: any) {
         toast({
           title: 'Error al subir imagen',
@@ -484,7 +485,7 @@ export default function DashboardNewVehicle() {
                 {formData.fotos.map((foto, index) => (
                   <div key={index} className={`relative group aspect-video rounded-lg overflow-hidden ${index === 0 ? 'ring-2 ring-primary' : ''}`}>
                     <img
-                      src={foto}
+                      src={buildImageUrl('vehicles', foto)}
                       alt={`Foto ${index + 1}`}
                       className="w-full h-full object-cover"
                     />

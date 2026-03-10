@@ -7,7 +7,7 @@ import { useAgency } from '@/hooks/useAgency';
 import { useAgencyVehicles } from '@/hooks/useVehicles';
 import { MapPin, Car, Filter, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { cn, resolveImageUrl } from '@/lib/utils';
+import { cn, buildImageUrl } from '@/lib/utils';
 
 import { TIPO_CAMBIO_USD } from '@/lib/constants';
 
@@ -171,7 +171,7 @@ export default function AgencyCatalog() {
         <div className="relative h-48 md:h-64 bg-gradient-to-r from-primary/20 to-primary/5">
           {agency.portada && (
             <img
-              src={resolveImageUrl(agency.portada)}
+              src={buildImageUrl('agencies', agency.portada)}
               alt={`${agency.nombre} portada`}
               className="w-full h-full object-cover"
             />
@@ -183,7 +183,7 @@ export default function AgencyCatalog() {
           <div className="flex flex-col md:flex-row md:items-end gap-4 mb-8">
             <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl bg-card border-4 border-background overflow-hidden flex items-center justify-center shadow-xl z-10">
               {agency.logo ? (
-                <img src={resolveImageUrl(agency.logo)} alt={agency.nombre} className="w-full h-full object-cover" />
+                <img src={buildImageUrl('agencies', agency.logo)} alt={agency.nombre} className="w-full h-full object-cover" />
               ) : (
                 <Car className="h-12 w-12 text-muted-foreground" />
               )}

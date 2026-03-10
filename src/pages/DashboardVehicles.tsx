@@ -37,7 +37,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { cn, resolveImageUrl } from '@/lib/utils';
+import { cn, buildImageUrl } from '@/lib/utils';
 import { PLAN_LIMITS, PLAN_NAMES } from '@/lib/storage';
 import { PlanLimitModal } from '@/components/ui/PlanLimitModal';
 
@@ -213,7 +213,7 @@ export default function DashboardVehicles() {
                 <div className="relative aspect-[16/10] overflow-hidden">
                   {vehicle.fotos.length > 0 ? (
                     <img
-                      src={resolveImageUrl(vehicle.fotos[0])}
+                      src={buildImageUrl('vehicles', vehicle.fotos[0])}
                       alt={`${vehicle.marca} ${vehicle.modelo}`}
                       className="w-full h-full object-cover"
                     />

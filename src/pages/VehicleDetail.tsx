@@ -20,7 +20,7 @@ import {
   X,
   Maximize2
 } from 'lucide-react';
-import { cn, resolveImageUrl } from '@/lib/utils';
+import { cn, buildImageUrl } from '@/lib/utils';
 
 export default function VehicleDetail() {
   const { username, vehicleId } = useParams<{ username: string; vehicleId: string }>();
@@ -168,7 +168,7 @@ export default function VehicleDetail() {
                 {images.length > 0 ? (
                   <>
                     <img
-                      src={resolveImageUrl(images[currentImageIndex])}
+                      src={buildImageUrl('vehicles', images[currentImageIndex])}
                       alt={`${vehicle.marca} ${vehicle.modelo}`}
                       className="w-full h-full object-contain transition-transform duration-500"
                     />
@@ -225,7 +225,7 @@ export default function VehicleDetail() {
                       )}
                     >
                       <img
-                        src={resolveImageUrl(img)}
+                        src={buildImageUrl('vehicles', img)}
                         alt={`Vista ${index + 1}`}
                         className="w-full h-full object-cover"
                       />
@@ -302,7 +302,7 @@ export default function VehicleDetail() {
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-14 h-14 rounded-xl bg-muted overflow-hidden flex items-center justify-center">
                     {agency.logo ? (
-                      <img src={resolveImageUrl(agency.logo)} alt={agency.nombre} className="w-full h-full object-cover" />
+                      <img src={buildImageUrl('agencies', agency.logo)} alt={agency.nombre} className="w-full h-full object-cover" />
                     ) : (
                       <Car className="h-7 w-7 text-muted-foreground" />
                     )}
@@ -334,7 +334,7 @@ export default function VehicleDetail() {
           </button>
 
           <img
-            src={resolveImageUrl(images[currentImageIndex])}
+            src={buildImageUrl('vehicles', images[currentImageIndex])}
             alt={`${vehicle.marca} ${vehicle.modelo} fullscreen`}
             className="w-full h-full max-w-[90vw] max-h-[90vh] object-contain select-none"
           />

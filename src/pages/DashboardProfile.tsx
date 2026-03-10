@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, User, MapPin, Phone, Image, ExternalLink, Upload, X, Crown, MessageCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, buildImageUrl } from '@/lib/utils';
 
 import { SEO } from '@/components/common/SEO';
 
@@ -84,7 +84,7 @@ export default function DashboardProfile() {
 
     try {
       const response = await uploadLogo(file);
-      updateField('logo', response.url);
+      updateField('logo', response.filename);
       toast({ title: 'Logo subido correctamente' });
     } catch (error: any) {
       toast({
@@ -103,7 +103,7 @@ export default function DashboardProfile() {
 
     try {
       const response = await uploadCover(file);
-      updateField('portada', response.url);
+      updateField('portada', response.filename);
       toast({ title: 'Portada subida correctamente' });
     } catch (error: any) {
       toast({
@@ -135,7 +135,7 @@ export default function DashboardProfile() {
           <div className="relative h-32 bg-gradient-to-r from-primary/20 to-primary/5">
             {formData.portada && (
               <img
-                src={formData.portada}
+                src={buildImageUrl('agencies', formData.portada)}
                 alt="Portada"
                 className="w-full h-full object-cover"
               />
@@ -145,7 +145,7 @@ export default function DashboardProfile() {
             <div className="flex flex-col sm:flex-row sm:items-end gap-4">
               <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 z-30 rounded-xl bg-card border-4 border-card overflow-hidden flex items-center justify-center relative shadow-sm">
                 {formData.logo ? (
-                  <img src={formData.logo} alt="Logo" className="w-full h-full object-cover" />
+                  <img src={buildImageUrl('agencies', formData.logo)} alt="Logo" className="w-full h-full object-cover" />
                 ) : (
                   <User className="h-10 w-10 text-muted-foreground" />
                 )}
@@ -232,7 +232,7 @@ export default function DashboardProfile() {
                 <div className="flex items-center gap-4">
                   <div className="w-20 h-20 rounded-xl bg-muted border overflow-hidden flex items-center justify-center">
                     {formData.logo ? (
-                      <img src={formData.logo} alt="Logo" className="w-full h-full object-cover" />
+                      <img src={buildImageUrl('agencies', formData.logo)} alt="Logo" className="w-full h-full object-cover" />
                     ) : (
                       <User className="h-8 w-8 text-muted-foreground" />
                     )}
@@ -284,7 +284,7 @@ export default function DashboardProfile() {
                 <div className="space-y-3">
                   <div className="w-full h-32 rounded-xl bg-muted border overflow-hidden">
                     {formData.portada ? (
-                      <img src={formData.portada} alt="Portada" className="w-full h-full object-cover" />
+                      <img src={buildImageUrl('agencies', formData.portada)} alt="Portada" className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <Image className="h-8 w-8 text-muted-foreground" />
