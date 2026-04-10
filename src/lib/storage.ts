@@ -48,7 +48,7 @@ const CURRENT_USER_KEY = 'agencia_express_current_user';
 // Plan limits
 export const PLAN_LIMITS = {
   gratuito: 3,
-  basico: 10,
+  basico: 15,
   profesional: 50,
   premium: Infinity,
 } as const;
@@ -58,9 +58,9 @@ export const WHATSAPP_SUPPORT = '+5493425765843';
 
 export const PLAN_PRICES = {
   gratuito: 0,
-  basico: 17000,
-  profesional: 46000,
-  premium: 78000,
+  basico: 58000,
+  profesional: 100000,
+  premium: 250000,
 } as const;
 
 export const PLAN_NAMES = {

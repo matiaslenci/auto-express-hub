@@ -10,7 +10,7 @@ const plans = [
     price: PLAN_PRICES.basico,
     description: 'Perfecto para empezar',
     features: [
-      '10 publicaciones activas',
+      '15 publicaciones activas',
       'URL personalizada',
       'Integración WhatsApp',
       'Soporte por email',

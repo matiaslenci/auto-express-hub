@@ -63,7 +63,7 @@ export function PlanLimitModal({ isOpen, onClose, plan, limite }: PlanLimitModal
                         <div className="text-sm">
                             <p className="font-medium">¿Necesitas más publicaciones?</p>
                             <p className="text-muted-foreground">
-                                Plan Básico: 10 | Plan Profesional: 50 | Plan Premium: Ilimitadas
+                                Plan Básico: 15 | Plan Profesional: 50 | Plan Premium: Ilimitadas
                             </p>
                         </div>
                     </div>
